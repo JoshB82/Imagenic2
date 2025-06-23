@@ -1,12 +1,68 @@
-﻿namespace Imagenic2.Core.Entities;
+﻿using Imagenic2.Core.Enums;
+
+namespace Imagenic2.Core.Entities;
 
 public abstract class RenderingEntity : OrientatedEntity
 {
     #region Fields and Properties
 
+    // Clipping Planes
+    internal ClippingPlane[] ViewClippingPlanes { get; set; }
+
     public Matrix4x4 WorldToView { get; private set; }
 
     private float viewWidth, viewHeight, zNear, zFar;
+    public virtual float ViewWidth
+    {
+        get => viewWidth;
+        set
+        {
+            if (value == viewWidth) return;
+            viewWidth = value;
+            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
+        }
+    }
+    /// <summary>
+    /// The height of the <see cref="RenderingEntity">RenderingObject's</see> view/near plane.
+    /// </summary>
+    public virtual float ViewHeight
+    {
+        get => viewHeight;
+        set
+        {
+            if (value == viewHeight) return;
+            viewHeight = value;
+            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
+        }
+    }
+    /// <summary>
+    /// The depth of the <see cref="RenderingEntity">RenderingObject's</see> view to the near plane.
+    /// </summary>
+    public virtual float ZNear
+    {
+        get => zNear;
+        set
+        {
+            if (value == zNear) return;
+            zNear = value;
+            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
+        }
+    }
+    /// <summary>
+    /// The depth of the <see cref="RenderingEntity">RenderingObject's</see> view to the far plane.
+    /// </summary>
+    public virtual float ZFar
+    {
+        get => zFar;
+        set
+        {
+            if (value == zFar) return;
+            zFar = value;
+            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
+        }
+    }
+
+    private VolumeOutline volumeStyle = VolumeOutline.None;
 
     #endregion
 

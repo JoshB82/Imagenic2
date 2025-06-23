@@ -40,6 +40,52 @@ public struct Vector3D : IEquatable<Vector3D>
 
     #region Methods
 
+    public readonly bool IsZero(float epsilon = float.Epsilon) => ApproxEquals(Zero, epsilon);
+
+    public readonly float Angle(Vector3D v, float epsilon = float.Epsilon)
+    {
+        if (IsZero(epsilon))
+        {
+            throw new InvalidOperationException();
+        }
+        if (v.IsZero(epsilon))
+        {
+            throw new InvalidOperationException();
+        }
+        float quotient = this * v / Sqrt(SquaredMagnitude() * v.SquaredMagnitude());
+        return Acos(quotient.Clamp(-1, 1));
+    }
+    public readonly bool TryGetAngle(Vector3D v, out float angle, float epsilon = float.Epsilon)
+    {
+        angle = 0;
+        if (IsZero(epsilon) || v.IsZero(epsilon))
+        {
+            return false;
+        }
+        float quotient = this * v / Sqrt(SquaredMagnitude() * v.SquaredMagnitude());
+        angle = Acos(quotient.Clamp(-1, 1));
+        return true;
+    }
+
+    public readonly Vector3D Normalise(float epsilon = float.Epsilon)
+    {
+        if (IsZero(epsilon))
+        {
+            throw new InvalidOperationException();
+        }
+        return this / Magnitude();
+    }
+    public bool TryNormalise(out Vector3D v, float epsilon = float.Epsilon)
+    {
+        v = Zero;
+        if (IsZero(epsilon))
+        {
+            return false;
+        }
+        v = this / Magnitude();
+        return true;
+    }
+
     public readonly Vector3D CrossProduct(Vector3D v) => new Vector3D(y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x);
 
     public readonly float Magnitude() => Sqrt(SquaredMagnitude());

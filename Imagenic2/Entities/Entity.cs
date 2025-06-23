@@ -27,5 +27,10 @@ public abstract class Entity
         return entity;
     }
 
+    internal void InvokeRenderEvent(RenderUpdate args)
+    {
+        RenderAlteringPropertyChanged?.Invoke(args);
+    }
+
     #endregion
 }
