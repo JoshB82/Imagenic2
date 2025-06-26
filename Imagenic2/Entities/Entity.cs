@@ -1,4 +1,6 @@
-﻿namespace Imagenic2.Core.Entities;
+﻿using Imagenic2.Core.Enums;
+
+namespace Imagenic2.Core.Entities;
 
 public abstract class Entity
 {
@@ -6,6 +8,8 @@ public abstract class Entity
 
     private static int id;
     public int Id => id++;
+
+    internal event Action<RenderUpdate>? RenderAlteringPropertyChanged;
 
     #endregion
 

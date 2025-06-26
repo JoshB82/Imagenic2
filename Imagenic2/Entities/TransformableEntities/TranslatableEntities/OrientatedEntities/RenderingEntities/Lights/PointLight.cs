@@ -13,6 +13,8 @@ public sealed class PointLight : Light
 
     }
 
+    #endregion
+
     #region Methods
 
     #endregion
