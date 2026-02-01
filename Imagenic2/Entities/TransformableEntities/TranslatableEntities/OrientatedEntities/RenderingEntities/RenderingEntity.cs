@@ -64,6 +64,28 @@ public abstract class RenderingEntity : OrientatedEntity
 
     private VolumeOutline volumeStyle = VolumeOutline.None;
 
+    private int renderWidth, renderHeight;
+    public virtual int RenderWidth
+    {
+        get => renderWidth;
+        set
+        {
+            if (value == renderWidth) return;
+            renderWidth = value;
+            InvokeRenderEvent(RenderUpdate.NewRender);
+        }
+    }
+    public virtual int RenderHeight
+    {
+        get => renderHeight;
+        set
+        {
+            if (value == renderHeight) return;
+            renderHeight = value;
+            InvokeRenderEvent(RenderUpdate.NewRender);
+        }
+    }
+
     #endregion
 
     #region Constructors

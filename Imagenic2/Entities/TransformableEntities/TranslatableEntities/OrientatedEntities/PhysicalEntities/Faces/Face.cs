@@ -1,8 +1,10 @@
 ﻿namespace Imagenic2.Core.Entities;
 
-public abstract class Face
+public class Face
 {
     #region Fields and Properties
+
+    public IList<Triangle> Triangles {get; set; }
 
     private FaceStyle frontStyle, backStyle;
     public FaceStyle FrontStyle
@@ -26,9 +28,9 @@ public abstract class Face
 
     #region Constructors
 
-    public Face()
+    public Face(params IList<Triangle> triangles)
     {
-
+        Triangles = triangles;
     }
 
     #endregion

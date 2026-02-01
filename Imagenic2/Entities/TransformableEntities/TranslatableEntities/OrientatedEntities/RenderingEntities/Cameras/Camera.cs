@@ -1,4 +1,5 @@
-﻿using Imagenic2.Core.Renderers;
+﻿using Imagenic2.Core.Enums;
+using Imagenic2.Core.Renderers;
 using System.Drawing;
 
 namespace Imagenic2.Core.Entities;
@@ -23,8 +24,6 @@ public abstract class Camera : RenderingEntity
 
             // Update view-to-screen matrix
             ScreenToView.m00 = ViewWidth / (2 * ZNear);
-
-            NewRenderNeeded = true;
         }
     }
     public override float ViewHeight
@@ -36,8 +35,6 @@ public abstract class Camera : RenderingEntity
 
             // Update view-to-screen matrix
             ScreenToView.m11 = ViewHeight / (2 * ZNear);
-
-            NewRenderNeeded = true;
         }
     }
     public override float ZNear
@@ -52,8 +49,6 @@ public abstract class Camera : RenderingEntity
             ScreenToView.m11 = ViewHeight / (2 * ZNear);
             ScreenToView.m32 = (ZNear - ZFar) / (2 * ZNear * ZFar);
             ScreenToView.m33 = (ZNear + ZFar) / (2 * ZNear * ZFar);
-
-            NewRenderNeeded = true;
         }
     }
     public override float ZFar
@@ -66,8 +61,6 @@ public abstract class Camera : RenderingEntity
             // Update view-to-screen matrix
             ScreenToView.m32 = (ZNear - ZFar) / (2 * ZNear * ZFar);
             ScreenToView.m33 = (ZNear + ZFar) / (2 * ZNear * ZFar);
-
-            NewRenderNeeded = true;
         }
     }
     public override int RenderWidth
@@ -96,7 +89,7 @@ public abstract class Camera : RenderingEntity
         set
         {
             renderBackgroundColour = value;
-            NewRenderNeeded = true;
+            InvokeRenderEvent(RenderUpdate.NewRender);
         }
     }
 
@@ -122,9 +115,9 @@ public abstract class Camera : RenderingEntity
 
     #region Methods
 
-    internal override void CalculateModelToWorldMatrix()
+    protected override void UpdateModelToWorldMatrix()
     {
-        base.CalculateModelToWorldMatrix();
+        base.UpdateModelToWorldMatrix();
         ViewToWorld = ModelToWorld;
     }
 

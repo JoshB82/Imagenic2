@@ -20,7 +20,7 @@ public class Cube : Mesh
 
     #region Constructors
 
-    public Cube(Vector3D worldOrigin, Orientation worldOrientation, float sideLength)
+    public Cube(Vector3D worldOrigin, Orientation worldOrientation, float sideLength) : base(worldOrigin, worldOrientation, MeshStructure.cubeStructure)
     {
         SideLength = sideLength;
     }
@@ -28,6 +28,24 @@ public class Cube : Mesh
     #endregion
 
     #region Methods
+
+    public override Cube ShallowCopy() => (Cube)MemberwiseClone();
+    public override Cube DeepCopy()
+    {
+        var cube = (Cube)base.DeepCopy();
+        cube.sideLength = sideLength;
+        return cube;
+    }
+
+    /// <summary>
+    /// Casts a <see cref="Cube"/> into a <see cref="Cuboid"/>.
+    /// </summary>
+    /// <param name="cube"><see cref="Cube"/> to cast.</param>
+    public static implicit operator Cuboid(Cube cube)
+    {
+        Cuboid cuboid = new Cuboid(cube.WorldOrigin, cube.WorldOrientation, cube.sideLength, cube.sideLength, cube.sideLength);
+        return cuboid;
+    }
 
     #endregion
 }

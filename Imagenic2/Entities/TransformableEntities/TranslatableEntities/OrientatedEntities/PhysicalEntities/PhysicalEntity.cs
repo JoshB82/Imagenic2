@@ -1,4 +1,6 @@
-﻿namespace Imagenic2.Core.Entities;
+﻿using Imagenic2.Core.Maths.Transformations;
+
+namespace Imagenic2.Core.Entities;
 
 public abstract class PhysicalEntity : OrientatedEntity
 {
