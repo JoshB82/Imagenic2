@@ -64,6 +64,7 @@ public abstract class RenderingEntity : OrientatedEntity
 
     private VolumeOutline volumeStyle = VolumeOutline.None;
 
+    /*
     private int renderWidth, renderHeight;
     public virtual int RenderWidth
     {
@@ -85,6 +86,8 @@ public abstract class RenderingEntity : OrientatedEntity
             InvokeRenderEvent(RenderUpdate.NewRender);
         }
     }
+
+    */
 
     #endregion
 

@@ -63,6 +63,8 @@ public abstract class Camera : RenderingEntity
             ScreenToView.m33 = (ZNear + ZFar) / (2 * ZNear * ZFar);
         }
     }
+
+    /*
     public override int RenderWidth
     {
         get => base.RenderWidth;
@@ -81,6 +83,7 @@ public abstract class Camera : RenderingEntity
             UpdateProperties();
         }
     }
+    */
 
     private Color renderBackgroundColour = Color.White;
     public Color RenderBackgroundColour
