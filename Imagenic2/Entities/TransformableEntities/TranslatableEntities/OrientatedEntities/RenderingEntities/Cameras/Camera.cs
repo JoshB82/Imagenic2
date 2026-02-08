@@ -124,6 +124,7 @@ public abstract class Camera : RenderingEntity
         ViewToWorld = ModelToWorld;
     }
 
+    /*
     internal override void UpdateProperties()
     {
         base.UpdateProperties();
@@ -132,6 +133,7 @@ public abstract class Camera : RenderingEntity
 
         NewRenderNeeded = true;
     }
+    */
 
     #endregion
 }

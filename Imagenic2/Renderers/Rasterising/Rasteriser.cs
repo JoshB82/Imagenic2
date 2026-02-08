@@ -1,4 +1,5 @@
 ﻿using Imagenic2.Core.Entities;
+using Imagenic2.Core.Images;
 
 namespace Imagenic2.Core.Renderers.Rasterising;
 
@@ -10,7 +11,7 @@ public class Rasteriser<TImage> : Renderer<TImage> where TImage : Image
 
     #region Constructors
 
-    public Rasteriser(RenderingOptions renderingOptions, ImageOptions<TImage> imageOptions = null) : base(renderingOptions, imageOptions)
+    public Rasteriser(RenderingOptions renderingOptions) : base(renderingOptions)
     {
 
     }
@@ -31,6 +32,8 @@ public class Rasteriser<TImage> : Renderer<TImage> where TImage : Image
         {
 
         }
+
+        return null; // Temporary
     }
 
     #endregion

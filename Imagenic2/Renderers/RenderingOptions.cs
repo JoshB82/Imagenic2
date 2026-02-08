@@ -1,4 +1,5 @@
 ﻿using Imagenic2.Core.Entities;
+using Imagenic2.Core.Images;
 
 namespace Imagenic2.Core.Renderers;
 

@@ -121,5 +121,7 @@ public struct Orientation : IEquatable<Orientation>
 
     public override bool Equals(object obj) => obj is Orientation orientation && Equals(orientation);
 
+    public readonly override string ToString() => $"[Forward: {DirectionForward}, Up: {DirectionUp}, Right: {DirectionRight}]";
+
     #endregion
 }

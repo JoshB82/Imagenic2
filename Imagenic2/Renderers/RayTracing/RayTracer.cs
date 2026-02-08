@@ -1,4 +1,6 @@
-﻿namespace Imagenic2.Core.Renderers.RayTracing;
+﻿using Imagenic2.Core.Images;
+
+namespace Imagenic2.Core.Renderers.RayTracing;
 
 public class RayTracer<TImage> : Renderer<TImage> where TImage : Image
 {
@@ -8,7 +10,7 @@ public class RayTracer<TImage> : Renderer<TImage> where TImage : Image
 
     #region Constructors
 
-    public RayTracer(RenderingOptions renderingOptions, ImageOptions<TImage> imageOptions = null) : base(renderingOptions, imageOptions)
+    public RayTracer(RenderingOptions renderingOptions) : base(renderingOptions)
     {
 
     }
@@ -24,6 +26,8 @@ public class RayTracer<TImage> : Renderer<TImage> where TImage : Image
         {
             return null;
         }
+
+        return null; // Temporary
     }
 
     #endregion

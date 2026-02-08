@@ -45,24 +45,14 @@ public abstract class Renderer<TImage> where TImage : Image
             renderingOptions = value;
         }
     }
-    private ImageOptions<TImage> imageOptions;
-    public ImageOptions<TImage> ImageOptions
-    {
-        get => imageOptions;
-        set
-        {
-            imageOptions = value;
-        }
-    }
 
     #endregion
 
     #region Constructors
 
-    public Renderer(RenderingOptions renderingOptions, ImageOptions<TImage> imageOptions = null)
+    public Renderer(RenderingOptions renderingOptions)
     {
         RenderingOptions = renderingOptions;
-        ImageOptions = imageOptions;
     }
 
     #endregion
