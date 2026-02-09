@@ -1,4 +1,6 @@
-﻿namespace Imagenic2.Core.Entities;
+﻿using Imagenic2.Core.Entities;
+
+namespace Imagenic2.Core.Entities;
 
 public class MeshStructure
 {
@@ -128,6 +130,117 @@ public class MeshStructure
     #endregion
 
     #region Methods
+
+    internal static IList<Vertex> GenerateCircleVertices(int resolution)
+    {
+        // Vertices are defined in anti-clockwise order.
+        IList<Vertex> vertices = new Vertex[resolution + 1];
+        vertices[0] = new Vertex(Vector3D.Zero);
+
+        float angle = Tau / resolution;
+        for (int i = 0; i < resolution; i++)
+        {
+            vertices[i + 1] = new Vertex(new Vector3D(Cos(angle * i), 0, Sin(angle * i)));
+        }
+
+        return vertices;
+    }
+
+    internal static IList<Edge> GenerateCircleEdges(IList<Vertex> vertices, int resolution)
+    {
+        IList<Edge> edges = new Edge[resolution];
+
+        for (int i = 0; i < resolution - 1; i++)
+        {
+            edges[i] = new Edge(vertices[i + 1], vertices[i + 2]);
+        }
+        edges[resolution - 1] = new Edge(vertices[resolution], vertices[1]);
+
+        return edges;
+    }
+
+    internal static IList<Triangle> GenerateCircleTriangles(IList<Vertex> vertices, int resolution)
+    {
+        IList<Triangle> triangles = new Triangle[resolution];
+        
+        for (int i = 0; i < resolution - 1; i++)
+        {
+            triangles.Add(new Triangle(vertices[i + 1], vertices[0], vertices[i + 2]));
+        }
+        triangles.Add(new Triangle(vertices[resolution], vertices[0], vertices[1]));
+
+        return triangles;
+    }
+
+    internal static IList<Face> GenerateCircleFaces(IList<Triangle> triangles)
+    {
+        return new Face[1]
+        {
+            new Face(triangles)
+        };
+    }
+
+    internal static MeshStructure GenerateCircleStructure(int resolution)
+    {
+        IList<Vertex> vertices = GenerateCircleVertices(resolution);
+        IList<Edge> edges = GenerateCircleEdges(vertices, resolution);
+        IList<Triangle> triangles = GenerateCircleTriangles(vertices, resolution);
+        IList<Face> faces = GenerateCircleFaces(triangles);
+
+        return new MeshStructure(vertices, edges, triangles, faces);
+    }
+
+    internal static IList<Vertex> GenerateConeVertices(MeshStructure circleStructure)
+    {
+        circleStructure.Vertices.Add(new Vertex(Vector3D.UnitZ));
+        return circleStructure.Vertices;
+    }
+
+    internal static IList<Edge> GenerateConeEdges(MeshStructure circleStructure, int resolution)
+    {
+        IList<Edge> topEdges = new Edge[resolution];
+
+        for (int i = 0; i < resolution; i++)
+        {
+            topEdges[i] = new Edge(circleStructure.Vertices[i + 1], circleStructure.Vertices[resolution + 1]);
+        }
+
+        return topEdges.Concat(circleStructure.Edges).ToList();
+    }
+
+    internal static IList<Triangle> GenerateConeTriangles(MeshStructure circleStructure, int resolution)
+    {
+        IList<Triangle> topTriangles = new Triangle[resolution];
+
+        for (int i = 0; i < resolution - 1; i++)
+        {
+            topTriangles[i] = new Triangle(circleStructure.Vertices[i + 1], circleStructure.Vertices[resolution + 1], circleStructure.Vertices[i + 2]);
+        }
+        topTriangles[resolution - 1] = new Triangle(circleStructure.Vertices[i - 1], circleStructure.Vertices[resolution + 1], circleStructure.Vertices[1]);
+
+        return topTriangles.Concat(circleStructure.Triangles).ToList();
+    }
+
+    internal static IList<Face> GenerateConeFaces(MeshStructure circleStructure, IList<Triangle> triangles, int resolution)
+    {
+        return new Face[2]
+        {
+            circleStructure.Faces[0],
+            new Face(triangles.Skip(resolution).ToList())
+        };
+    }
+
+    internal static MeshStructure GenerateConeStructure(int resolution)
+    {
+        MeshStructure circleStructure = GenerateCircleStructure(resolution);
+
+        IList<Vertex> vertices = GenerateConeVertices(circleStructure);
+        IList<Edge> edges = GenerateConeEdges(circleStructure, resolution);
+        IList<Triangle> triangles = GenerateConeTriangles(circleStructure, resolution);
+        IList<Face> faces = GenerateConeFaces(circleStructure, triangles, resolution);
+
+        return new MeshStructure(vertices, edges, triangles, faces);
+    }
 
     #endregion
 }

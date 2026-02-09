@@ -38,7 +38,7 @@ public class Rasteriser<TImage> : Renderer<TImage> where TImage : Image
             {
                 foreach (Triangle triangle in mesh.Structure.Triangles)
                 {
-                    Interpolate(triangle, colourBuffer, zBuffer);
+                    Interpolate(triangle, colourBuffer, zBuffer, RenderingOptions.RenderCamera, RenderingOptions.ScreenToWindow);
                 }
             }
         }
@@ -50,18 +50,25 @@ public class Rasteriser<TImage> : Renderer<TImage> where TImage : Image
         return null; // Temporary
     }
 
-    private static void Interpolate(Triangle triangle, Buffer2D<Color> colourBuffer, Buffer2D<float> zBuffer)
+    private static void Interpolate(Triangle triangle, Buffer2D<Color> colourBuffer, Buffer2D<float> zBuffer, Camera renderCamera, Matrix4x4 screenToWindow)
     {
+        Matrix4x4 modelToWindow = screenToWindow * renderCamera.viewToScreen * renderCamera.WorldToView * renderCamera.ModelToWorld;
+
+        // Transform vertices
+        Vector4D transformedP1 = modelToWindow * new Vector4D(triangle.P1.WorldOrigin, 1);
+        Vector4D transformedP2 = modelToWindow * new Vector4D(triangle.P2.WorldOrigin, 1);
+        Vector4D transformedP3 = modelToWindow * new Vector4D(triangle.P3.WorldOrigin, 1);
+
         // Extract values
-        int x1 = triangle.P1.WorldOrigin.x.RoundToInt();
-        int y1 = triangle.P1.WorldOrigin.y.RoundToInt();
-        float z1 = triangle.P1.WorldOrigin.z;
-        int x2 = triangle.P2.WorldOrigin.x.RoundToInt();
-        int y2 = triangle.P2.WorldOrigin.y.RoundToInt();
-        float z2 = triangle.P2.WorldOrigin.z;
-        int x3 = triangle.P3.WorldOrigin.x.RoundToInt();
-        int y3 = triangle.P3.WorldOrigin.y.RoundToInt();
-        float z3 = triangle.P3.WorldOrigin.z;
+        int x1 = transformedP1.x.RoundToInt();
+        int y1 = transformedP1.y.RoundToInt();
+        float z1 = transformedP1.z;
+        int x2 = transformedP2.x.RoundToInt();
+        int y2 = transformedP2.y.RoundToInt();
+        float z2 = transformedP2.z;
+        int x3 = transformedP3.x.RoundToInt();
+        int y3 = transformedP3.y.RoundToInt();
+        float z3 = transformedP3.z;
 
         // Create steps
         float dyStep1 = y1 - y2;
@@ -150,7 +157,6 @@ public class Rasteriser<TImage> : Renderer<TImage> where TImage : Image
             colourBuffer.Values[x][y] = colour;
         }
     }
-
 
     #endregion
 }

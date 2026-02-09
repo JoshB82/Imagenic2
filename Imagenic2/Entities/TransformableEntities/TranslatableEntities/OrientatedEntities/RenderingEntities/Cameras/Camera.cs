@@ -11,7 +11,7 @@ public abstract class Camera : RenderingEntity
     protected Buffer2D<Color> colourBuffer;
     protected Matrix4x4 ViewToWorld;
     protected Matrix4x4 ScreenToView;
-    protected Matrix4x4 WindowToScreen;
+    
     internal Matrix4x4 ScreenToWorld;
 
     // View Volume

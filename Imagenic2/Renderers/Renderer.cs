@@ -21,20 +21,10 @@ public abstract class Renderer<TImage> where TImage : Image
     internal Buffer2D<float> zBuffer;
     internal bool NewRenderNeeded { get; set; }
 
-    private Camera renderCamera;
-    public virtual Camera RenderCamera
-    {
-        get => renderCamera;
-        set
-        {
-            renderCamera = value;
-            NewRenderNeeded = true;
+    
 
-        }
-    }
-
-    public Matrix4x4 ScreenToWindow { get; private set; }
-    protected static readonly Matrix4x4 windowTranslate = Transform.Translate(new Vector3D(1, 1, 0));
+    
+    
 
     private RenderingOptions renderingOptions;
     public RenderingOptions RenderingOptions
