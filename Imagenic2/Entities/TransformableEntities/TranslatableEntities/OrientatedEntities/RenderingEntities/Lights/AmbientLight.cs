@@ -8,7 +8,7 @@ public sealed class AmbientLight : Light
 
     #region Constructors
 
-    public AmbientLight(Vector3D worldOrigin) : base(worldOrigin)
+    public AmbientLight(Vector3D worldOrigin, Orientation worldOrientation, float viewWidth, float viewHeight, float zNear, float zFar) : base(worldOrigin, worldOrientation, viewWidth, viewHeight, zNear, zFar)
     {
 
     }

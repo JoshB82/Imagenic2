@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Imagenic2\Imagenic2.Core.csproj" />
+  </ItemGroup>
+
 </Project>

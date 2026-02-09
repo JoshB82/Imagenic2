@@ -8,7 +8,7 @@ public sealed class PointLight : Light
 
     #region Constructors
 
-    public PointLight() : base()
+    public PointLight(Vector3D worldOrigin, Orientation worldOrientation, float viewWidth, float viewHeight, float zNear, float zFar) : base(worldOrigin, worldOrientation, viewWidth, viewHeight, zNear, zFar)
     {
 
     }

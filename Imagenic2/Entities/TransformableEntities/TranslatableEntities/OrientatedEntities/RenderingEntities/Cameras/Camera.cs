@@ -108,10 +108,10 @@ public abstract class Camera : RenderingEntity
                   float zFar)
         : base(worldOrigin, worldOrientation, viewWidth, viewHeight, zNear, zFar)
     {
-        string[] iconObjData = Properties.Resources.Camera.Split(Environment.NewLine);
-        Icon = new Custom(worldOrigin, directionForward, directionUp, iconObjData) { Dimension = 3 };
-        Icon.ColourAllSolidFaces(Color.DarkCyan);
-        Icon.Scale(5);
+        //string[] iconObjData = Properties.Resources.Camera.Split(Environment.NewLine);
+        //Icon = new Custom(worldOrigin, directionForward, directionUp, iconObjData) { Dimension = 3 };
+        //Icon.ColourAllSolidFaces(Color.DarkCyan);
+        //Icon.Scale(5);
     }
 
     #endregion

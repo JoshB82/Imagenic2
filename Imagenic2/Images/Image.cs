@@ -23,7 +23,7 @@ public abstract class Image
 
     public bool Export(string filePath)
     {
-
+        return false; // Temporary
     }
 
     #endregion

@@ -10,6 +10,7 @@ public abstract class RenderingEntity : OrientatedEntity
     internal ClippingPlane[] ViewClippingPlanes { get; set; }
 
     public Matrix4x4 WorldToView { get; private set; }
+    protected Matrix4x4 viewToScreen;
 
     private float viewWidth, viewHeight, zNear, zFar;
     public virtual float ViewWidth

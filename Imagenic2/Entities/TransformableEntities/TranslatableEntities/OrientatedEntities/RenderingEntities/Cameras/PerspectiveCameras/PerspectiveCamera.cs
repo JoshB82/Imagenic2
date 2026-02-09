@@ -70,7 +70,7 @@ public sealed class PerspectiveCamera : Camera
 
     #region Constructors
 
-    public PerspectiveCamera() : base()
+    public PerspectiveCamera(Vector3D worldOrigin, Orientation worldOrientation, float viewWidth, float viewHeight, float zNear, float zFar) : base(worldOrigin, worldOrientation, viewWidth, viewHeight, zNear, zFar)
     {
 
     }

@@ -40,6 +40,8 @@ public struct Vector3D : IEquatable<Vector3D>
 
     #region Methods
 
+    public static Vector3D NormalFromPlane(Vector3D p1, Vector3D p2, Vector3D p3) => (p3 - p1).CrossProduct(p2 - p1).Normalise();
+
     public readonly bool IsZero(float epsilon = float.Epsilon) => ApproxEquals(Zero, epsilon);
 
     public readonly float Angle(Vector3D v, float epsilon = float.Epsilon)

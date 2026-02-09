@@ -1,10 +1,12 @@
-﻿namespace Imagenic2.Core.Entities;
+﻿using Imagenic2.Core.Enums;
+
+namespace Imagenic2.Core.Entities;
 
 public class Mesh : PhysicalEntity
 {
     #region Fields and Properties
 
-    private bool drawEdges;
+    private bool drawEdges, drawTriangles, drawFaces;
     public bool DrawEdges
     {
         get => drawEdges;
@@ -12,10 +14,19 @@ public class Mesh : PhysicalEntity
         {
             if (value == drawEdges) return;
             drawEdges = value;
-            RequestNewRenders();
+            InvokeRenderEvent(RenderUpdate.NewRender);
         }
     }
-    private bool drawFaces;
+    public bool DrawTriangles
+    {
+        get => drawTriangles;
+        set
+        {
+            if (value == drawTriangles) return;
+            drawTriangles = value;
+            InvokeRenderEvent(RenderUpdate.NewRender);
+        }
+    }
     public bool DrawFaces
     {
         get => drawFaces;
@@ -23,10 +34,9 @@ public class Mesh : PhysicalEntity
         {
             if (value == drawFaces) return;
             drawFaces = value;
-            RequestNewRenders();
+            InvokeRenderEvent(RenderUpdate.NewRender);
         }
     }
-
 
     private MeshStructure structure;
     public MeshStructure Structure
@@ -34,7 +44,9 @@ public class Mesh : PhysicalEntity
         get => structure;
         set
         {
+            ThrowIfNull(value);
             structure = value;
+            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
         }
     }
 

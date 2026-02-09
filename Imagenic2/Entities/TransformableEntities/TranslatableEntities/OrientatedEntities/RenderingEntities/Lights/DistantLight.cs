@@ -8,7 +8,7 @@ public sealed class DistantLight : Light
 
     #region Constructors
 
-    public DistantLight() : base()
+    public DistantLight(Vector3D worldOrigin, Orientation worldOrientation, float viewWidth, float viewHeight, float zNear, float zFar) : base(worldOrigin, worldOrientation, viewWidth, viewHeight, zNear, zFar)
     {
 
     }

@@ -8,7 +8,7 @@ public sealed class Spotlight : Light
 
     #region Constructors
 
-    public Spotlight() : base()
+    public Spotlight(Vector3D worldOrigin, Orientation worldOrientation, float viewWidth, float viewHeight, float zNear, float zFar) : base(worldOrigin, worldOrientation, viewWidth, viewHeight, zNear, zFar)
     {
 
     }

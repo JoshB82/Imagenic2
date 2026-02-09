@@ -8,6 +8,11 @@ public sealed class StereoCamera : Camera
 
     #region Constructors
 
+    public StereoCamera(Vector3D worldOrigin, Orientation worldOrientation, float viewWidth, float viewHeight, float zNear, float zFar) : base(worldOrigin, worldOrientation, viewWidth, viewHeight, zNear, zFar)
+    {
+
+    }
+
     #endregion
 
     #region Methods
