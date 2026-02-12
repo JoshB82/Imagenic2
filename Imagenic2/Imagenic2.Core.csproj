@@ -6,9 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="Entities\TransformableEntities\TranslatableEntities\OrientatedEntities\PhysicalEntities\Meshes\OneDimension\" />
-    <Folder Include="Entities\TransformableEntities\TranslatableEntities\OrientatedEntities\PhysicalEntities\Meshes\TwoDimensions\" />
-  </ItemGroup>
-
 </Project>

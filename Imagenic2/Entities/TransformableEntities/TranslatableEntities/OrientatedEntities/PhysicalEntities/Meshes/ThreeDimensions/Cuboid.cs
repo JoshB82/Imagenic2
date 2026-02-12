@@ -1,6 +1,4 @@
-﻿
-
-namespace Imagenic2.Core.Entities;
+﻿namespace Imagenic2.Core.Entities;
 
 public class Cuboid : Mesh
 {

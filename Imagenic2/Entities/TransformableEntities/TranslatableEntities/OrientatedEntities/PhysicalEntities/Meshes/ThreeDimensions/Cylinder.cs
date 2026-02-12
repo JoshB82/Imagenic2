@@ -2,7 +2,7 @@
 
 namespace Imagenic2.Core.Entities;
 
-public sealed class Cone : Mesh
+public sealed class Cylinder : Mesh
 {
     #region Fields and Properties
     
@@ -26,7 +26,6 @@ public sealed class Cone : Mesh
             Scaling = new Vector3D(radius, height, radius);
         }
     }
-
     private int resolution;
     public int Resolution
     {
@@ -34,35 +33,24 @@ public sealed class Cone : Mesh
         set
         {
             resolution = value;
-            Structure = MeshStructure.GenerateConeStructure(resolution);
+            Structure = MeshStructure.GenerateCylinderStructure(resolution);
             InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
         }
     }
-
+    
     #endregion
-
+    
     #region Constructors
-
-    public Cone(Vector3D worldOrigin, Orientation worldOrientation, float height, float radius, int resolution) : base(worldOrigin, worldOrientation, MeshStructure.GenerateConeStructure(resolution))
+    
+    public Cylinder(Vector3D worldOrigin, Orientation worldOrientation, float height, float radius, int resolution) : base(worldOrigin, worldOrientation, MeshStructure.GenerateCylinderStructure(resolution))
     {
         Radius = radius;
         Height = height;
         Resolution = resolution;
     }
-    
     #endregion
     
     #region Methods
     
-    public override Cone ShallowCopy() => (Cone)MemberwiseClone();
-    public override Cone DeepCopy()
-    {
-        var cone = (Cone)base.DeepCopy();
-        cone.radius = radius;
-        cone.height = height;
-        cone.resolution = resolution;
-        return cone;
-    }
-
     #endregion
 }
