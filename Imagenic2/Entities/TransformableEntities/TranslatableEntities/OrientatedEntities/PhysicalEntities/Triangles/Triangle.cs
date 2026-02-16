@@ -26,6 +26,10 @@ public class Triangle
     public Vertex P2 { get; set; }
     public Vertex P3 { get; set; }
 
+    internal Vector4D TransformedP1 { get; set; }
+    internal Vector4D TransformedP2 { get; set; }
+    internal Vector4D TransformedP3 { get; set; }
+
     #endregion
 
     #region Constructors
@@ -49,6 +53,18 @@ public class Triangle
     #endregion
 
     #region Methods
+
+    public Triangle ShallowCopy() => (Triangle)MemberwiseClone();
+    public Triangle DeepCopy()
+    {
+        var triangle = new Triangle(P1, P2, P3);
+        triangle.TransformedP1 = TransformedP1;
+        triangle.TransformedP2 = TransformedP2;
+        triangle.TransformedP3 = TransformedP3;
+        triangle.FrontStyle = FrontStyle;
+        triangle.BackStyle = BackStyle;
+        return triangle;
+    }
 
     #endregion
 }

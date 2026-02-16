@@ -23,6 +23,11 @@ public class Rasteriser<TImage> : Renderer<TImage> where TImage : Image
 
     public async override Task<TImage?> RenderAsync(CancellationToken token = default)
     {
+        if (RenderingOptions.RenderCamera is null)
+        {
+            throw new InvalidOperationException("Render camera must be set in order to render an image.");
+        }
+
         // Check if there is anything to render.
         if (RenderingOptions.PhysicalEntitiesToRender is null || !RenderingOptions.PhysicalEntitiesToRender.Any())
         {
@@ -38,11 +43,17 @@ public class Rasteriser<TImage> : Renderer<TImage> where TImage : Image
             {
                 foreach (Triangle triangle in mesh.Structure.Triangles)
                 {
-                    Interpolate(triangle, colourBuffer, zBuffer, RenderingOptions.RenderCamera, RenderingOptions.ScreenToWindow);
+                    TransformVertices(triangle, RenderingOptions.RenderCamera, RenderingOptions.ScreenToWindow);
+                    var clippedTriangles = ClipTriangle(triangle, Renderer<TImage>.ScreenClippingPlanes);
+                    foreach (Triangle clippedTriangle in clippedTriangles)
+                    {
+                        Interpolate(clippedTriangle, colourBuffer, zBuffer);
+                    }
                 }
             }
         }
 
+        //TImage image = new TImage(colourBuffer);
         Bitmap bitmap = new Bitmap(colourBuffer);
         //return bitmap;
 
@@ -50,25 +61,125 @@ public class Rasteriser<TImage> : Renderer<TImage> where TImage : Image
         return null; // Temporary
     }
 
-    private static void Interpolate(Triangle triangle, Buffer2D<Color> colourBuffer, Buffer2D<float> zBuffer, Camera renderCamera, Matrix4x4 screenToWindow)
+    private static void TransformVertices(Triangle triangle, Camera renderCamera, Matrix4x4 screenToWindow)
     {
         Matrix4x4 modelToWindow = screenToWindow * renderCamera.viewToScreen * renderCamera.WorldToView * renderCamera.ModelToWorld;
 
         // Transform vertices
-        Vector4D transformedP1 = modelToWindow * new Vector4D(triangle.P1.WorldOrigin, 1);
-        Vector4D transformedP2 = modelToWindow * new Vector4D(triangle.P2.WorldOrigin, 1);
-        Vector4D transformedP3 = modelToWindow * new Vector4D(triangle.P3.WorldOrigin, 1);
+        triangle.TransformedP1 = modelToWindow * new Vector4D(triangle.P1.WorldOrigin, 1);
+        triangle.TransformedP2 = modelToWindow * new Vector4D(triangle.P2.WorldOrigin, 1);
+        triangle.TransformedP3 = modelToWindow * new Vector4D(triangle.P3.WorldOrigin, 1);
+    }
 
+    private static Queue<Triangle> ClipTriangle(Triangle triangle, ClippingPlane[] clippingPlanes)
+    {
+        var triangleQueue = new Queue<Triangle>();
+        triangleQueue.Enqueue(triangle);
+        return Clip(triangleQueue, clippingPlanes);
+    }
+
+    private static Queue<Triangle> Clip(Queue<Triangle> triangleQueue, ClippingPlane[] clippingPlanes)
+    {
+        Vector3D[] insidePoints = new Vector3D[3], outsidePoints = new Vector3D[3];
+        int insidePointCount = 0, outsidePointCount = 0;
+
+        var triangle = triangleQueue.Dequeue();
+
+        foreach (ClippingPlane clippingPlane in clippingPlanes)
+        {
+            int noTrianglesRemaining = triangleQueue.Count;
+            while (noTrianglesRemaining-- > 0) ClipTriangle(triangleQueue, triangle, clippingPlane.Point, clippingPlane.Normal);
+        }
+
+        return triangleQueue;
+
+        void ClipTriangle(Queue<Triangle> triangleQueue, Triangle triangle, Vector3D planePoint, Vector3D planeNormal)
+        {
+            Vector3D p1 = (Vector3D)(triangle.TransformedP1);
+            Vector3D p2 = (Vector3D)(triangle.TransformedP2);
+            Vector3D p3 = (Vector3D)(triangle.TransformedP3);
+
+            // Determine what vertices of the Triangle are inside and outside.
+            if (Vector3D.PointDistanceFromPlane(p1, planePoint, planeNormal) >= 0)
+            {
+                insidePoints[insidePointCount++] = p1;
+            }
+            else
+            {
+                outsidePoints[outsidePointCount++] = p1;
+            }
+
+            if (Vector3D.PointDistanceFromPlane(p2, planePoint, planeNormal) >= 0)
+            {
+                insidePoints[insidePointCount++] = p2;
+            }
+            else
+            {
+                outsidePoints[outsidePointCount++] = p2;
+            }
+
+            if (Vector3D.PointDistanceFromPlane(p3, planePoint, planeNormal) >= 0)
+            {
+                insidePoints[insidePointCount++] = p3;
+            }
+            else
+            {
+                outsidePoints[outsidePointCount++] = p3;
+            }
+
+            switch (insidePointCount)
+            {
+                case 0:
+                    // All points are on the outside, so no valid triangles to enqueue
+                    break;
+                case 1:
+                    // One point is on the inside, so only a smaller triangle is needed
+                    var intersection1 = new Vector4D(Vector3D.LineIntersectPlane(insidePoints[0], outsidePoints[0], planePoint, planeNormal, out float d1), 1);
+                    var intersection2 = new Vector4D(Vector3D.LineIntersectPlane(insidePoints[0], outsidePoints[1], planePoint, planeNormal, out float d2), 1);
+
+                    triangle.TransformedP1 = new Vector4D(insidePoints[0], 1);
+                    triangle.TransformedP2 = intersection1;
+                    triangle.TransformedP3 = intersection2;
+                    triangleQueue.Enqueue(triangle);
+
+                    break;
+                case 2:
+                    // Two points are on the inside, so a quadrilateral is formed and split into two triangles
+                    intersection1 = new Vector4D(Vector3D.LineIntersectPlane(insidePoints[0], outsidePoints[0], planePoint, planeNormal, out d1), 1);
+                    intersection2 = new Vector4D(Vector3D.LineIntersectPlane(insidePoints[1], outsidePoints[0], planePoint, planeNormal, out d2), 1);
+
+                    triangle.TransformedP1 = new Vector4D(insidePoints[0], 1);
+                    triangle.TransformedP2 = intersection1;
+                    triangle.TransformedP3 = new Vector4D(insidePoints[1], 1);
+                    
+                    var triangle2 = triangle.DeepCopy();
+                    triangle2.TransformedP1 = new Vector4D(insidePoints[1], 1);
+                    triangle2.TransformedP2 = intersection1;
+                    triangle2.TransformedP3 = intersection2;
+
+                    triangleQueue.Enqueue(triangle);
+                    triangleQueue.Enqueue(triangle2);
+                    break;
+                case 3:
+                    // All points are on the inside, so enqueue the triangle unchanged
+                    triangleQueue.Enqueue(triangle);
+                    break;
+            }
+        }
+    }
+
+    private static void Interpolate(Triangle triangle, Buffer2D<Color> colourBuffer, Buffer2D<float> zBuffer)
+    {
         // Extract values
-        int x1 = transformedP1.x.RoundToInt();
-        int y1 = transformedP1.y.RoundToInt();
-        float z1 = transformedP1.z;
-        int x2 = transformedP2.x.RoundToInt();
-        int y2 = transformedP2.y.RoundToInt();
-        float z2 = transformedP2.z;
-        int x3 = transformedP3.x.RoundToInt();
-        int y3 = transformedP3.y.RoundToInt();
-        float z3 = transformedP3.z;
+        int x1 = triangle.TransformedP1.x.RoundToInt();
+        int y1 = triangle.TransformedP1.y.RoundToInt();
+        float z1 = triangle.TransformedP1.z;
+        int x2 = triangle.TransformedP2.x.RoundToInt();
+        int y2 = triangle.TransformedP2.y.RoundToInt();
+        float z2 = triangle.TransformedP2.z;
+        int x3 = triangle.TransformedP3.x.RoundToInt();
+        int y3 = triangle.TransformedP3.y.RoundToInt();
+        float z3 = triangle.TransformedP3.z;
 
         // Create steps
         float dyStep1 = y1 - y2;

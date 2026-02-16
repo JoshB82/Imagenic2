@@ -40,6 +40,20 @@ public struct Vector3D : IEquatable<Vector3D>
 
     #region Methods
 
+    public static Vector3D LineIntersectPlane(Vector3D lineStart, Vector3D lineFinish, Vector3D planePoint, Vector3D planeNormal, out float d)
+    {
+        Vector3D line = lineFinish - lineStart;
+        float denominator = line * planeNormal;
+        //if (denominator == 0) throw new ArgumentException("Line does not intersect plane or exists entirely on plane.");
+
+        // d = new length / old length
+        d = (planePoint - lineStart) * planeNormal / denominator;
+        // Round in direction of normal!?
+        return line * d + lineStart;
+    }
+
+    public static float PointDistanceFromPlane(Vector3D point, Vector3D planePoint, Vector3D planeNormal) => point * planeNormal - planePoint * planeNormal;
+
     public static Vector3D NormalFromPlane(Vector3D p1, Vector3D p2, Vector3D p3) => (p3 - p1).CrossProduct(p2 - p1).Normalise();
 
     public readonly bool IsZero(float epsilon = float.Epsilon) => ApproxEquals(Zero, epsilon);

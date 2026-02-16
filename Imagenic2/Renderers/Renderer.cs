@@ -1,6 +1,5 @@
 ﻿using Imagenic2.Core.Entities;
 using Imagenic2.Core.Images;
-using Imagenic2.Core.Maths.Transformations;
 
 namespace Imagenic2.Core.Renderers;
 
@@ -20,11 +19,6 @@ public abstract class Renderer<TImage> where TImage : Image
     
     internal Buffer2D<float> zBuffer;
     internal bool NewRenderNeeded { get; set; }
-
-    
-
-    
-    
 
     private RenderingOptions renderingOptions;
     public RenderingOptions RenderingOptions
