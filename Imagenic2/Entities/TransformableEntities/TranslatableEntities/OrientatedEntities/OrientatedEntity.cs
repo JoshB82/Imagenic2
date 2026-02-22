@@ -1,10 +1,12 @@
-﻿namespace Imagenic2.Core.Entities;
+﻿using Imagenic2.Core.Maths.Transformations;
+
+namespace Imagenic2.Core.Entities;
 
 public abstract class OrientatedEntity : TranslatableEntity
 {
     #region Fields and Properties
 
-    private Matrix4x4 rotationMatrix;
+    private Matrix4x4 rotationMatrix = Matrix4x4.Identity;
     private Orientation worldOrientation;
     public virtual Orientation WorldOrientation
     {
@@ -14,6 +16,7 @@ public abstract class OrientatedEntity : TranslatableEntity
             if (value == worldOrientation) return;
             worldOrientation = value;
 
+            UpdateRotationMatrix();
         }
     }
 
@@ -23,12 +26,22 @@ public abstract class OrientatedEntity : TranslatableEntity
 
     protected OrientatedEntity(Vector3D worldOrigin, Orientation worldOrientation) : base(worldOrigin)
     {
-        this.worldOrientation = worldOrientation;
+        WorldOrientation = worldOrientation;
     }
 
     #endregion
 
     #region Methods
+
+    private void UpdateRotationMatrix()
+    {
+        Matrix4x4 directionForwardRotation = Transform.RotateBetweenVectors(Orientation.ModelDirectionForward, worldOrientation.DirectionForward);
+        Matrix4x4 directionUpRotation = Transform.RotateBetweenVectors((Vector3D)(directionForwardRotation * Orientation.ModelDirectionUp), worldOrientation.DirectionUp);
+
+        rotationMatrix = directionUpRotation * directionForwardRotation;
+
+        UpdateModelToWorldMatrix();
+    }
 
     protected override void UpdateModelToWorldMatrix()
     {

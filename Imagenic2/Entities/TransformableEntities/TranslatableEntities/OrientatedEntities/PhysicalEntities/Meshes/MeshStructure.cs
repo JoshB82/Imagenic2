@@ -11,7 +11,6 @@ public class MeshStructure
     public IList<Texture> Textures { get; set; }
 
     // Line
-    internal static readonly MeshStructure lineStructure = new MeshStructure(lineVertices, lineEdges);
     private static readonly IList<Vertex> lineVertices = new Vertex[2]
     {
         new Vertex(Vector3D.Zero), // 0
@@ -21,10 +20,9 @@ public class MeshStructure
     {
         new Edge(lineVertices[0], lineVertices[1]) // 0
     };
-    
+    internal static readonly MeshStructure lineStructure = new MeshStructure(lineVertices, lineEdges);
 
     // Plane
-    internal static readonly MeshStructure planeStructure = new MeshStructure(planeVertices, planeEdges, planeTriangles, planeFaces);
     private static readonly IList<Vertex> planeVertices = new Vertex[4]
     {
         new Vertex(new Vector3D(0, 0, 0)), // 0 [Bottom-left]
@@ -48,10 +46,9 @@ public class MeshStructure
     {
         new Face(planeTriangles[0], planeTriangles[1]) // 0
     };
-    
+    internal static readonly MeshStructure planeStructure = new MeshStructure(planeVertices, planeEdges, planeTriangles, planeFaces);
 
     // Cube
-    internal static readonly MeshStructure cubeStructure = new MeshStructure(cuboidVertices, cuboidEdges, cuboidTriangles, cuboidFaces);
     private static float radical = MathF.Sqrt(3) / 3;
     private static readonly IList<Vertex> cuboidVertices = new Vertex[8]
     {
@@ -103,6 +100,7 @@ public class MeshStructure
         new Face(cuboidTriangles[8], cuboidTriangles[9]), // 4 [Top]
         new Face(cuboidTriangles[10], cuboidTriangles[11]) // 5 [Bottom]
     };
+    internal static readonly MeshStructure cubeStructure = new MeshStructure(cuboidVertices, cuboidEdges, cuboidTriangles, cuboidFaces);
 
     #endregion
 

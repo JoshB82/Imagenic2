@@ -1,10 +1,9 @@
 ﻿using Imagenic2.Core.Entities;
-using Imagenic2.Core.Images;
 using System.Drawing;
 
 namespace Imagenic2.Core.Renderers.Rasterising;
 
-public class Rasteriser<TImage> : Renderer<TImage> where TImage : Image
+public class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagenic2.Core.Images.Image
 {
     #region Fields and Properties
 
@@ -43,42 +42,52 @@ public class Rasteriser<TImage> : Renderer<TImage> where TImage : Image
             {
                 foreach (Triangle triangle in mesh.Structure.Triangles)
                 {
-                    TransformVertices(triangle, RenderingOptions.RenderCamera, RenderingOptions.ScreenToWindow);
-                    var clippedTriangles = ClipTriangle(triangle, Renderer<TImage>.ScreenClippingPlanes);
+                    triangle.TransformedP1 = new Vector4D(triangle.P1.WorldOrigin, 1);
+                    triangle.TransformedP2 = new Vector4D(triangle.P2.WorldOrigin, 1);
+                    triangle.TransformedP3 = new Vector4D(triangle.P3.WorldOrigin, 1);
+
+                    var triangleQueue = new Queue<Triangle>();
+                    triangleQueue.Enqueue(triangle);
+
+                    Matrix4x4 modelToView = RenderingOptions.RenderCamera.WorldToView * RenderingOptions.RenderCamera.ModelToWorld;
+                    TransformTriangleVertices(triangle, modelToView);
+                    var clippedTriangles = ClipTriangles(triangleQueue, RenderingOptions.RenderCamera.ViewClippingPlanes);
+                    if (clippedTriangles.Count == 0) continue;
+
                     foreach (Triangle clippedTriangle in clippedTriangles)
                     {
+                        TransformTriangleVertices(clippedTriangle, RenderingOptions.RenderCamera.viewToScreen);
+                    }
+                    clippedTriangles = ClipTriangles(triangleQueue, Renderer<TImage>.ScreenClippingPlanes);
+
+                    foreach (Triangle clippedTriangle in clippedTriangles)
+                    {
+                        TransformTriangleVertices(clippedTriangle, RenderingOptions.ScreenToWindow);
                         Interpolate(clippedTriangle, colourBuffer, zBuffer);
                     }
                 }
             }
         }
 
-        //TImage image = new TImage(colourBuffer);
-        Bitmap bitmap = new Bitmap(colourBuffer);
-        //return bitmap;
+        NewRenderNeeded = false;
 
-        //return new TImage();
-        return null; // Temporary
+        if (typeof(TImage) == typeof(Imagenic2.Core.Images.Bitmap))
+        {
+            return new Imagenic2.Core.Images.Bitmap(colourBuffer) as TImage;
+        }
+
+        return null;
     }
 
-    private static void TransformVertices(Triangle triangle, Camera renderCamera, Matrix4x4 screenToWindow)
+    private static void TransformTriangleVertices(Triangle triangle, Matrix4x4 transformationMatrix)
     {
-        Matrix4x4 modelToWindow = screenToWindow * renderCamera.viewToScreen * renderCamera.WorldToView * renderCamera.ModelToWorld;
-
         // Transform vertices
-        triangle.TransformedP1 = modelToWindow * new Vector4D(triangle.P1.WorldOrigin, 1);
-        triangle.TransformedP2 = modelToWindow * new Vector4D(triangle.P2.WorldOrigin, 1);
-        triangle.TransformedP3 = modelToWindow * new Vector4D(triangle.P3.WorldOrigin, 1);
+        triangle.TransformedP1 = transformationMatrix * triangle.TransformedP1;
+        triangle.TransformedP2 = transformationMatrix * triangle.TransformedP2;
+        triangle.TransformedP3 = transformationMatrix * triangle.TransformedP3;
     }
 
-    private static Queue<Triangle> ClipTriangle(Triangle triangle, ClippingPlane[] clippingPlanes)
-    {
-        var triangleQueue = new Queue<Triangle>();
-        triangleQueue.Enqueue(triangle);
-        return Clip(triangleQueue, clippingPlanes);
-    }
-
-    private static Queue<Triangle> Clip(Queue<Triangle> triangleQueue, ClippingPlane[] clippingPlanes)
+    private static Queue<Triangle> ClipTriangles(Queue<Triangle> triangleQueue, ClippingPlane[] clippingPlanes)
     {
         Vector3D[] insidePoints = new Vector3D[3], outsidePoints = new Vector3D[3];
         int insidePointCount = 0, outsidePointCount = 0;

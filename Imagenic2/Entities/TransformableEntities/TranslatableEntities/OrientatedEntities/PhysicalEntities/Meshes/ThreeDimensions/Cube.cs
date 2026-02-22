@@ -12,7 +12,10 @@ public class Cube : Mesh
         set
         {
             sideLength = value;
-            Scaling = new Vector3D(sideLength, sideLength, sideLength);
+            foreach (Vertex vertex in Structure.Vertices)
+            {
+                vertex.Scaling = new Vector3D(sideLength, sideLength, sideLength);
+            }
         }
     }
 

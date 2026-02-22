@@ -13,6 +13,9 @@ public abstract class RenderingEntity : OrientatedEntity
     internal Matrix4x4 viewToScreen;
 
     private float viewWidth, viewHeight, zNear, zFar;
+    /// <summary>
+    /// The width of the <see cref="RenderingEntity">RenderingEntity's</see> view/near plane.
+    /// </summary>
     public virtual float ViewWidth
     {
         get => viewWidth;
@@ -24,7 +27,7 @@ public abstract class RenderingEntity : OrientatedEntity
         }
     }
     /// <summary>
-    /// The height of the <see cref="RenderingEntity">RenderingObject's</see> view/near plane.
+    /// The height of the <see cref="RenderingEntity">RenderingEntity's</see> view/near plane.
     /// </summary>
     public virtual float ViewHeight
     {
@@ -37,7 +40,7 @@ public abstract class RenderingEntity : OrientatedEntity
         }
     }
     /// <summary>
-    /// The depth of the <see cref="RenderingEntity">RenderingObject's</see> view to the near plane.
+    /// The depth of the <see cref="RenderingEntity">RenderingEntity's</see> view to the near plane.
     /// </summary>
     public virtual float ZNear
     {
@@ -50,7 +53,7 @@ public abstract class RenderingEntity : OrientatedEntity
         }
     }
     /// <summary>
-    /// The depth of the <see cref="RenderingEntity">RenderingObject's</see> view to the far plane.
+    /// The depth of the <see cref="RenderingEntity">RenderingEntity's</see> view to the far plane.
     /// </summary>
     public virtual float ZFar
     {
@@ -65,31 +68,6 @@ public abstract class RenderingEntity : OrientatedEntity
 
     private VolumeOutline volumeStyle = VolumeOutline.None;
 
-    /*
-    private int renderWidth, renderHeight;
-    public virtual int RenderWidth
-    {
-        get => renderWidth;
-        set
-        {
-            if (value == renderWidth) return;
-            renderWidth = value;
-            InvokeRenderEvent(RenderUpdate.NewRender);
-        }
-    }
-    public virtual int RenderHeight
-    {
-        get => renderHeight;
-        set
-        {
-            if (value == renderHeight) return;
-            renderHeight = value;
-            InvokeRenderEvent(RenderUpdate.NewRender);
-        }
-    }
-
-    */
-
     #endregion
 
     #region Constructors
@@ -102,10 +80,10 @@ public abstract class RenderingEntity : OrientatedEntity
                               float zFar)
         : base(worldOrigin, worldOrientation)
     {
-        this.viewWidth = viewWidth;
-        this.viewHeight = viewHeight;
-        this.zNear = zNear;
-        this.zFar = zFar;
+        ViewWidth = viewWidth;
+        ViewHeight = viewHeight;
+        ZNear = zNear;
+        ZFar = zFar;
     }
 
     #endregion

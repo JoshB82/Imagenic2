@@ -11,10 +11,10 @@ public sealed class PerspectiveCamera : Camera
         {
             base.ViewWidth = value;
 
+            UpdateViewClippingPlanes();
+
+            // Update view-to-screen matrix
             viewToScreen.m00 = 2 * ZNear / base.ViewWidth;
-            float semiWidth = base.ViewWidth / 2, semiHeight = ViewHeight / 2;
-            ViewClippingPlanes[0].Normal = Vector3D.NormalFromPlane(Vector3D.Zero, new Vector3D(-semiWidth, -semiHeight, ZNear), new Vector3D(-semiWidth, semiHeight, ZNear));
-            ViewClippingPlanes[3].Normal = Vector3D.NormalFromPlane(Vector3D.Zero, new Vector3D(semiWidth, semiHeight, ZNear), new Vector3D(semiWidth, -semiHeight, ZNear));
         }
     }
     public override float ViewHeight
@@ -24,13 +24,10 @@ public sealed class PerspectiveCamera : Camera
         {
             base.ViewHeight = value;
 
+            UpdateViewClippingPlanes();
+
             // Update view-to-screen matrix
             viewToScreen.m11 = 2 * ZNear / base.ViewHeight;
-
-            // Update top and bottom clipping planes
-            float semiWidth = base.ViewWidth / 2, semiHeight = base.ViewHeight / 2;
-            ViewClippingPlanes[4].Normal = Vector3D.NormalFromPlane(Vector3D.Zero, new Vector3D(-semiWidth, semiHeight, ZNear), new Vector3D(semiWidth, semiHeight, ZNear));
-            ViewClippingPlanes[1].Normal = Vector3D.NormalFromPlane(Vector3D.Zero, new Vector3D(semiWidth, -semiHeight, ZNear), new Vector3D(-semiWidth, -semiHeight, ZNear));
         }
     }
     public override float ZNear
@@ -39,6 +36,8 @@ public sealed class PerspectiveCamera : Camera
         set
         {
             base.ZNear = value;
+
+            UpdateViewClippingPlanes();
 
             // Update view-to-screen matrix
             viewToScreen.m00 = 2 * base.ZNear / base.ViewWidth;
@@ -57,6 +56,8 @@ public sealed class PerspectiveCamera : Camera
         {
             base.ZNear = value;
 
+            UpdateViewClippingPlanes();
+
             // Update view-to-screen matrix
             viewToScreen.m22 = (base.ZFar + base.ZNear) / (base.ZFar - base.ZNear);
             viewToScreen.m23 = -(2 * base.ZFar * base.ZNear) / (base.ZFar - base.ZNear);
@@ -64,6 +65,35 @@ public sealed class PerspectiveCamera : Camera
             // Update far clipping plane
             ViewClippingPlanes[5].Point.z = base.ZFar;
         }
+    }
+
+    private void UpdateViewClippingPlanes()
+    {
+        float semiViewWidth = ViewWidth / 2, semiViewHeight = ViewHeight / 2;
+
+        Vector3D nearBottomLeftPoint = new(-semiViewWidth, -semiViewHeight, ZNear);
+        Vector3D farTopRightPoint = new(ViewWidth * ZFar / (2 * ZNear), ViewHeight * ZFar / (2 * ZNear), ZFar);
+        Vector3D nearTopLeftPoint = new(-semiViewWidth, semiViewHeight, ZNear);
+        Vector3D nearTopRightPoint = new(semiViewWidth, semiViewHeight, ZNear);
+        Vector3D farBottomLeftPoint = new(-semiViewWidth * ZFar / ZNear, -semiViewHeight * ZFar / ZNear, ZFar);
+        Vector3D farBottomRightPoint = new(semiViewWidth * ZFar / ZNear, -semiViewHeight * ZFar / ZNear, ZFar);
+
+        ViewClippingPlanes = new ClippingPlane[]
+        {
+            new(nearBottomLeftPoint, Vector3D.NormalFromPlane(farBottomLeftPoint, nearTopLeftPoint, nearBottomLeftPoint)), // Left
+            new(nearBottomLeftPoint, Vector3D.NormalFromPlane(nearBottomLeftPoint, farBottomRightPoint, farBottomLeftPoint)), // Bottom
+            new(nearBottomLeftPoint, Vector3D.UnitZ), // Near
+            new(farTopRightPoint, Vector3D.NormalFromPlane(nearTopRightPoint, farTopRightPoint, farBottomRightPoint)), // Right
+            new(farTopRightPoint, Vector3D.NormalFromPlane(nearTopLeftPoint, farTopRightPoint, nearTopRightPoint)), // Top
+            new(farTopRightPoint, Vector3D.UnitNegativeZ) // Far
+        };
+
+        ViewClippingPlanes[0].Normal = Vector3D.NormalFromPlane(Vector3D.Zero, new Vector3D(-semiViewWidth, -semiViewHeight, ZNear), new Vector3D(-semiViewWidth, semiViewHeight, ZNear));
+        ViewClippingPlanes[3].Normal = Vector3D.NormalFromPlane(Vector3D.Zero, new Vector3D(semiViewWidth, semiViewHeight, ZNear), new Vector3D(semiViewWidth, -semiViewHeight, ZNear));
+
+        // Update top and bottom clipping planes
+        ViewClippingPlanes[4].Normal = Vector3D.NormalFromPlane(Vector3D.Zero, new Vector3D(-semiViewWidth, semiViewHeight, ZNear), new Vector3D(semiViewWidth, semiViewHeight, ZNear));
+        ViewClippingPlanes[1].Normal = Vector3D.NormalFromPlane(Vector3D.Zero, new Vector3D(semiViewWidth, -semiViewHeight, ZNear), new Vector3D(-semiViewWidth, -semiViewHeight, ZNear));
     }
 
     #endregion

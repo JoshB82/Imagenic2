@@ -11,7 +11,10 @@ public sealed class OrthogonalCamera : Camera
         {
             base.ViewWidth = value;
 
+            UpdateViewClippingPlanes();
+
             viewToScreen.m00 = 2 / base.ViewWidth;
+
             // Update left and right clipping planes
             ViewClippingPlanes[0].Point.x = -base.ViewWidth / 2;
             ViewClippingPlanes[3].Point.x = base.ViewWidth / 2;
@@ -23,6 +26,8 @@ public sealed class OrthogonalCamera : Camera
         set
         {
             base.ViewHeight = value;
+
+            UpdateViewClippingPlanes();
 
             // Update view-to-screen matrix
             viewToScreen.m11 = 2 / base.ViewHeight;
@@ -39,6 +44,8 @@ public sealed class OrthogonalCamera : Camera
         {
             base.ZNear = value;
 
+            UpdateViewClippingPlanes();
+
             // Update view-to-screen matrix
             viewToScreen.m22 = 2 / (base.ZFar - base.ZNear);
             viewToScreen.m23 = -(base.ZFar + base.ZNear) / (base.ZFar - base.ZNear);
@@ -54,6 +61,8 @@ public sealed class OrthogonalCamera : Camera
         {
             base.ZFar = value;
 
+            UpdateViewClippingPlanes();
+
             // Update view-to-screen matrix
             viewToScreen.m22 = 2 / (base.ZFar - base.ZNear);
             viewToScreen.m23 = -(base.ZFar + base.ZNear) / (base.ZFar - base.ZNear);
@@ -61,6 +70,23 @@ public sealed class OrthogonalCamera : Camera
             // Update far clipping plane
             ViewClippingPlanes[5].Point.z = base.ZFar;
         }
+    }
+
+    private void UpdateViewClippingPlanes()
+    {
+        float semiViewWidth = ViewWidth / 2, semiViewHeight = ViewHeight / 2;
+        Vector3D nearBottomLeftPoint = new(-semiViewWidth, -semiViewHeight, ZNear);
+        Vector3D farTopRightPoint = new(semiViewWidth, semiViewHeight, ZFar);
+
+        ViewClippingPlanes = new ClippingPlane[]
+        {
+            new(nearBottomLeftPoint, Vector3D.UnitX), // Left
+            new(nearBottomLeftPoint, Vector3D.UnitY), // Bottom
+            new(nearBottomLeftPoint, Vector3D.UnitZ), // Near
+            new(farTopRightPoint, Vector3D.UnitNegativeX), // Right
+            new(farTopRightPoint, Vector3D.UnitNegativeY), // Top
+            new(farTopRightPoint, Vector3D.UnitNegativeZ) // Far
+        };
     }
 
     #endregion

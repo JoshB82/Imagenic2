@@ -64,27 +64,6 @@ public abstract class Camera : RenderingEntity
         }
     }
 
-    /*
-    public override int RenderWidth
-    {
-        get => base.RenderWidth;
-        set
-        {
-            base.RenderWidth = value;
-            UpdateProperties();
-        }
-    }
-    public override int RenderHeight
-    {
-        get => base.RenderHeight;
-        set
-        {
-            base.RenderHeight = value;
-            UpdateProperties();
-        }
-    }
-    */
-
     private Color renderBackgroundColour = Color.White;
     public Color RenderBackgroundColour
     {

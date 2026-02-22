@@ -4,7 +4,7 @@ public abstract class TransformableEntity : Entity
 {
     #region Fields and Properties
 
-    public Matrix4x4 ModelToWorld { get; protected set; }
+    public Matrix4x4 ModelToWorld { get; protected set; } = Matrix4x4.Identity;
 
     #endregion
 

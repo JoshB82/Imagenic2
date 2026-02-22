@@ -35,8 +35,8 @@ public sealed class RenderingOptions
             {
                 // error!
             }
-            UpdateScreenToWindow();
             renderHeight = value;
+            UpdateScreenToWindow();
         }
     }
 

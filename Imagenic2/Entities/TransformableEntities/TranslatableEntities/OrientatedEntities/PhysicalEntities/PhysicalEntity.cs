@@ -43,7 +43,7 @@ public abstract class PhysicalEntity : OrientatedEntity
         }
     }
 
-    private Matrix4x4 scalingMatrix;
+    private Matrix4x4 scalingMatrix = Matrix4x4.Identity;
     private Vector3D scaling = Vector3D.One;
 
     public Vector3D Scaling

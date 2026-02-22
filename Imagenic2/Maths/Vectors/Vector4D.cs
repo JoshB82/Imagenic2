@@ -137,6 +137,7 @@ public struct Vector4D
         x.ApproxEquals(v.x, epsilon) && y.ApproxEquals(v.y, epsilon) &&
         z.ApproxEquals(v.z, epsilon) && w.ApproxEquals(v.w, epsilon);
 
+    public static implicit operator Vector4D(Vector3D v) => new(v);
     public static explicit operator Vector3D(Vector4D v) => new(v.x, v.y, v.z);
 
     #endregion
