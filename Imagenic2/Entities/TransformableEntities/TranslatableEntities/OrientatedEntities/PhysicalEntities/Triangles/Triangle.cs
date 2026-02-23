@@ -1,10 +1,14 @@
-﻿namespace Imagenic2.Core.Entities;
+﻿using System.Drawing;
+
+namespace Imagenic2.Core.Entities;
 
 public class Triangle
 {
     #region Fields and Properties
 
-    private FaceStyle frontStyle, backStyle;
+    private FaceStyle frontStyle = new SolidStyle() { Colour = Color.Black };
+    private FaceStyle backStyle = new SolidStyle() { Colour = Color.Black };
+
     public FaceStyle FrontStyle
     {
         get => frontStyle;

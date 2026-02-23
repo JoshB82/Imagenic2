@@ -1,5 +1,4 @@
-﻿using Imagenic2.Core.Entities;
-using Imagenic2.Core.Renderers;
+﻿using Imagenic2.Core.Renderers;
 using System.Drawing;
 using System.Drawing.Imaging;
 

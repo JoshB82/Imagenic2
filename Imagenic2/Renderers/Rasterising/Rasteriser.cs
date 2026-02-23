@@ -46,11 +46,11 @@ public class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagenic2.Core
                     triangle.TransformedP2 = new Vector4D(triangle.P2.WorldOrigin, 1);
                     triangle.TransformedP3 = new Vector4D(triangle.P3.WorldOrigin, 1);
 
+                    Matrix4x4 modelToView = RenderingOptions.RenderCamera.WorldToView * triangle.P1.ModelToWorld;
+                    TransformTriangleVertices(triangle, modelToView);
+
                     var triangleQueue = new Queue<Triangle>();
                     triangleQueue.Enqueue(triangle);
-
-                    Matrix4x4 modelToView = RenderingOptions.RenderCamera.WorldToView * RenderingOptions.RenderCamera.ModelToWorld;
-                    TransformTriangleVertices(triangle, modelToView);
                     var clippedTriangles = ClipTriangles(triangleQueue, RenderingOptions.RenderCamera.ViewClippingPlanes);
                     if (clippedTriangles.Count == 0) continue;
 
@@ -62,6 +62,10 @@ public class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagenic2.Core
 
                     foreach (Triangle clippedTriangle in clippedTriangles)
                     {
+                        triangle.TransformedP1 /= triangle.TransformedP1.w;
+                        triangle.TransformedP2 /= triangle.TransformedP2.w;
+                        triangle.TransformedP3 /= triangle.TransformedP3.w;
+
                         TransformTriangleVertices(clippedTriangle, RenderingOptions.ScreenToWindow);
                         Interpolate(clippedTriangle, colourBuffer, zBuffer);
                     }
@@ -89,21 +93,24 @@ public class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagenic2.Core
 
     private static Queue<Triangle> ClipTriangles(Queue<Triangle> triangleQueue, ClippingPlane[] clippingPlanes)
     {
-        Vector3D[] insidePoints = new Vector3D[3], outsidePoints = new Vector3D[3];
-        int insidePointCount = 0, outsidePointCount = 0;
-
-        var triangle = triangleQueue.Dequeue();
-
         foreach (ClippingPlane clippingPlane in clippingPlanes)
         {
             int noTrianglesRemaining = triangleQueue.Count;
-            while (noTrianglesRemaining-- > 0) ClipTriangle(triangleQueue, triangle, clippingPlane.Point, clippingPlane.Normal);
+            
+            while (noTrianglesRemaining-- > 0)
+            {
+                var triangle = triangleQueue.Dequeue();
+                ClipTriangle(triangleQueue, triangle, clippingPlane.Point, clippingPlane.Normal);
+            }
         }
 
         return triangleQueue;
 
         void ClipTriangle(Queue<Triangle> triangleQueue, Triangle triangle, Vector3D planePoint, Vector3D planeNormal)
         {
+            Vector3D[] insidePoints = new Vector3D[3], outsidePoints = new Vector3D[3];
+            int insidePointCount = 0, outsidePointCount = 0;
+
             Vector3D p1 = (Vector3D)(triangle.TransformedP1);
             Vector3D p2 = (Vector3D)(triangle.TransformedP2);
             Vector3D p3 = (Vector3D)(triangle.TransformedP3);
@@ -189,6 +196,13 @@ public class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagenic2.Core
         int x3 = triangle.TransformedP3.x.RoundToInt();
         int y3 = triangle.TransformedP3.y.RoundToInt();
         float z3 = triangle.TransformedP3.z;
+
+        Extensions.SortByY
+        (
+            ref x1, ref y1, ref z1,
+            ref x2, ref y2, ref z2,
+            ref x3, ref y3, ref z3
+        );
 
         // Create steps
         float dyStep1 = y1 - y2;

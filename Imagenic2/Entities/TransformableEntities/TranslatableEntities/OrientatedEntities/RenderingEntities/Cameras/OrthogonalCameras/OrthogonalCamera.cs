@@ -95,7 +95,7 @@ public sealed class OrthogonalCamera : Camera
 
     public OrthogonalCamera(Vector3D worldOrigin, Orientation worldOrientation, float viewWidth, float viewHeight, float zNear, float zFar) : base(worldOrigin, worldOrientation, viewWidth, viewHeight, zNear, zFar)
     {
-
+        viewToScreen.m33 = 1;
     }
 
     #endregion
