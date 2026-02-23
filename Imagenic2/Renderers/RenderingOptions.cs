@@ -1,5 +1,7 @@
 ﻿using Imagenic2.Core.Entities;
+using Imagenic2.Core.Enums;
 using Imagenic2.Core.Maths.Transformations;
+using System.Drawing;
 
 namespace Imagenic2.Core.Renderers;
 
@@ -48,6 +50,17 @@ public sealed class RenderingOptions
         {
             renderCamera = value;
             //NewRenderNeeded = true;
+        }
+    }
+
+    private Color backgroundColour = Color.White;
+    public Color BackgroundColour
+    {
+        get => backgroundColour;
+        set
+        {
+            backgroundColour = value;
+            //InvokeRenderEvent(RenderUpdate.NewRender);
         }
     }
 

@@ -34,6 +34,7 @@ public class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagenic2.Core
         }
 
         var colourBuffer = new Buffer2D<Color>(RenderingOptions.RenderWidth, RenderingOptions.RenderHeight);
+        colourBuffer.SetAllToValue(RenderingOptions.BackgroundColour);
         var zBuffer = new Buffer2D<float>(RenderingOptions.RenderWidth, RenderingOptions.RenderHeight);
 
         foreach (PhysicalEntity physicalEntity in RenderingOptions.PhysicalEntitiesToRender)
@@ -62,9 +63,12 @@ public class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagenic2.Core
 
                     foreach (Triangle clippedTriangle in clippedTriangles)
                     {
-                        triangle.TransformedP1 /= triangle.TransformedP1.w;
-                        triangle.TransformedP2 /= triangle.TransformedP2.w;
-                        triangle.TransformedP3 /= triangle.TransformedP3.w;
+                        if (RenderingOptions.RenderCamera is PerspectiveCamera)
+                        {
+                            triangle.TransformedP1 /= triangle.TransformedP1.w;
+                            triangle.TransformedP2 /= triangle.TransformedP2.w;
+                            triangle.TransformedP3 /= triangle.TransformedP3.w;
+                        }
 
                         TransformTriangleVertices(clippedTriangle, RenderingOptions.ScreenToWindow);
                         Interpolate(clippedTriangle, colourBuffer, zBuffer);

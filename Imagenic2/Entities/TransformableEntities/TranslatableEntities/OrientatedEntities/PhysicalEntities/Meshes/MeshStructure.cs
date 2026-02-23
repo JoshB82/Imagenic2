@@ -184,31 +184,36 @@ public class MeshStructure
 
     internal static IList<Vertex> GenerateConeVertices(MeshStructure circleStructure)
     {
-        circleStructure.Vertices.Add(new Vertex(Vector3D.UnitZ));
-        return circleStructure.Vertices;
+        IList<Vertex> coneVertices = new Vertex[circleStructure.Vertices.Count + 1];
+        for (int i = 0; i < circleStructure.Vertices.Count; i++)
+        {
+            coneVertices[i] = circleStructure.Vertices[i];
+        }
+        coneVertices[circleStructure.Vertices.Count] = new Vertex(Vector3D.UnitZ);
+        return coneVertices;
     }
 
-    internal static IList<Edge> GenerateConeEdges(MeshStructure circleStructure, int resolution)
+    internal static IList<Edge> GenerateConeEdges(MeshStructure circleStructure, IList<Vertex> vertices, int resolution)
     {
         IList<Edge> topEdges = new Edge[resolution];
 
         for (int i = 0; i < resolution; i++)
         {
-            topEdges[i] = new Edge(circleStructure.Vertices[i + 1], circleStructure.Vertices[resolution + 1]);
+            topEdges[i] = new Edge(vertices[i + 1], vertices[resolution + 1]);
         }
 
         return topEdges.Concat(circleStructure.Edges).ToList();
     }
 
-    internal static IList<Triangle> GenerateConeTriangles(MeshStructure circleStructure, int resolution)
+    internal static IList<Triangle> GenerateConeTriangles(MeshStructure circleStructure, IList<Vertex> vertices, int resolution)
     {
         IList<Triangle> topTriangles = new Triangle[resolution];
 
         for (int i = 0; i < resolution - 1; i++)
         {
-            topTriangles[i] = new Triangle(circleStructure.Vertices[i + 1], circleStructure.Vertices[resolution + 1], circleStructure.Vertices[i + 2]);
+            topTriangles[i] = new Triangle(vertices[i + 1], vertices[resolution + 1], vertices[i + 2]);
         }
-        topTriangles[resolution - 1] = new Triangle(circleStructure.Vertices[resolution], circleStructure.Vertices[resolution + 1], circleStructure.Vertices[1]);
+        topTriangles[resolution - 1] = new Triangle(vertices[resolution], vertices[resolution + 1], vertices[1]);
 
         return topTriangles.Concat(circleStructure.Triangles).ToList();
     }
@@ -227,8 +232,8 @@ public class MeshStructure
         MeshStructure circleStructure = GenerateCircleStructure(resolution);
 
         IList<Vertex> vertices = GenerateConeVertices(circleStructure);
-        IList<Edge> edges = GenerateConeEdges(circleStructure, resolution);
-        IList<Triangle> triangles = GenerateConeTriangles(circleStructure, resolution);
+        IList<Edge> edges = GenerateConeEdges(circleStructure, vertices, resolution);
+        IList<Triangle> triangles = GenerateConeTriangles(circleStructure, vertices, resolution);
         IList<Face> faces = GenerateConeFaces(circleStructure, triangles, resolution);
 
         return new MeshStructure(vertices, edges, triangles, faces);

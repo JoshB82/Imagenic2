@@ -26,15 +26,15 @@ public class Bitmap : Image
 
     #region Methods
 
-    public static implicit operator System.Drawing.Bitmap(Bitmap bitmap)
+    public System.Drawing.Bitmap ToSystemDrawingBitmap()
     {
-        System.Drawing.Bitmap systemDrawingBitmap = new System.Drawing.Bitmap(bitmap.Width, bitmap.Height);
-        BitmapData data = systemDrawingBitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, bitmap.PixelFormat);
+        System.Drawing.Bitmap systemDrawingBitmap = new System.Drawing.Bitmap(Width, Height);
+        BitmapData data = systemDrawingBitmap.LockBits(new Rectangle(0, 0, Width, Height), ImageLockMode.WriteOnly, PixelFormat);
 
-        switch (bitmap.PixelFormat)
+        switch (PixelFormat)
         {
             case PixelFormat.Format24bppRgb:
-                Format24bppRgb(bitmap.Width, bitmap.Height, data, bitmap.ColourBuffer);
+                Format24bppRgb(Width, Height, data, ColourBuffer);
                 break;
         }
 
@@ -48,6 +48,19 @@ public class Bitmap : Image
         BitmapData data,
         Buffer2D<Color> colourBuffer)
     {
+        Parallel.For(0, height, y =>
+        {
+            byte* rowStart = (byte*)data.Scan0 + y * data.Stride;
+            int yIndex = height - 1 - y;
+            for (int x = 0; x < width; x++)
+            {
+                rowStart[x * 3] = colourBuffer.Values[x][yIndex].B; // Blue
+                rowStart[x * 3 + 1] = colourBuffer.Values[x][yIndex].G; // Green
+                rowStart[x * 3 + 2] = colourBuffer.Values[x][yIndex].R; // Red
+            }
+        });
+
+        /*
         const int noTasks = 4; // TODO: Move to configuration
 
         int smallHeight = height / noTasks;
@@ -67,9 +80,9 @@ public class Bitmap : Image
                     byte* rowStart = (byte*)data.Scan0 + y * data.Stride;
                     for (int x = 0; x < width; x++)
                     {
-                        rowStart[x * 3] = colourBuffer.Values[x][y * -1 + height - 1].B; // Blue
-                        rowStart[x * 3 + 1] = colourBuffer.Values[x][y * -1 + height - 1].G; // Green
-                        rowStart[x * 3 + 2] = colourBuffer.Values[x][y * -1 + height - 1].R; // Red
+                        rowStart[x * 3] = colourBuffer.Values[x][height - 1 - y].B; // Blue
+                        rowStart[x * 3 + 1] = colourBuffer.Values[x][height - 1 - y].G; // Green
+                        rowStart[x * 3 + 2] = colourBuffer.Values[x][height - 1 - y].R; // Red
                     }
                 }
 
@@ -91,9 +104,9 @@ public class Bitmap : Image
                     byte* rowStart = (byte*)data.Scan0 + y * data.Stride;
                     for (int x = 0; x < width; x++)
                     {
-                        rowStart[x * 3] = colourBuffer.Values[x][y * -1 + height - 1].B; // Blue
-                        rowStart[x * 3 + 1] = colourBuffer.Values[x][y * -1 + height - 1].G; // Green
-                        rowStart[x * 3 + 2] = colourBuffer.Values[x][y * -1 + height - 1].R; // Red
+                        rowStart[x * 3] = colourBuffer.Values[x][height - 1 - y].B; // Blue
+                        rowStart[x * 3 + 1] = colourBuffer.Values[x][height - 1 - y].G; // Green
+                        rowStart[x * 3 + 2] = colourBuffer.Values[x][height - 1 - y].R; // Red
                     }
                 }
 
@@ -106,6 +119,8 @@ public class Bitmap : Image
         }
 
         Task.WaitAll(renderTasks);
+
+        */
     }
 
     #endregion

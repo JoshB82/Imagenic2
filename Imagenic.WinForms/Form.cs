@@ -14,7 +14,8 @@ public partial class Form : System.Windows.Forms.Form
         Cube cube = new Cube(
             worldOrigin: Vector3D.Zero,
             worldOrientation: Imagenic2.Core.Maths.Orientation.OrientationYZ,
-            sideLength: 10);
+            sideLength: 10
+        );
 
         Camera renderCamera = new OrthogonalCamera(
             worldOrigin: new Vector3D(0, 0, 50),
@@ -37,6 +38,6 @@ public partial class Form : System.Windows.Forms.Form
 
         Imagenic2.Core.Images.Bitmap renderedImage = renderer.RenderAsync().Result;
 
-        pictureBox.Image = renderedImage;
+        pictureBox.Image = renderedImage.ToSystemDrawingBitmap();
     }
 }

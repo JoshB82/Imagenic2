@@ -4,7 +4,7 @@ using System.Drawing;
 
 namespace Imagenic2.Core.Entities;
 
-public abstract class Camera : RenderingEntity
+public abstract partial class Camera : RenderingEntity
 {
     #region Fields and Parameters
 
@@ -61,17 +61,6 @@ public abstract class Camera : RenderingEntity
             // Update view-to-screen matrix
             ScreenToView.m32 = (ZNear - ZFar) / (2 * ZNear * ZFar);
             ScreenToView.m33 = (ZNear + ZFar) / (2 * ZNear * ZFar);
-        }
-    }
-
-    private Color renderBackgroundColour = Color.White;
-    public Color RenderBackgroundColour
-    {
-        get => renderBackgroundColour;
-        set
-        {
-            renderBackgroundColour = value;
-            InvokeRenderEvent(RenderUpdate.NewRender);
         }
     }
 
