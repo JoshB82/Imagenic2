@@ -1,5 +1,4 @@
-﻿using Imagenic2.Core.Enums;
-using Imagenic2.Core.Renderers;
+﻿using Imagenic2.Core.Renderers;
 using System.Drawing;
 
 namespace Imagenic2.Core.Entities;

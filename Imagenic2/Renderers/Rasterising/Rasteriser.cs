@@ -1,4 +1,5 @@
 ﻿using Imagenic2.Core.Entities;
+using System.Buffers;
 using System.Drawing;
 
 namespace Imagenic2.Core.Renderers.Rasterising;
@@ -6,6 +7,8 @@ namespace Imagenic2.Core.Renderers.Rasterising;
 public class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagenic2.Core.Images.Image
 {
     #region Fields and Properties
+
+    private static ArrayPool<Vector3D> Vector3DArrayPool = ArrayPool<Vector3D>.Shared;
 
     #endregion
 
@@ -36,6 +39,7 @@ public class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagenic2.Core
         var colourBuffer = new Buffer2D<Color>(RenderingOptions.RenderWidth, RenderingOptions.RenderHeight);
         colourBuffer.SetAllToValue(RenderingOptions.BackgroundColour);
         var zBuffer = new Buffer2D<float>(RenderingOptions.RenderWidth, RenderingOptions.RenderHeight);
+        var triangleQueue = new Queue<Triangle>();
 
         foreach (PhysicalEntity physicalEntity in RenderingOptions.PhysicalEntitiesToRender)
         {
@@ -49,20 +53,14 @@ public class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagenic2.Core
 
                     Matrix4x4 modelToView = RenderingOptions.RenderCamera.WorldToView * triangle.P1.ModelToWorld;
                     TransformTriangleVertices(triangle, modelToView);
-
-                    var triangleQueue = new Queue<Triangle>();
+                    
                     triangleQueue.Enqueue(triangle);
-                    var clippedTriangles = ClipTriangles(triangleQueue, RenderingOptions.RenderCamera.ViewClippingPlanes);
-                    if (clippedTriangles.Count == 0) continue;
+                    ClipTriangles(triangleQueue, RenderingOptions.RenderCamera.ViewClippingPlanes);
+                    if (triangleQueue.Count == 0) continue;
 
-                    foreach (Triangle clippedTriangle in clippedTriangles)
+                    foreach (Triangle clippedTriangle in triangleQueue)
                     {
                         TransformTriangleVertices(clippedTriangle, RenderingOptions.RenderCamera.viewToScreen);
-                    }
-                    clippedTriangles = ClipTriangles(triangleQueue, Renderer<TImage>.ScreenClippingPlanes);
-
-                    foreach (Triangle clippedTriangle in clippedTriangles)
-                    {
                         if (RenderingOptions.RenderCamera is PerspectiveCamera)
                         {
                             clippedTriangle.TransformedP1 /= clippedTriangle.TransformedP1.w;
@@ -70,9 +68,16 @@ public class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagenic2.Core
                             clippedTriangle.TransformedP3 /= clippedTriangle.TransformedP3.w;
                         }
 
+                    }
+
+                    ClipTriangles(triangleQueue, Renderer<TImage>.ScreenClippingPlanes);
+                    foreach (Triangle clippedTriangle in triangleQueue)
+                    {
                         TransformTriangleVertices(clippedTriangle, RenderingOptions.ScreenToWindow);
                         Interpolate(clippedTriangle, colourBuffer, zBuffer);
                     }
+
+                    triangleQueue.Clear();
                 }
             }
         }
@@ -95,7 +100,7 @@ public class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagenic2.Core
         triangle.TransformedP3 = transformationMatrix * triangle.TransformedP3;
     }
 
-    private static Queue<Triangle> ClipTriangles(Queue<Triangle> triangleQueue, ClippingPlane[] clippingPlanes)
+    private static void ClipTriangles(Queue<Triangle> triangleQueue, ClippingPlane[] clippingPlanes)
     {
         foreach (ClippingPlane clippingPlane in clippingPlanes)
         {
@@ -108,11 +113,9 @@ public class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagenic2.Core
             }
         }
 
-        return triangleQueue;
-
         void ClipTriangle(Queue<Triangle> triangleQueue, Triangle triangle, Vector3D planePoint, Vector3D planeNormal)
         {
-            Vector3D[] insidePoints = new Vector3D[3], outsidePoints = new Vector3D[3];
+            Vector3D[] insidePoints = Vector3DArrayPool.Rent(3), outsidePoints = Vector3DArrayPool.Rent(3);
             int insidePointCount = 0, outsidePointCount = 0;
 
             Vector3D p1 = (Vector3D)(triangle.TransformedP1);
@@ -185,6 +188,9 @@ public class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagenic2.Core
                     triangleQueue.Enqueue(triangle);
                     break;
             }
+
+            Vector3DArrayPool.Return(insidePoints, true);
+            Vector3DArrayPool.Return(outsidePoints, true);
         }
     }
 
