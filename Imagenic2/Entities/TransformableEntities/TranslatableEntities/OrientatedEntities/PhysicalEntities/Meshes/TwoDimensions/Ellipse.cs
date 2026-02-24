@@ -13,8 +13,10 @@ public sealed class Ellipse : Mesh
         get => radiusX;
         set
         {
+            if (value.ApproxEquals(radiusX)) return;
             radiusX = value;
             Scaling = new Vector3D(radiusX, radiusZ, 1);
+            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
         }
     }
     public float RadiusZ
@@ -22,8 +24,10 @@ public sealed class Ellipse : Mesh
         get => radiusZ;
         set
         {
+            if (value.ApproxEquals(radiusZ)) return;
             radiusZ = value;
             Scaling = new Vector3D(radiusX, radiusZ, 1);
+            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
         }
     }
     private int resolution;
@@ -32,8 +36,13 @@ public sealed class Ellipse : Mesh
         get => resolution;
         set
         {
+            if (value == resolution) return;
             resolution = value;
             Structure = MeshStructure.GenerateCircleStructure(resolution);
+            foreach (Vertex vertex in Structure.Vertices)
+            {
+                vertex.Scaling = new Vector3D(radiusX, radiusZ, 1);
+            }
             InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
         }
     }

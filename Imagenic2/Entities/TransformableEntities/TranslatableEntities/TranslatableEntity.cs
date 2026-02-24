@@ -13,7 +13,7 @@ public abstract class TranslatableEntity : TransformableEntity
         get => worldOrigin;
         set
         {
-            if (value == worldOrigin) return;
+            if (value.ApproxEquals(worldOrigin)) return;
             worldOrigin = value;
 
             UpdateTranslationMatrix();
@@ -41,6 +41,7 @@ public abstract class TranslatableEntity : TransformableEntity
 
     protected override void UpdateModelToWorldMatrix()
     {
+        base.UpdateModelToWorldMatrix();
         ModelToWorld *= translationMatrix;
     }
 

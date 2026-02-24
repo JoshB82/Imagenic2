@@ -21,7 +21,7 @@ public abstract class RenderingEntity : OrientatedEntity
         get => viewWidth;
         set
         {
-            if (value == viewWidth) return;
+            if (value.ApproxEquals(viewWidth)) return;
             viewWidth = value;
             InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
         }
@@ -34,7 +34,7 @@ public abstract class RenderingEntity : OrientatedEntity
         get => viewHeight;
         set
         {
-            if (value == viewHeight) return;
+            if (value.ApproxEquals(viewHeight)) return;
             viewHeight = value;
             InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
         }
@@ -47,7 +47,7 @@ public abstract class RenderingEntity : OrientatedEntity
         get => zNear;
         set
         {
-            if (value == zNear) return;
+            if (value.ApproxEquals(zNear)) return;
             zNear = value;
             InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
         }
@@ -60,13 +60,21 @@ public abstract class RenderingEntity : OrientatedEntity
         get => zFar;
         set
         {
-            if (value == zFar) return;
+            if (value.ApproxEquals(zFar)) return;
             zFar = value;
             InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
         }
     }
 
     private VolumeOutline volumeStyle = VolumeOutline.None;
+    public VolumeOutline VolumeStyle
+    {
+        get => volumeStyle;
+        set
+        {
+            volumeStyle = value;
+        }
+    }
 
     #endregion
 

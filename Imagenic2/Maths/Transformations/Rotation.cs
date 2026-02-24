@@ -13,8 +13,8 @@ public static partial class Transform
         if (angle == 0) return rotation;
         float sinAngle = Sin(angle), cosAngle = Cos(angle);
         rotation.m11 = cosAngle;
-        rotation.m12 = -sinAngle;
-        rotation.m21 = sinAngle;
+        rotation.m12 = sinAngle;
+        rotation.m21 = -sinAngle;
         rotation.m22 = cosAngle;
         return rotation;
     }
@@ -30,8 +30,8 @@ public static partial class Transform
         if (angle == 0) return rotation;
         float sinAngle = Sin(angle), cosAngle = Cos(angle);
         rotation.m00 = cosAngle;
-        rotation.m02 = sinAngle;
-        rotation.m20 = -sinAngle;
+        rotation.m02 = -sinAngle;
+        rotation.m20 = sinAngle;
         rotation.m22 = cosAngle;
         return rotation;
     }
@@ -47,8 +47,8 @@ public static partial class Transform
         if (angle == 0) return rotation;
         float sinAngle = Sin(angle), cosAngle = Cos(angle);
         rotation.m00 = cosAngle;
-        rotation.m01 = -sinAngle;
-        rotation.m10 = sinAngle;
+        rotation.m01 = sinAngle;
+        rotation.m10 = -sinAngle;
         rotation.m11 = cosAngle;
         return rotation;
     }
@@ -66,15 +66,15 @@ public static partial class Transform
         return new
         (
             cosAngle + axis.x * axis.x * (1 - cosAngle),
-            axis.x * axis.y * (1 - cosAngle) - axis.z * sinAngle,
-            axis.x * axis.z * (1 - cosAngle) + axis.y * sinAngle,
+            axis.x * axis.y * (1 - cosAngle) - axis.z * -sinAngle,
+            axis.x * axis.z * (1 - cosAngle) + axis.y * -sinAngle,
             0,
-            axis.y * axis.x * (1 - cosAngle) + axis.z * sinAngle,
+            axis.y * axis.x * (1 - cosAngle) + axis.z * -sinAngle,
             cosAngle + axis.y * axis.y * (1 - cosAngle),
-            axis.y * axis.z * (1 - cosAngle) - axis.x * sinAngle,
+            axis.y * axis.z * (1 - cosAngle) - axis.x * -sinAngle,
             0,
-            axis.z * axis.x * (1 - cosAngle) - axis.y * sinAngle,
-            axis.z * axis.y * (1 - cosAngle) + axis.x * sinAngle,
+            axis.z * axis.x * (1 - cosAngle) - axis.y * -sinAngle,
+            axis.z * axis.y * (1 - cosAngle) + axis.x * -sinAngle,
             cosAngle + axis.z * axis.z * (1 - cosAngle),
             0,
             0,

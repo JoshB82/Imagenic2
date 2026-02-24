@@ -1,4 +1,6 @@
-﻿namespace Imagenic2.Core.Entities;
+﻿using Imagenic2.Core.Enums;
+
+namespace Imagenic2.Core.Entities;
 
 public class Cuboid : Mesh
 {
@@ -14,8 +16,10 @@ public class Cuboid : Mesh
         get => length;
         set
         {
+            if (value.ApproxEquals(length)) return;
             length = value;
             Scaling = new Vector3D(length, width, height);
+            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
         }
     }
     /// <summary>
@@ -26,8 +30,10 @@ public class Cuboid : Mesh
         get => width;
         set
         {
+            if (value.ApproxEquals(width)) return;
             width = value;
             Scaling = new Vector3D(length, width, height);
+            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
         }
     }
     /// <summary>
@@ -38,8 +44,10 @@ public class Cuboid : Mesh
         get => height;
         set
         {
+            if (value.ApproxEquals(height)) return;
             height = value;
             Scaling = new Vector3D(length, width, height);
+            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
         }
     }
 

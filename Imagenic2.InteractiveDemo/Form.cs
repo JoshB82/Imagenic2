@@ -18,13 +18,13 @@ public partial class Form : System.Windows.Forms.Form
 
         Cube cube = new Cube(
             worldOrigin: Vector3D.Zero,
-            worldOrientation: Imagenic2.Core.Maths.Orientation.OrientationYZ,
+            worldOrientation: Imagenic2.Core.Maths.Orientation.OrientationZY,
             sideLength: 10
         );
 
         Cone cone = new Cone(
             worldOrigin: new Vector3D(30, 0, 0),
-            worldOrientation: Imagenic2.Core.Maths.Orientation.OrientationYZ,
+            worldOrientation: Imagenic2.Core.Maths.Orientation.OrientationZY,
             height: 20,
             radius: 10,
             resolution: 10
@@ -32,7 +32,7 @@ public partial class Form : System.Windows.Forms.Form
 
         renderCamera = new PerspectiveCamera(
             worldOrigin: new Vector3D(0, 0, 50),
-            worldOrientation: Imagenic2.Core.Maths.Orientation.OrientationNegativeZY,
+            worldOrientation: Imagenic2.Core.Maths.Orientation.OrientationZY,
             viewWidth: pictureBox.Width / 10f,
             viewHeight: pictureBox.Height / 10f,
             zNear: 50,
@@ -112,7 +112,7 @@ public partial class Form : System.Windows.Forms.Form
 
     private void CheckKeyboard(float deltaTime)
     {
-        const float panDistance = 1, tiltAngle = 0.1f;
+        const float panDistance = 1, tiltAngle = 0.01f;
 
         foreach (Keys key in keysPressed)
         {

@@ -1,4 +1,6 @@
-﻿namespace Imagenic2.Core.Entities;
+﻿using Imagenic2.Core.Enums;
+
+namespace Imagenic2.Core.Entities;
 
 public class Cube : Mesh
 {
@@ -11,11 +13,10 @@ public class Cube : Mesh
         get => sideLength;
         set
         {
+            if (value.ApproxEquals(sideLength)) return;
             sideLength = value;
-            foreach (Vertex vertex in Structure.Vertices)
-            {
-                vertex.Scaling = new Vector3D(sideLength, sideLength, sideLength);
-            }
+            Scaling = new Vector3D(sideLength, sideLength, sideLength);
+            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
         }
     }
 

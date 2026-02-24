@@ -13,6 +13,7 @@ public sealed class Ring : Mesh
         get => innerRadius;
         set
         {
+            if (value.ApproxEquals(innerRadius)) return;
             innerRadius = value;
             Structure = MeshStructure.GenerateRingStructure(resolution, innerRadius, outerRadius);
             InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
@@ -23,6 +24,7 @@ public sealed class Ring : Mesh
         get => outerRadius;
         set
         {
+            if (value.ApproxEquals(outerRadius)) return;
             outerRadius = value;
             Structure = MeshStructure.GenerateRingStructure(resolution, innerRadius, outerRadius);
             InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
@@ -34,6 +36,7 @@ public sealed class Ring : Mesh
         get => resolution;
         set
         {
+            if (value == resolution) return;
             resolution = value;
             Structure = MeshStructure.GenerateRingStructure(resolution, innerRadius, outerRadius);
             InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);

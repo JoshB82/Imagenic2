@@ -50,6 +50,20 @@ public class Mesh : PhysicalEntity
         }
     }
 
+    public override Vector3D Scaling
+    {
+        get => base.Scaling;
+        set
+        {
+            base.Scaling = value;
+
+            foreach (Vertex vertex in Structure.Vertices)
+            {
+                vertex.Scaling = Scaling;
+            }
+        }
+    }
+
     #endregion
 
     #region Constructors

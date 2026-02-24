@@ -23,7 +23,7 @@ public abstract class PhysicalEntity : OrientatedEntity
         get => opacity;
         set
         {
-            if (value == opacity) return;
+            if (value.ApproxEquals(opacity)) return;
             if (opacity < 0 || opacity > 1)
             {
                 throw new Exception("Opacity must be between 0 and 1 inclusive.");
@@ -46,13 +46,14 @@ public abstract class PhysicalEntity : OrientatedEntity
     private Matrix4x4 scalingMatrix = Matrix4x4.Identity;
     private Vector3D scaling = Vector3D.One;
 
-    public Vector3D Scaling
+    public virtual Vector3D Scaling
     {
         get => scaling;
         set
         {
-            if (value == scaling) return;
+            if (value.ApproxEquals(scaling)) return;
             scaling = value;
+
             UpdateScalingMatrix();
         }
     }

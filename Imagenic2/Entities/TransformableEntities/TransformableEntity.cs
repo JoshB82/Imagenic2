@@ -10,7 +10,7 @@ public abstract class TransformableEntity : Entity
 
     #region Constructors
 
-    public TransformableEntity()
+    protected TransformableEntity()
     {
 
     }
@@ -21,7 +21,7 @@ public abstract class TransformableEntity : Entity
 
     protected virtual void UpdateModelToWorldMatrix()
     {
-
+        ModelToWorld = Matrix4x4.Identity;
     }
 
     #endregion

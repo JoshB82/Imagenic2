@@ -1,45 +1,51 @@
-﻿namespace Imagenic2.Core.Entities;
+﻿using Imagenic2.Core.Enums;
+
+namespace Imagenic2.Core.Entities;
 
 public sealed class Plane : Mesh
 {
-        #region Fields and Properties
+    #region Fields and Properties
     
-        private float length, width;
+    private float length, width;
     
-        /// <summary>
-        /// The length of the <see cref="Plane"/>.
-        /// </summary>
-        public float Length
+    /// <summary>
+    /// The length of the <see cref="Plane"/>.
+    /// </summary>
+    public float Length
+    {
+        get => length;
+        set
         {
-            get => length;
-            set
-            {
-                length = value;
-                Scaling = new Vector3D(length, width, 1);
-            }
+            if (value.ApproxEquals(length)) return;
+            length = value;
+            Scaling = new Vector3D(length, width, 1);
+            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
         }
-        /// <summary>
-        /// The width of the <see cref="Plane"/>.
-        /// </summary>
-        public float Width
+    }
+    /// <summary>
+    /// The width of the <see cref="Plane"/>.
+    /// </summary>
+    public float Width
+    {
+        get => width;
+        set
         {
-            get => width;
-            set
-            {
-                width = value;
-                Scaling = new Vector3D(length, width, 1);
-            }
+            if (value.ApproxEquals(width)) return;
+            width = value;
+            Scaling = new Vector3D(length, width, 1);
+            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
         }
+    }
     
-        #endregion
+    #endregion
     
-        #region Constructors
+    #region Constructors
     
-        public Plane(Vector3D worldOrigin, Orientation worldOrientation, float length, float width) : base(worldOrigin, worldOrientation, MeshStructure.planeStructure)
-        {
-            Length = length;
-            Width = width;
-        }
+    public Plane(Vector3D worldOrigin, Orientation worldOrientation, float length, float width) : base(worldOrigin, worldOrientation, MeshStructure.planeStructure)
+    {
+        Length = length;
+        Width = width;
+    }
 
     #endregion
 }

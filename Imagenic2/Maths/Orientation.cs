@@ -37,7 +37,6 @@ public struct Orientation : IEquatable<Orientation>
     public static readonly Orientation OrientationNegativeZNegativeX = new(Vector3D.UnitNegativeZ, Vector3D.UnitNegativeX, Vector3D.UnitNegativeY);
     public static readonly Orientation OrientationNegativeZNegativeY = new(Vector3D.UnitNegativeZ, Vector3D.UnitNegativeY, Vector3D.UnitX);
 
-
     public Vector3D DirectionForward { get; private set; }
     public Vector3D DirectionUp { get; private set; }
     public Vector3D DirectionRight { get; private set; }

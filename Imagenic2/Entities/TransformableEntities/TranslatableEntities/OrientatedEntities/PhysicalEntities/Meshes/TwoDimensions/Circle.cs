@@ -15,8 +15,10 @@ public sealed class Circle : Mesh
         get => radius;
         set
         {
+            if (value.ApproxEquals(radius)) return;
             radius = value;
             Scaling = new Vector3D(radius, radius, 1);
+            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
         }
     }
 
@@ -26,8 +28,13 @@ public sealed class Circle : Mesh
         get => resolution;
         set
         {
+            if (value == resolution) return;
             resolution = value;
             Structure = MeshStructure.GenerateCircleStructure(resolution);
+            foreach (Vertex vertex in Structure.Vertices)
+            {
+                vertex.Scaling = new Vector3D(radius, radius, 1);
+            }
             InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
         }
     }

@@ -13,8 +13,10 @@ public sealed class Cone : Mesh
         get => radius;
         set
         {
+            if (value.ApproxEquals(radius)) return;
             radius = value;
             Scaling = new Vector3D(radius, height, radius);
+            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
         }
     }
     public float Height
@@ -22,8 +24,10 @@ public sealed class Cone : Mesh
         get => height;
         set
         {
+            if (value.ApproxEquals(height)) return;
             height = value;
             Scaling = new Vector3D(radius, height, radius);
+            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
         }
     }
 
@@ -33,8 +37,13 @@ public sealed class Cone : Mesh
         get => resolution;
         set
         {
+            if (value == resolution) return;
             resolution = value;
             Structure = MeshStructure.GenerateConeStructure(resolution);
+            foreach (Vertex vertex in Structure.Vertices)
+            {
+                vertex.Scaling = new Vector3D(radius, height, radius);
+            }
             InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
         }
     }

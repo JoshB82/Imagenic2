@@ -1,4 +1,6 @@
-﻿namespace Imagenic2.Core.Entities;
+﻿using Imagenic2.Core.Enums;
+
+namespace Imagenic2.Core.Entities;
 
 public sealed class Square : Mesh
 {
@@ -13,8 +15,10 @@ public sealed class Square : Mesh
         get => sideLength;
         set
         {
+            if (value.ApproxEquals(sideLength)) return;
             sideLength = value;
             Scaling = new Vector3D(sideLength, sideLength, 1);
+            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
         }
     }
 
