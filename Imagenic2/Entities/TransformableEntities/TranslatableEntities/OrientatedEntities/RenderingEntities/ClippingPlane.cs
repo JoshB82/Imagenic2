@@ -22,4 +22,10 @@ internal sealed class ClippingPlane
     }
 
     #endregion
+
+    #region Methods
+
+    public override string ToString() => $"Point: {Point}, Normal: {Normal}";
+
+    #endregion
 }

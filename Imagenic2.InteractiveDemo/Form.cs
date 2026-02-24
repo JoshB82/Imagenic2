@@ -10,7 +10,7 @@ public partial class Form : System.Windows.Forms.Form
 {
     private readonly Camera renderCamera;
     private Rasteriser<Imagenic2.Core.Images.Bitmap> renderer;
-    private List<Keys> keysPressed = new();
+    private HashSet<Keys> keysPressed = new();
 
     public Form()
     {
@@ -30,7 +30,7 @@ public partial class Form : System.Windows.Forms.Form
             resolution: 10
         );
 
-        renderCamera = new OrthogonalCamera(
+        renderCamera = new PerspectiveCamera(
             worldOrigin: new Vector3D(0, 0, 50),
             worldOrientation: Imagenic2.Core.Maths.Orientation.OrientationNegativeZY,
             viewWidth: pictureBox.Width / 10f,
@@ -53,20 +53,20 @@ public partial class Form : System.Windows.Forms.Form
         thread.Start();
     }
 
-    private void Loop()
+    private async void Loop()
     {
         bool running = true;
 
         const int maxFramePerSecond = 60, maxUpdatesPerSecond = 60;
-        const long frameMinimumTime = 1000 / maxFramePerSecond; //(?)
-        const long updateMinimumTime = 1000 / maxUpdatesPerSecond; // ?
+        const double frameMinimumTime = 1000.0 / maxFramePerSecond;
+        const double updateMinimumTime = 1000.0 / maxUpdatesPerSecond;
 
         int noFrames = 0, noUpdates = 0, timer = 1;
 
-        long nowTime, deltaTime, frameTime = 0, updateTime = 0;
+        double nowTime, deltaTime, frameTime = 0, updateTime = 0;
 
         Stopwatch sw = Stopwatch.StartNew();
-        long startTime = sw.ElapsedMilliseconds;
+        double startTime = sw.ElapsedMilliseconds;
 
         while (running)
         {
@@ -79,14 +79,14 @@ public partial class Form : System.Windows.Forms.Form
 
             if (frameTime >= frameMinimumTime)
             {
-                this.Invoke((MethodInvoker)(() =>
+                this.Invoke((MethodInvoker)(async () =>
                 {
                     var oldImage = pictureBox.Image;
-                    Imagenic2.Core.Images.Bitmap renderedImage = renderer.RenderAsync().Result;
+                    Imagenic2.Core.Images.Bitmap renderedImage = await renderer.RenderAsync();
                     pictureBox.Image = renderedImage.ToSystemDrawingBitmap();
                     oldImage?.Dispose();
                 }));
-                noFrames++; //?
+                noFrames++;
                 frameTime -= frameMinimumTime;
             }
 
@@ -104,65 +104,67 @@ public partial class Form : System.Windows.Forms.Form
                 timer += 1;
             }
 
-            CheckKeyboard(updateTime);
+            CheckKeyboard((float)deltaTime);
+
+            Thread.Sleep(1);
         }
     }
 
-    private void CheckKeyboard(long updateTime)
+    private void CheckKeyboard(float deltaTime)
     {
-        const float cameraPanDampener = 0.0001f, cameraTiltDampener = 0.00001f;
+        const float panDistance = 1, tiltAngle = 0.1f;
 
-        for (int i = 0; i < keysPressed.Count; i++)
+        foreach (Keys key in keysPressed)
         {
-            switch (keysPressed[i])
+            switch (key)
             {
                 case Keys.W:
                     // Pan forward
-                    renderCamera.PanForward(cameraPanDampener * updateTime);
+                    renderCamera.PanForward(panDistance);
                     break;
                 case Keys.A:
                     // Pan left
-                    renderCamera.PanLeft(cameraPanDampener * updateTime);
+                    renderCamera.PanLeft(panDistance);
                     break;
                 case Keys.D:
                     // Pan right
-                    renderCamera.PanRight(cameraPanDampener * updateTime);
+                    renderCamera.PanRight(panDistance);
                     break;
                 case Keys.S:
                     // Pan backward
-                    renderCamera.PanBackward(cameraPanDampener * updateTime);
+                    renderCamera.PanBackward(panDistance);
                     break;
                 case Keys.Q:
                     // Pan up
-                    renderCamera.PanUp(cameraPanDampener * updateTime);
+                    renderCamera.PanUp(panDistance);
                     break;
                 case Keys.E:
                     // Pan down
-                    renderCamera.PanDown(cameraPanDampener * updateTime);
+                    renderCamera.PanDown(panDistance);
                     break;
                 case Keys.I:
                     // Rotate up
-                    renderCamera.RotateUp(cameraTiltDampener * updateTime);
+                    renderCamera.RotateUp(tiltAngle);
                     break;
                 case Keys.J:
                     // Rotate left
-                    renderCamera.RotateLeft(cameraTiltDampener * updateTime);
+                    renderCamera.RotateLeft(tiltAngle);
                     break;
                 case Keys.L:
                     // Rotate right
-                    renderCamera.RotateRight(cameraTiltDampener * updateTime);
+                    renderCamera.RotateRight(tiltAngle);
                     break;
                 case Keys.K:
                     // Rotate down
-                    renderCamera.RotateDown(cameraTiltDampener * updateTime);
+                    renderCamera.RotateDown(tiltAngle);
                     break;
                 case Keys.U:
                     // Roll left
-                    renderCamera.RollLeft(cameraTiltDampener * updateTime);
+                    renderCamera.RollLeft(tiltAngle);
                     break;
                 case Keys.O:
                     // Roll right
-                    renderCamera.RollRight(cameraTiltDampener * updateTime);
+                    renderCamera.RollRight(tiltAngle);
                     break;
             }
         }
@@ -171,7 +173,6 @@ public partial class Form : System.Windows.Forms.Form
     private void Form_KeyDown(object sender, KeyEventArgs e)
     {
         keysPressed.Add(e.KeyCode);
-        keysPressed = keysPressed.Distinct().ToList();
     }
 
     private void Form_KeyUp(object sender, KeyEventArgs e) => keysPressed.Remove(e.KeyCode);
@@ -182,5 +183,10 @@ public partial class Form : System.Windows.Forms.Form
         renderCamera.ViewHeight = pictureBox.Height / 10f;
         renderer.RenderingOptions.RenderWidth = pictureBox.Width;
         renderer.RenderingOptions.RenderHeight = pictureBox.Height;
+    }
+
+    private void Form_FormClosed(object sender, FormClosedEventArgs e)
+    {
+        pictureBox.Image.Dispose();
     }
 }

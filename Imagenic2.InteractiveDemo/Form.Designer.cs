@@ -49,6 +49,7 @@
             Controls.Add(pictureBox);
             Name = "Form";
             Text = "Interactive Demo";
+            FormClosed += Form_FormClosed;
             KeyDown += Form_KeyDown;
             KeyUp += Form_KeyUp;
             Resize += Form_Resize;

@@ -30,4 +30,10 @@ public sealed class Vertex : PhysicalEntity
     }
 
     #endregion
+
+    #region Methods
+
+    public override string ToString() => $"WorldOrigin: {WorldOrigin}, Normal: {Normal}";
+
+    #endregion
 }

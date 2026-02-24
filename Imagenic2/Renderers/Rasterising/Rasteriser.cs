@@ -65,9 +65,9 @@ public class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagenic2.Core
                     {
                         if (RenderingOptions.RenderCamera is PerspectiveCamera)
                         {
-                            triangle.TransformedP1 /= triangle.TransformedP1.w;
-                            triangle.TransformedP2 /= triangle.TransformedP2.w;
-                            triangle.TransformedP3 /= triangle.TransformedP3.w;
+                            clippedTriangle.TransformedP1 /= clippedTriangle.TransformedP1.w;
+                            clippedTriangle.TransformedP2 /= clippedTriangle.TransformedP2.w;
+                            clippedTriangle.TransformedP3 /= clippedTriangle.TransformedP3.w;
                         }
 
                         TransformTriangleVertices(clippedTriangle, RenderingOptions.ScreenToWindow);

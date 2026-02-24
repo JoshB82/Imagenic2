@@ -54,7 +54,7 @@ public sealed class PerspectiveCamera : Camera
         get => base.ZFar;
         set
         {
-            base.ZNear = value;
+            base.ZFar = value;
 
             UpdateViewClippingPlanes();
 
@@ -102,7 +102,7 @@ public sealed class PerspectiveCamera : Camera
 
     public PerspectiveCamera(Vector3D worldOrigin, Orientation worldOrientation, float viewWidth, float viewHeight, float zNear, float zFar) : base(worldOrigin, worldOrientation, viewWidth, viewHeight, zNear, zFar)
     {
-
+        viewToScreen.m32 = 1;
     }
 
     #endregion

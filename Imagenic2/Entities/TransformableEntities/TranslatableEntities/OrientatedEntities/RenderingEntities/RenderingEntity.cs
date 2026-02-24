@@ -80,6 +80,11 @@ public abstract class RenderingEntity : OrientatedEntity
                               float zFar)
         : base(worldOrigin, worldOrientation)
     {
+        this.viewWidth = viewWidth;
+        this.viewHeight = viewHeight;
+        this.zNear = zNear;
+        this.zFar = zFar;
+
         ViewWidth = viewWidth;
         ViewHeight = viewHeight;
         ZNear = zNear;
