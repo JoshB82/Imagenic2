@@ -112,7 +112,7 @@ public partial class Form : System.Windows.Forms.Form
 
     private void CheckKeyboard(float deltaTime)
     {
-        const float panDistance = 1, tiltAngle = 0.01f;
+        const float panDistance = 0.1f, tiltAngle = 0.001f;
 
         foreach (Keys key in keysPressed)
         {
