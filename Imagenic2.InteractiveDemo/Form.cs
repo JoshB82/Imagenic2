@@ -31,7 +31,7 @@ public partial class Form : System.Windows.Forms.Form
         );
 
         renderCamera = new PerspectiveCamera(
-            worldOrigin: new Vector3D(0, 0, 50),
+            worldOrigin: new Vector3D(0, 0, 100),
             worldOrientation: Imagenic2.Core.Maths.Orientation.OrientationZY,
             viewWidth: pictureBox.Width / 10f,
             viewHeight: pictureBox.Height / 10f,
@@ -120,51 +120,51 @@ public partial class Form : System.Windows.Forms.Form
             {
                 case Keys.W:
                     // Pan forward
-                    renderCamera.PanForward(panDistance);
+                    renderCamera.PanForward(panDistance * deltaTime);
                     break;
                 case Keys.A:
                     // Pan left
-                    renderCamera.PanLeft(panDistance);
+                    renderCamera.PanLeft(panDistance * deltaTime);
                     break;
                 case Keys.D:
                     // Pan right
-                    renderCamera.PanRight(panDistance);
+                    renderCamera.PanRight(panDistance * deltaTime);
                     break;
                 case Keys.S:
                     // Pan backward
-                    renderCamera.PanBackward(panDistance);
+                    renderCamera.PanBackward(panDistance * deltaTime);
                     break;
                 case Keys.Q:
                     // Pan up
-                    renderCamera.PanUp(panDistance);
+                    renderCamera.PanUp(panDistance * deltaTime);
                     break;
                 case Keys.E:
                     // Pan down
-                    renderCamera.PanDown(panDistance);
+                    renderCamera.PanDown(panDistance * deltaTime);
                     break;
                 case Keys.I:
                     // Rotate up
-                    renderCamera.RotateUp(tiltAngle);
+                    renderCamera.RotateUp(tiltAngle * deltaTime);
                     break;
                 case Keys.J:
                     // Rotate left
-                    renderCamera.RotateLeft(tiltAngle);
+                    renderCamera.RotateLeft(tiltAngle * deltaTime);
                     break;
                 case Keys.L:
                     // Rotate right
-                    renderCamera.RotateRight(tiltAngle);
+                    renderCamera.RotateRight(tiltAngle * deltaTime);
                     break;
                 case Keys.K:
                     // Rotate down
-                    renderCamera.RotateDown(tiltAngle);
+                    renderCamera.RotateDown(tiltAngle * deltaTime);
                     break;
                 case Keys.U:
                     // Roll left
-                    renderCamera.RollLeft(tiltAngle);
+                    renderCamera.RollLeft(tiltAngle * deltaTime);
                     break;
                 case Keys.O:
                     // Roll right
-                    renderCamera.RollRight(tiltAngle);
+                    renderCamera.RollRight(tiltAngle * deltaTime);
                     break;
             }
         }
