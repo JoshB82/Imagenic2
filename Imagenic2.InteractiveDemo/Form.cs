@@ -11,6 +11,7 @@ public partial class Form : System.Windows.Forms.Form
     private readonly Camera renderCamera;
     private Rasteriser<Imagenic2.Core.Images.Bitmap> renderer;
     private HashSet<Keys> keysPressed = new();
+    private float fieldOfView = MathF.PI / 3; // 60 degrees
 
     public Form()
     {
@@ -30,13 +31,19 @@ public partial class Form : System.Windows.Forms.Form
             resolution: 10
         );
 
+        float aspectRatio = pictureBox.Width / (float)(pictureBox.Height);
+        float zNear = 1;
+        float zFar = 750;
+        float viewHeight = 2 * zNear * MathF.Tan(fieldOfView / 2);
+        float viewWidth = viewHeight * aspectRatio;
+
         renderCamera = new PerspectiveCamera(
-            worldOrigin: new Vector3D(0, 0, 100),
+            worldOrigin: new Vector3D(0, 0, -100),
             worldOrientation: Imagenic2.Core.Maths.Orientation.OrientationZY,
-            viewWidth: pictureBox.Width / 10f,
-            viewHeight: pictureBox.Height / 10f,
-            zNear: 50,
-            zFar: 750
+            viewWidth: viewWidth,
+            viewHeight: viewHeight,
+            zNear: zNear,
+            zFar: zFar
         );
 
         RenderingOptions renderingOptions = new RenderingOptions()
@@ -170,23 +177,23 @@ public partial class Form : System.Windows.Forms.Form
         }
     }
 
-    private void Form_KeyDown(object sender, KeyEventArgs e)
-    {
-        keysPressed.Add(e.KeyCode);
-    }
+    private void Form_KeyDown(object sender, KeyEventArgs e) => keysPressed.Add(e.KeyCode);
 
     private void Form_KeyUp(object sender, KeyEventArgs e) => keysPressed.Remove(e.KeyCode);
 
     private void Form_Resize(object sender, System.EventArgs e)
     {
-        renderCamera.ViewWidth = pictureBox.Width / 10f;
-        renderCamera.ViewHeight = pictureBox.Height / 10f;
+        float aspectRatio = pictureBox.Width / (float)(pictureBox.Height);
+        float viewHeight = 2 * renderer.RenderingOptions.RenderCamera.ZNear * MathF.Tan(fieldOfView / 2);
+        float viewWidth = viewHeight * aspectRatio;
+        renderCamera.ViewWidth = viewWidth;
+        renderCamera.ViewHeight = viewHeight;
         renderer.RenderingOptions.RenderWidth = pictureBox.Width;
         renderer.RenderingOptions.RenderHeight = pictureBox.Height;
     }
 
     private void Form_FormClosed(object sender, FormClosedEventArgs e)
     {
-        pictureBox.Image.Dispose();
+        pictureBox.Image?.Dispose();
     }
 }

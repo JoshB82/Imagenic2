@@ -37,6 +37,7 @@ public abstract class Renderer<TImage> where TImage : Image
     public Renderer(RenderingOptions renderingOptions)
     {
         RenderingOptions = renderingOptions;
+        //RenderingOptions.Renderer = this;
     }
 
     #endregion

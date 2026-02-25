@@ -9,6 +9,8 @@ public class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagenic2.Core
     #region Fields and Properties
 
     private static ArrayPool<Vector3D> Vector3DArrayPool = ArrayPool<Vector3D>.Shared;
+    internal Buffer2D<Color> colourBuffer;
+    internal Buffer2D<float> zBuffer;
 
     #endregion
 
@@ -16,7 +18,8 @@ public class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagenic2.Core
 
     public Rasteriser(RenderingOptions renderingOptions) : base(renderingOptions)
     {
-
+        colourBuffer = new Buffer2D<Color>(RenderingOptions.RenderWidth, RenderingOptions.RenderHeight);
+        zBuffer = new Buffer2D<float>(RenderingOptions.RenderWidth, RenderingOptions.RenderHeight);
     }
 
     #endregion
@@ -36,9 +39,8 @@ public class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagenic2.Core
             return null;
         }
 
-        var colourBuffer = new Buffer2D<Color>(RenderingOptions.RenderWidth, RenderingOptions.RenderHeight);
         colourBuffer.SetAllToValue(RenderingOptions.BackgroundColour);
-        var zBuffer = new Buffer2D<float>(RenderingOptions.RenderWidth, RenderingOptions.RenderHeight);
+        zBuffer.SetAllToValue(1.1f); // A number > 1
         var triangleQueue = new Queue<Triangle>();
 
         foreach (PhysicalEntity physicalEntity in RenderingOptions.PhysicalEntitiesToRender)
@@ -67,7 +69,6 @@ public class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagenic2.Core
                             clippedTriangle.TransformedP2 /= clippedTriangle.TransformedP2.w;
                             clippedTriangle.TransformedP3 /= clippedTriangle.TransformedP3.w;
                         }
-
                     }
 
                     ClipTriangles(triangleQueue, Renderer<TImage>.ScreenClippingPlanes);

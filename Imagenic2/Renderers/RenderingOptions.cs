@@ -1,6 +1,6 @@
 ﻿using Imagenic2.Core.Entities;
-using Imagenic2.Core.Enums;
 using Imagenic2.Core.Maths.Transformations;
+using Imagenic2.Core.Renderers.Rasterising;
 using System.Drawing;
 
 namespace Imagenic2.Core.Renderers;
@@ -9,10 +9,11 @@ public sealed class RenderingOptions
 {
     #region Fields and Properties
 
+    //internal Rasteriser<Imagenic2.Core.Images.Bitmap> Renderer { get; set; }
+
     public Matrix4x4 WindowToScreen { get; private set; }
 
     private int renderWidth = 1920, renderHeight = 1080;
-
     public int RenderWidth
     {
         get => renderWidth;
@@ -25,6 +26,7 @@ public sealed class RenderingOptions
             }
             renderWidth = value;
             UpdateScreenToWindow();
+            UpdateBuffers();
         }
     }
     public int RenderHeight
@@ -39,7 +41,14 @@ public sealed class RenderingOptions
             }
             renderHeight = value;
             UpdateScreenToWindow();
+            UpdateBuffers();
         }
+    }
+
+    private void UpdateBuffers()
+    {
+        //Renderer.colourBuffer = new Buffer2D<Color>(RenderWidth, RenderHeight);
+        //Renderer.zBuffer = new Buffer2D<float>(RenderWidth, RenderHeight);
     }
 
     private Camera renderCamera;

@@ -72,7 +72,7 @@ public sealed class PerspectiveCamera : Camera
         float semiViewWidth = ViewWidth / 2, semiViewHeight = ViewHeight / 2;
 
         Vector3D nearBottomLeftPoint = new(-semiViewWidth, -semiViewHeight, ZNear);
-        Vector3D farTopRightPoint = new(ViewWidth * ZFar / (2 * ZNear), ViewHeight * ZFar / (2 * ZNear), ZFar);
+        Vector3D farTopRightPoint = new(semiViewWidth * ZFar / ZNear, semiViewHeight * ZFar / ZNear, ZFar);
         Vector3D nearTopLeftPoint = new(-semiViewWidth, semiViewHeight, ZNear);
         Vector3D nearTopRightPoint = new(semiViewWidth, semiViewHeight, ZNear);
         Vector3D farBottomLeftPoint = new(-semiViewWidth * ZFar / ZNear, -semiViewHeight * ZFar / ZNear, ZFar);
