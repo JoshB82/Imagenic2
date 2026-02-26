@@ -45,8 +45,8 @@ public abstract class OrientatedEntity : TranslatableEntity
 
     protected override void UpdateModelToWorldMatrix()
     {
-        ModelToWorld *= rotationMatrix;
         base.UpdateModelToWorldMatrix();
+        ModelToWorld *= rotationMatrix;
     }
 
     #endregion
