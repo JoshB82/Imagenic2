@@ -79,9 +79,9 @@ public abstract class PhysicalEntity : OrientatedEntity
 
     protected override void UpdateModelToWorldMatrix()
     {
+        //ModelToWorld *= scalingMatrix;
+        ModelToWorld = scalingMatrix;
         base.UpdateModelToWorldMatrix();
-
-        ModelToWorld *= scalingMatrix;
     }
 
     #endregion

@@ -41,7 +41,7 @@ public abstract class TranslatableEntity : TransformableEntity
 
     protected override void UpdateModelToWorldMatrix()
     {
-        base.UpdateModelToWorldMatrix();
+        //base.UpdateModelToWorldMatrix();
         ModelToWorld *= translationMatrix;
     }
 
