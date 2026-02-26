@@ -42,7 +42,7 @@ public class Mesh : PhysicalEntity
     public MeshStructure Structure
     {
         get => structure;
-        set
+        internal set
         {
             ThrowIfNull(value);
             structure = value;

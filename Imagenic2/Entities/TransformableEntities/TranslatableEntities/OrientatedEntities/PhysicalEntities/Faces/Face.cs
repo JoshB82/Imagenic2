@@ -4,7 +4,7 @@ public class Face
 {
     #region Fields and Properties
 
-    public IList<Triangle> Triangles {get; set; }
+    public IReadOnlyList<Triangle> Triangles {get; set; }
 
     private FaceStyle frontStyle, backStyle;
     public FaceStyle FrontStyle
@@ -28,7 +28,7 @@ public class Face
 
     #region Constructors
 
-    public Face(params IList<Triangle> triangles)
+    public Face(params IReadOnlyList<Triangle> triangles)
     {
         Triangles = triangles;
     }

@@ -4,45 +4,45 @@ public class MeshStructure
 {
     #region Fields and Properties
 
-    public IList<Vertex> Vertices { get; set; }
-    public IList<Edge> Edges { get; set; }
-    public IList<Triangle> Triangles { get; set; }
-    public IList<Face> Faces { get; set; }
+    public IReadOnlyList<Vertex> Vertices { get; set; }
+    public IReadOnlyList<Edge> Edges { get; set; }
+    public IReadOnlyList<Triangle> Triangles { get; set; }
+    public IReadOnlyList<Face> Faces { get; set; }
     public IList<Texture> Textures { get; set; }
 
     // Line
-    private static readonly IList<Vertex> lineVertices = new Vertex[2]
+    private static readonly IReadOnlyList<Vertex> lineVertices = new Vertex[2]
     {
         new Vertex(Vector3D.Zero), // 0
         new Vertex(Vector3D.One) // 1
     };
-    private static readonly IList<Edge> lineEdges = new Edge[1]
+    private static readonly IReadOnlyList<Edge> lineEdges = new Edge[1]
     {
         new Edge(lineVertices[0], lineVertices[1]) // 0
     };
     internal static readonly MeshStructure lineStructure = new MeshStructure(lineVertices, lineEdges);
 
     // Plane
-    private static readonly IList<Vertex> planeVertices = new Vertex[4]
+    private static readonly IReadOnlyList<Vertex> planeVertices = new Vertex[4]
     {
         new Vertex(new Vector3D(0, 0, 0)), // 0 [Bottom-left]
         new Vertex(new Vector3D(1, 0, 0)), // 1 [Bottom-right]
         new Vertex(new Vector3D(1, 0, 1)), // 2 [Top-right]
         new Vertex(new Vector3D(0, 0, 1)) // 3 [Top-left]
     };
-    private static readonly IList<Edge> planeEdges = new Edge[4]
+    private static readonly IReadOnlyList<Edge> planeEdges = new Edge[4]
     {
         new Edge(planeVertices[0], planeVertices[1]), // 0 []
         new Edge(planeVertices[1], planeVertices[2]), // 1 []
         new Edge(planeVertices[2], planeVertices[3]), // 2 []
         new Edge(planeVertices[0], planeVertices[3]) // 3 []
     };
-    private static readonly IList<Triangle> planeTriangles = new Triangle[2]
+    private static readonly IReadOnlyList<Triangle> planeTriangles = new Triangle[2]
     {
         new Triangle(planeVertices[0], planeVertices[1], planeVertices[2]), // 0 []
         new Triangle(planeVertices[0], planeVertices[2], planeVertices[3]) // 1 []
     };
-    private static readonly IList<Face> planeFaces = new Face[1]
+    private static readonly IReadOnlyList<Face> planeFaces = new Face[1]
     {
         new Face(planeTriangles[0], planeTriangles[1]) // 0
     };
@@ -50,7 +50,7 @@ public class MeshStructure
 
     // Cube
     private static float radical = MathF.Sqrt(3) / 3;
-    private static readonly IList<Vertex> cuboidVertices = new Vertex[8]
+    private static readonly IReadOnlyList<Vertex> cuboidVertices = new Vertex[8]
     {
         new Vertex(Vector3D.Zero, new Vector3D(-radical, -radical, -radical)), // 0 [Back-bottom-left]
         new Vertex(Vector3D.UnitX, new Vector3D(radical, -radical, -radical)), // 1 [Back-bottom-right]
@@ -61,7 +61,7 @@ public class MeshStructure
         new Vertex(Vector3D.One, new Vector3D(radical, radical, radical)), // 6 [Front-top-right]
         new Vertex(new Vector3D(0, 1, 1), new Vector3D(-radical, radical, radical)) // 7 [Front-top-left]
     };
-    private static readonly IList<Edge> cuboidEdges = new Edge[12]
+    private static readonly IReadOnlyList<Edge> cuboidEdges = new Edge[12]
     {
         new Edge(cuboidVertices[0], cuboidVertices[1]), // 0 [Back-bottom]
         new Edge(cuboidVertices[1], cuboidVertices[2]), // 1 [Back-right]
@@ -76,7 +76,7 @@ public class MeshStructure
         new Edge(cuboidVertices[2], cuboidVertices[6]), // 10 [Middle-top-right]
         new Edge(cuboidVertices[3], cuboidVertices[7]) // 11 [Middle-top-left]
     };
-    private static readonly IList<Triangle> cuboidTriangles = new Triangle[12]
+    private static readonly IReadOnlyList<Triangle> cuboidTriangles = new Triangle[12]
     {
         new Triangle(cuboidVertices[0], cuboidVertices[1], cuboidVertices[2]), // 0 [Back-1]
         new Triangle(cuboidVertices[0], cuboidVertices[2], cuboidVertices[3]), // 1 [Back-2]
@@ -91,7 +91,7 @@ public class MeshStructure
         new Triangle(cuboidVertices[1], cuboidVertices[0], cuboidVertices[4]), // 10 [Bottom-1]
         new Triangle(cuboidVertices[1], cuboidVertices[4], cuboidVertices[5])  // 11 [Bottom-2]
     };
-    private static readonly IList<Face> cuboidFaces = new Face[6]
+    private static readonly IReadOnlyList<Face> cuboidFaces = new Face[6]
     {
         new Face(cuboidTriangles[0], cuboidTriangles[1]),// 0 [Back]
         new Face(cuboidTriangles[2], cuboidTriangles[3]), // 1 [Right]
@@ -106,10 +106,10 @@ public class MeshStructure
 
     #region Constructors
 
-    public MeshStructure(IList<Vertex> vertices,
-                         IList<Edge>? edges = null,
-                         IList<Triangle>? triangles = null,
-                         IList<Face>? faces = null,
+    public MeshStructure(IReadOnlyList<Vertex> vertices,
+                         IReadOnlyList<Edge>? edges = null,
+                         IReadOnlyList<Triangle>? triangles = null,
+                         IReadOnlyList<Face>? faces = null,
                          IList<Texture>? textures = null)
     {
         Vertices = vertices;
@@ -123,7 +123,7 @@ public class MeshStructure
 
     #region Methods
 
-    internal static IList<Vertex> GenerateCircleVertices(int resolution)
+    internal static IReadOnlyList<Vertex> GenerateCircleVertices(int resolution)
     {
         // Vertices are defined in anti-clockwise order.
         IList<Vertex> vertices = new Vertex[resolution + 1];
@@ -135,10 +135,10 @@ public class MeshStructure
             vertices[i + 1] = new Vertex(new Vector3D(Cos(angle * i), 0, Sin(angle * i)));
         }
 
-        return vertices;
+        return vertices.AsReadOnly();
     }
 
-    internal static IList<Edge> GenerateCircleEdges(IList<Vertex> vertices, int resolution)
+    internal static IReadOnlyList<Edge> GenerateCircleEdges(IReadOnlyList<Vertex> vertices, int resolution)
     {
         IList<Edge> edges = new Edge[resolution];
 
@@ -148,10 +148,10 @@ public class MeshStructure
         }
         edges[resolution - 1] = new Edge(vertices[resolution], vertices[1]);
 
-        return edges;
+        return edges.AsReadOnly();
     }
 
-    internal static IList<Triangle> GenerateCircleTriangles(IList<Vertex> vertices, int resolution)
+    internal static IReadOnlyList<Triangle> GenerateCircleTriangles(IReadOnlyList<Vertex> vertices, int resolution)
     {
         IList<Triangle> triangles = new Triangle[resolution];
         
@@ -161,10 +161,10 @@ public class MeshStructure
         }
         triangles[resolution - 1] = new Triangle(vertices[resolution], vertices[0], vertices[1]);
 
-        return triangles;
+        return triangles.AsReadOnly();
     }
 
-    internal static IList<Face> GenerateCircleFaces(IList<Triangle> triangles)
+    internal static IReadOnlyList<Face> GenerateCircleFaces(IReadOnlyList<Triangle> triangles)
     {
         return new Face[1]
         {
@@ -174,15 +174,15 @@ public class MeshStructure
 
     internal static MeshStructure GenerateCircleStructure(int resolution)
     {
-        IList<Vertex> vertices = GenerateCircleVertices(resolution);
-        IList<Edge> edges = GenerateCircleEdges(vertices, resolution);
-        IList<Triangle> triangles = GenerateCircleTriangles(vertices, resolution);
-        IList<Face> faces = GenerateCircleFaces(triangles);
+        IReadOnlyList<Vertex> vertices = GenerateCircleVertices(resolution);
+        IReadOnlyList<Edge> edges = GenerateCircleEdges(vertices, resolution);
+        IReadOnlyList<Triangle> triangles = GenerateCircleTriangles(vertices, resolution);
+        IReadOnlyList<Face> faces = GenerateCircleFaces(triangles);
 
         return new MeshStructure(vertices, edges, triangles, faces);
     }
 
-    internal static IList<Vertex> GenerateConeVertices(MeshStructure circleStructure)
+    internal static IReadOnlyList<Vertex> GenerateConeVertices(MeshStructure circleStructure)
     {
         IList<Vertex> coneVertices = new Vertex[circleStructure.Vertices.Count + 1];
         for (int i = 0; i < circleStructure.Vertices.Count; i++)
@@ -190,10 +190,10 @@ public class MeshStructure
             coneVertices[i] = circleStructure.Vertices[i];
         }
         coneVertices[circleStructure.Vertices.Count] = new Vertex(Vector3D.UnitZ);
-        return coneVertices;
+        return coneVertices.AsReadOnly();
     }
 
-    internal static IList<Edge> GenerateConeEdges(MeshStructure circleStructure, IList<Vertex> vertices, int resolution)
+    internal static IReadOnlyList<Edge> GenerateConeEdges(MeshStructure circleStructure, IReadOnlyList<Vertex> vertices, int resolution)
     {
         IList<Edge> topEdges = new Edge[resolution];
 
@@ -205,7 +205,7 @@ public class MeshStructure
         return topEdges.Concat(circleStructure.Edges).ToList();
     }
 
-    internal static IList<Triangle> GenerateConeTriangles(MeshStructure circleStructure, IList<Vertex> vertices, int resolution)
+    internal static IReadOnlyList<Triangle> GenerateConeTriangles(MeshStructure circleStructure, IReadOnlyList<Vertex> vertices, int resolution)
     {
         IList<Triangle> topTriangles = new Triangle[resolution];
 
@@ -218,7 +218,7 @@ public class MeshStructure
         return topTriangles.Concat(circleStructure.Triangles).ToList();
     }
 
-    internal static IList<Face> GenerateConeFaces(MeshStructure circleStructure, IList<Triangle> triangles, int resolution)
+    internal static IReadOnlyList<Face> GenerateConeFaces(MeshStructure circleStructure, IReadOnlyList<Triangle> triangles, int resolution)
     {
         return new Face[2]
         {
@@ -231,15 +231,15 @@ public class MeshStructure
     {
         MeshStructure circleStructure = GenerateCircleStructure(resolution);
 
-        IList<Vertex> vertices = GenerateConeVertices(circleStructure);
-        IList<Edge> edges = GenerateConeEdges(circleStructure, vertices, resolution);
-        IList<Triangle> triangles = GenerateConeTriangles(circleStructure, vertices, resolution);
-        IList<Face> faces = GenerateConeFaces(circleStructure, triangles, resolution);
+        IReadOnlyList<Vertex> vertices = GenerateConeVertices(circleStructure);
+        IReadOnlyList<Edge> edges = GenerateConeEdges(circleStructure, vertices, resolution);
+        IReadOnlyList<Triangle> triangles = GenerateConeTriangles(circleStructure, vertices, resolution);
+        IReadOnlyList<Face> faces = GenerateConeFaces(circleStructure, triangles, resolution);
 
         return new MeshStructure(vertices, edges, triangles, faces);
     }
 
-    internal static IList<Vertex> GenerateRingVertices(int resolution, float innerRadius, float outerRadius)
+    internal static IReadOnlyList<Vertex> GenerateRingVertices(int resolution, float innerRadius, float outerRadius)
     {
         // Vertices are defined in anti-clockwise order.
         IList<Vertex> vertices = new Vertex[2 * resolution + 1];
@@ -252,10 +252,10 @@ public class MeshStructure
             vertices[i + resolution + 1] = new Vertex(new Vector3D(Cos(angle * i) * outerRadius, 0, Sin(angle * i) * outerRadius));
         }
 
-        return vertices;
+        return vertices.AsReadOnly();
     }
 
-    internal static IList<Edge> GenerateRingEdges(IList<Vertex> vertices, int resolution)
+    internal static IReadOnlyList<Edge> GenerateRingEdges(IReadOnlyList<Vertex> vertices, int resolution)
     {
         IList<Edge> edges = new Edge[2 * resolution];
 
@@ -267,10 +267,10 @@ public class MeshStructure
         edges[resolution - 1] = new Edge(vertices[resolution], vertices[1]);
         edges[2 * resolution - 1] = new Edge(vertices[2 * resolution], vertices[resolution + 1]);
 
-        return edges;
+        return edges.AsReadOnly();
     }
 
-    internal static IList<Triangle> GenerateRingTriangles(IList<Vertex> vertices, int resolution)
+    internal static IReadOnlyList<Triangle> GenerateRingTriangles(IReadOnlyList<Vertex> vertices, int resolution)
     {
         IList<Triangle> triangles = new Triangle[2 * resolution];
 
@@ -282,10 +282,10 @@ public class MeshStructure
             triangles[i + resolution + 1] = new Triangle(vertices[i + 1], vertices[i + resolution], vertices[i]);
         }
 
-        return triangles;
+        return triangles.AsReadOnly();
     }
 
-    internal static IList<Face> GenerateRingFaces(IList<Triangle> triangles)
+    internal static IReadOnlyList<Face> GenerateRingFaces(IReadOnlyList<Triangle> triangles)
     {
         return new Face[1]
         {
@@ -295,20 +295,20 @@ public class MeshStructure
 
     internal static MeshStructure GenerateRingStructure(int resolution, float innerRadius, float outerRadius)
     {
-        IList<Vertex> vertices = GenerateRingVertices(resolution, innerRadius, outerRadius);
-        IList<Edge> edges = GenerateRingEdges(vertices, resolution);
-        IList<Triangle> triangles = GenerateRingTriangles(vertices, resolution);
-        IList<Face> faces = GenerateRingFaces(triangles);
+        IReadOnlyList<Vertex> vertices = GenerateRingVertices(resolution, innerRadius, outerRadius);
+        IReadOnlyList<Edge> edges = GenerateRingEdges(vertices, resolution);
+        IReadOnlyList<Triangle> triangles = GenerateRingTriangles(vertices, resolution);
+        IReadOnlyList<Face> faces = GenerateRingFaces(triangles);
 
         return new MeshStructure(vertices, edges, triangles, faces);
     }
 
-    internal static IList<Vertex> GenerateCylinderVertices(MeshStructure topCircleStructure, MeshStructure bottomCircleStructure)
+    internal static IReadOnlyList<Vertex> GenerateCylinderVertices(MeshStructure topCircleStructure, MeshStructure bottomCircleStructure)
     {
         return topCircleStructure.Vertices.Concat(bottomCircleStructure.Vertices).ToList();
     }
 
-    internal static IList<Edge> GenerateCylinderEdges(MeshStructure topCircleStructure, MeshStructure bottomCircleStructure, int resolution)
+    internal static IReadOnlyList<Edge> GenerateCylinderEdges(MeshStructure topCircleStructure, MeshStructure bottomCircleStructure, int resolution)
     {
         IList<Edge> sideEdges = new Edge[resolution];
 
@@ -320,7 +320,7 @@ public class MeshStructure
         return topCircleStructure.Edges.Concat(bottomCircleStructure.Edges.Concat(sideEdges)).ToList();
     }
 
-    internal static IList<Triangle> GenerateCylinderTriangles(MeshStructure topCircleStructure, MeshStructure bottomCircleStructure, int resolution)
+    internal static IReadOnlyList<Triangle> GenerateCylinderTriangles(MeshStructure topCircleStructure, MeshStructure bottomCircleStructure, int resolution)
     {
         IList<Triangle> sideTriangles = new Triangle[2 * resolution];
 
@@ -335,7 +335,7 @@ public class MeshStructure
         return sideTriangles.Concat(topCircleStructure.Triangles.Concat(bottomCircleStructure.Triangles)).ToList();
     }
 
-    internal static IList<Face> GenerateCylinderFaces(IList<Triangle> triangles, MeshStructure topCircleStructure, MeshStructure bottomCircleStructure, int resolution)
+    internal static IReadOnlyList<Face> GenerateCylinderFaces(IReadOnlyList<Triangle> triangles, MeshStructure topCircleStructure, MeshStructure bottomCircleStructure, int resolution)
     {
         IList<Face> faces = new Face[resolution + 2];
 
@@ -346,7 +346,7 @@ public class MeshStructure
         faces[resolution] = new Face(topCircleStructure.Triangles);
         faces[resolution + 1] = new Face(bottomCircleStructure.Triangles);
 
-        return faces;
+        return faces.AsReadOnly();
     }
 
     internal static MeshStructure GenerateCylinderStructure(int resolution)
@@ -354,10 +354,10 @@ public class MeshStructure
         MeshStructure topCircleStructure = GenerateCircleStructure(resolution);
         MeshStructure bottomCircleStructure = GenerateCircleStructure(resolution);
 
-        IList<Vertex> vertices = GenerateCylinderVertices(topCircleStructure, bottomCircleStructure);
-        IList<Edge> edges = GenerateCylinderEdges(topCircleStructure, bottomCircleStructure, resolution);
-        IList<Triangle> triangles = GenerateCylinderTriangles(topCircleStructure, bottomCircleStructure, resolution);
-        IList<Face> faces = GenerateCylinderFaces(triangles, topCircleStructure, bottomCircleStructure, resolution);
+        IReadOnlyList<Vertex> vertices = GenerateCylinderVertices(topCircleStructure, bottomCircleStructure);
+        IReadOnlyList<Edge> edges = GenerateCylinderEdges(topCircleStructure, bottomCircleStructure, resolution);
+        IReadOnlyList<Triangle> triangles = GenerateCylinderTriangles(topCircleStructure, bottomCircleStructure, resolution);
+        IReadOnlyList<Face> faces = GenerateCylinderFaces(triangles, topCircleStructure, bottomCircleStructure, resolution);
 
         return new MeshStructure(vertices, edges, triangles, faces);
     }

@@ -62,19 +62,20 @@ public static partial class Transform
     public static Matrix4x4 Rotate(Vector3D axis, float angle)
     {
         if (angle == 0) return Matrix4x4.Identity;
+        axis = axis.Normalise();
         float sinAngle = Sin(angle), cosAngle = Cos(angle);
         return new
         (
             cosAngle + axis.x * axis.x * (1 - cosAngle),
-            axis.x * axis.y * (1 - cosAngle) - axis.z * -sinAngle,
-            axis.x * axis.z * (1 - cosAngle) + axis.y * -sinAngle,
+            axis.x * axis.y * (1 - cosAngle) - axis.z * sinAngle,
+            axis.x * axis.z * (1 - cosAngle) + axis.y * sinAngle,
             0,
-            axis.y * axis.x * (1 - cosAngle) + axis.z * -sinAngle,
+            axis.y * axis.x * (1 - cosAngle) + axis.z * sinAngle,
             cosAngle + axis.y * axis.y * (1 - cosAngle),
-            axis.y * axis.z * (1 - cosAngle) - axis.x * -sinAngle,
+            axis.y * axis.z * (1 - cosAngle) - axis.x * sinAngle,
             0,
-            axis.z * axis.x * (1 - cosAngle) - axis.y * -sinAngle,
-            axis.z * axis.y * (1 - cosAngle) + axis.x * -sinAngle,
+            axis.z * axis.x * (1 - cosAngle) - axis.y * sinAngle,
+            axis.z * axis.y * (1 - cosAngle) + axis.x * sinAngle,
             cosAngle + axis.z * axis.z * (1 - cosAngle),
             0,
             0,
