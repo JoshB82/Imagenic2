@@ -19,7 +19,7 @@ public sealed class Plane : Mesh
             if (value.ApproxEquals(length)) return;
             length = value;
             Scaling = new Vector3D(length, width, 1);
-            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
+            InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
     /// <summary>
@@ -33,7 +33,7 @@ public sealed class Plane : Mesh
             if (value.ApproxEquals(width)) return;
             width = value;
             Scaling = new Vector3D(length, width, 1);
-            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
+            InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
     

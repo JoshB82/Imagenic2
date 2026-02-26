@@ -18,7 +18,7 @@ public sealed class Circle : Mesh
             if (value.ApproxEquals(radius)) return;
             radius = value;
             Scaling = new Vector3D(radius, radius, 1);
-            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
+            InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
 
@@ -35,7 +35,7 @@ public sealed class Circle : Mesh
             {
                 vertex.Scaling = new Vector3D(radius, radius, 1);
             }
-            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
+            InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
 

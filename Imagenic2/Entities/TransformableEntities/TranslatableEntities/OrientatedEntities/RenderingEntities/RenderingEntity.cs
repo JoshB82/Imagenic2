@@ -23,7 +23,7 @@ public abstract class RenderingEntity : OrientatedEntity
         {
             if (value.ApproxEquals(viewWidth)) return;
             viewWidth = value;
-            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
+            InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
     /// <summary>
@@ -36,7 +36,7 @@ public abstract class RenderingEntity : OrientatedEntity
         {
             if (value.ApproxEquals(viewHeight)) return;
             viewHeight = value;
-            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
+            InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
     /// <summary>
@@ -49,7 +49,7 @@ public abstract class RenderingEntity : OrientatedEntity
         {
             if (value.ApproxEquals(zNear)) return;
             zNear = value;
-            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
+            InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
     /// <summary>
@@ -62,7 +62,7 @@ public abstract class RenderingEntity : OrientatedEntity
         {
             if (value.ApproxEquals(zFar)) return;
             zFar = value;
-            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
+            InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
 

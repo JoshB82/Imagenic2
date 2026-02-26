@@ -88,4 +88,67 @@ public static partial class Transform
         float angle = v1.Angle(v2);
         return Rotate(rotationAxis, angle);
     }
+
+    public static Matrix4x4 QuaternionToMatrix(Quaternion q)
+    {
+        // RIGHT HANDED ROTATION
+        // (ANTI CLOCKWISE WHEN LOOKING AT ORIGIN FROM ARROW TIP TO BEGINNING)
+        return new
+        (
+            1 - 2 * (q.q3 * q.q3 + q.q4 * q.q4),
+            2 * (q.q2 * q.q3 - q.q4 * q.q1),
+            2 * (q.q2 * q.q4 + q.q3 * q.q1),
+            0,
+            2 * (q.q2 * q.q3 + q.q4 * q.q1),
+            1 - 2 * (q.q2 * q.q2 + q.q4 * q.q4),
+            2 * (q.q3 * q.q4 - q.q2 * q.q1),
+            0,
+            2 * (q.q2 * q.q4 - q.q3 * q.q1),
+            2 * (q.q3 * q.q4 + q.q2 * q.q1),
+            1 - 2 * (q.q2 * q.q2 + q.q3 * q.q3),
+            0,
+            0,
+            0,
+            0,
+            1
+        );
+    }
+
+    /// <summary>
+    /// Creates a <see cref="Quaternion"/> for rotation about the x-axis.
+    /// </summary>
+    /// <param name="angle">Angle to rotate by.</param>
+    /// <returns>A rotation <see cref="Quaternion"/>.</returns>
+    public static Quaternion QuaternionRotateX(float angle) => QuaternionRotate(Vector3D.UnitX, angle);
+
+    /// <summary>
+    /// Creates a<see cref="Quaternion"/> for rotation about the y-axis.
+    /// </summary>
+    /// <param name="angle">Angle to rotate by.</param>
+    /// <returns>A rotation <see cref="Quaternion"/>.</returns>
+    public static Quaternion QuaternionRotateY(float angle) => QuaternionRotate(Vector3D.UnitY, angle);
+
+    /// <summary>
+    /// Creates a <see cref="Quaternion"/> for rotation about the z-axis.
+    /// </summary>
+    /// <param name="angle">Angle to rotate by.</param>
+    /// <returns>A rotation <see cref="Quaternion"/>.</returns>
+    public static Quaternion QuaternionRotateZ(float angle) => QuaternionRotate(Vector3D.UnitZ, angle);
+
+    /// <summary>
+    /// Creates a <see cref= "Quaternion"/> that represents a rotation around any axis.
+    /// </summary>
+    /// <param name="axis">Axis that will be rotated around.</param>
+    /// <param name="angle">Angle to rotate by.</param>
+    /// <returns>A rotation <see cref="Quaternion"/>.</returns>
+    public static Quaternion QuaternionRotate(Vector3D axis, float angle) => angle.ApproxEquals(0, 1E-6f) ? Quaternion.Identity : new Quaternion(Cos(angle / 2), axis.Normalise() * Sin(angle / 2)).Normalise();
+
+    public static Quaternion QuaternionRotateBetweenVectors(Vector3D v1, Vector3D v2, Vector3D? axis = null)
+    {
+        if (v1.ApproxEquals(v2, 1E-6f)) return Quaternion.Identity;
+        axis ??= Vector3D.UnitY;
+        Vector3D rotationAxis = v1.ApproxEquals(-v2, 1E-6F) ? (Vector3D)axis : v1.CrossProduct(v2).Normalise();
+        float angle = v1.Angle(v2);
+        return QuaternionRotate(rotationAxis, angle);
+    }
 }

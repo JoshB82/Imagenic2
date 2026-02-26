@@ -46,7 +46,7 @@ public class Mesh : PhysicalEntity
         {
             ThrowIfNull(value);
             structure = value;
-            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
+            InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
 

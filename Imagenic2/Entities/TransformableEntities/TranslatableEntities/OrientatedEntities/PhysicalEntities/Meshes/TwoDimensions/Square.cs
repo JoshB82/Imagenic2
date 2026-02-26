@@ -18,7 +18,7 @@ public sealed class Square : Mesh
             if (value.ApproxEquals(sideLength)) return;
             sideLength = value;
             Scaling = new Vector3D(sideLength, sideLength, 1);
-            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
+            InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
 

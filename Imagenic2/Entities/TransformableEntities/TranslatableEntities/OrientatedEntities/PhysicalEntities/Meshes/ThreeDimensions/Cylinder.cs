@@ -16,7 +16,7 @@ public sealed class Cylinder : Mesh
             if (value.ApproxEquals(radius)) return;
             radius = value;
             Scaling = new Vector3D(radius, height, radius);
-            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
+            InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
     public float Height
@@ -27,7 +27,7 @@ public sealed class Cylinder : Mesh
             if (value.ApproxEquals(height)) return;
             height = value;
             Scaling = new Vector3D(radius, height, radius);
-            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
+            InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
     private int resolution;
@@ -43,7 +43,7 @@ public sealed class Cylinder : Mesh
             {
                 vertex.Scaling = new Vector3D(radius, height, radius);
             }
-            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
+            InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
     

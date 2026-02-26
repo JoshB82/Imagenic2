@@ -16,7 +16,7 @@ public class Cube : Mesh
             if (value.ApproxEquals(sideLength)) return;
             sideLength = value;
             Scaling = new Vector3D(sideLength, sideLength, sideLength);
-            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
+            InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
 

@@ -16,7 +16,7 @@ public sealed class Ring : Mesh
             if (value.ApproxEquals(innerRadius)) return;
             innerRadius = value;
             Structure = MeshStructure.GenerateRingStructure(resolution, innerRadius, outerRadius);
-            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
+            InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
     public float OuterRadius
@@ -27,7 +27,7 @@ public sealed class Ring : Mesh
             if (value.ApproxEquals(outerRadius)) return;
             outerRadius = value;
             Structure = MeshStructure.GenerateRingStructure(resolution, innerRadius, outerRadius);
-            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
+            InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
     private int resolution;
@@ -39,7 +39,7 @@ public sealed class Ring : Mesh
             if (value == resolution) return;
             resolution = value;
             Structure = MeshStructure.GenerateRingStructure(resolution, innerRadius, outerRadius);
-            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
+            InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
     

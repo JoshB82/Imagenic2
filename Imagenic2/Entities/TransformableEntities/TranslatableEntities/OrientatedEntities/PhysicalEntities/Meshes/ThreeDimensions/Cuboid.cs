@@ -19,7 +19,7 @@ public class Cuboid : Mesh
             if (value.ApproxEquals(length)) return;
             length = value;
             Scaling = new Vector3D(length, width, height);
-            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
+            InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
     /// <summary>
@@ -33,7 +33,7 @@ public class Cuboid : Mesh
             if (value.ApproxEquals(width)) return;
             width = value;
             Scaling = new Vector3D(length, width, height);
-            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
+            InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
     /// <summary>
@@ -47,7 +47,7 @@ public class Cuboid : Mesh
             if (value.ApproxEquals(height)) return;
             height = value;
             Scaling = new Vector3D(length, width, height);
-            InvokeRenderEvent(RenderUpdate.NewRender & RenderUpdate.NewShadowMap);
+            InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
 
