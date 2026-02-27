@@ -13,7 +13,7 @@ public abstract class OrientatedEntity : TranslatableEntity
         get => worldOrientation;
         set
         {
-            if (value == worldOrientation) return;
+            //if (value == worldOrientation) return;
             worldOrientation = value;
 
             UpdateRotationMatrix();
@@ -35,10 +35,11 @@ public abstract class OrientatedEntity : TranslatableEntity
 
     private void UpdateRotationMatrix()
     {
-        Matrix4x4 directionForwardRotation = Transform.RotateBetweenVectors(Orientation.ModelDirectionForward, worldOrientation.DirectionForward);
-        Matrix4x4 directionUpRotation = Transform.RotateBetweenVectors((Vector3D)(directionForwardRotation * Orientation.ModelDirectionUp), worldOrientation.DirectionUp);
+        //Matrix4x4 directionForwardRotation = Transform.RotateBetweenVectors(Orientation.ModelDirectionForward, worldOrientation.DirectionForward);
+        //Matrix4x4 directionUpRotation = Transform.RotateBetweenVectors((Vector3D)(directionForwardRotation * Orientation.ModelDirectionUp), worldOrientation.DirectionUp);
 
-        rotationMatrix = directionUpRotation * directionForwardRotation;
+        //rotationMatrix = directionUpRotation * directionForwardRotation;
+        rotationMatrix = Transform.QuaternionToMatrix(worldOrientation.rotation);
 
         UpdateModelToWorldMatrix();
     }

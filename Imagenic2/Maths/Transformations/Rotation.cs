@@ -95,22 +95,10 @@ public static partial class Transform
         // (ANTI CLOCKWISE WHEN LOOKING AT ORIGIN FROM ARROW TIP TO BEGINNING)
         return new
         (
-            1 - 2 * (q.q3 * q.q3 + q.q4 * q.q4),
-            2 * (q.q2 * q.q3 - q.q4 * q.q1),
-            2 * (q.q2 * q.q4 + q.q3 * q.q1),
-            0,
-            2 * (q.q2 * q.q3 + q.q4 * q.q1),
-            1 - 2 * (q.q2 * q.q2 + q.q4 * q.q4),
-            2 * (q.q3 * q.q4 - q.q2 * q.q1),
-            0,
-            2 * (q.q2 * q.q4 - q.q3 * q.q1),
-            2 * (q.q3 * q.q4 + q.q2 * q.q1),
-            1 - 2 * (q.q2 * q.q2 + q.q3 * q.q3),
-            0,
-            0,
-            0,
-            0,
-            1
+            1 - 2 * (q.q3 * q.q3 + q.q4 * q.q4), 2 * (q.q2 * q.q3 + q.q4 * q.q1), 2 * (q.q2 * q.q4 - q.q3 * q.q1), 0,
+            2 * (q.q2 * q.q3 - q.q4 * q.q1), 1 - 2 * (q.q2 * q.q2 + q.q4 * q.q4), 2 * (q.q3 * q.q4 + q.q2 * q.q1), 0,
+            2 * (q.q2 * q.q4 + q.q3 * q.q1), 2 * (q.q3 * q.q4 - q.q2 * q.q1), 1 - 2 * (q.q2 * q.q2 + q.q3 * q.q3), 0,
+            0, 0, 0, 1
         );
     }
 
@@ -150,5 +138,11 @@ public static partial class Transform
         Vector3D rotationAxis = v1.ApproxEquals(-v2, 1E-6F) ? (Vector3D)axis : v1.CrossProduct(v2).Normalise();
         float angle = v1.Angle(v2);
         return QuaternionRotate(rotationAxis, angle);
+    }
+
+    public static Vector3D RotateVectorUsingQuaternion(Vector3D v, Quaternion q)
+    {
+        Quaternion qRotate = q * new Quaternion(0, v) * new Quaternion(q.q1, -q.q2, -q.q3, -q.q4);
+        return new Vector3D(qRotate.q2, qRotate.q3, qRotate.q4);
     }
 }

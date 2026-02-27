@@ -62,38 +62,68 @@ public abstract partial class Camera
 
     public void RotateUp(float angle)
     {
-        Matrix4x4 transformationUp = Transform.Rotate(WorldOrientation.DirectionRight, -angle);
-        WorldOrientation = Orientation.CreateOrientationForwardUp((Vector3D)(transformationUp * WorldOrientation.DirectionForward), (Vector3D)(transformationUp * WorldOrientation.DirectionUp));
+        float semiAngle = angle / 2;
+        Vector3D axis = Transform.RotateVectorUsingQuaternion(Orientation.ModelDirectionRight, WorldOrientation.rotation);
+        Quaternion rotation = new Quaternion(Cos(semiAngle), axis * Sin(-semiAngle));
+        WorldOrientation = new Orientation((rotation * WorldOrientation.rotation).Normalise());
+
+        //Matrix4x4 transformationUp = Transform.Rotate(WorldOrientation.DirectionRight, -angle);
+        //WorldOrientation = Orientation.CreateOrientationForwardUp((Vector3D)(transformationUp * WorldOrientation.DirectionForward), (Vector3D)(transformationUp * WorldOrientation.DirectionUp));
         InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
     }
     public void RotateLeft(float angle)
     {
-        Matrix4x4 transformationLeft = Transform.Rotate(WorldOrientation.DirectionUp, -angle);
-        WorldOrientation = Orientation.CreateOrientationRightForward((Vector3D)(transformationLeft * WorldOrientation.DirectionRight), (Vector3D)(transformationLeft * WorldOrientation.DirectionForward));
+        float semiAngle = angle / 2;
+        Vector3D axis = Transform.RotateVectorUsingQuaternion(Orientation.ModelDirectionUp, WorldOrientation.rotation);
+        Quaternion rotation = new Quaternion(Cos(semiAngle), axis * Sin(-semiAngle));
+        WorldOrientation = new Orientation((rotation * WorldOrientation.rotation).Normalise());
+
+        //Matrix4x4 transformationLeft = Transform.Rotate(WorldOrientation.DirectionUp, -angle);
+        //WorldOrientation = Orientation.CreateOrientationRightForward((Vector3D)(transformationLeft * WorldOrientation.DirectionRight), (Vector3D)(transformationLeft * WorldOrientation.DirectionForward));
         InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
     }
     public void RotateRight(float angle)
     {
-        Matrix4x4 transformationRight = Transform.Rotate(WorldOrientation.DirectionUp, angle);
-        WorldOrientation = Orientation.CreateOrientationRightForward((Vector3D)(transformationRight * WorldOrientation.DirectionRight), (Vector3D)(transformationRight * WorldOrientation.DirectionForward));
+        float semiAngle = angle / 2;
+        Vector3D axis = Transform.RotateVectorUsingQuaternion(Orientation.ModelDirectionUp, WorldOrientation.rotation);
+        Quaternion rotation = new Quaternion(Cos(semiAngle), axis * Sin(semiAngle));
+        WorldOrientation = new Orientation((rotation * WorldOrientation.rotation).Normalise());
+
+        //Matrix4x4 transformationRight = Transform.Rotate(WorldOrientation.DirectionUp, angle);
+        //WorldOrientation = Orientation.CreateOrientationRightForward((Vector3D)(transformationRight * WorldOrientation.DirectionRight), (Vector3D)(transformationRight * WorldOrientation.DirectionForward));
         InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
     }
     public void RotateDown(float angle)
     {
-        Matrix4x4 transformationDown = Transform.Rotate(WorldOrientation.DirectionRight, angle);
-        WorldOrientation = Orientation.CreateOrientationForwardUp((Vector3D)(transformationDown * WorldOrientation.DirectionForward), (Vector3D)(transformationDown * WorldOrientation.DirectionUp));
+        float semiAngle = angle / 2;
+        Vector3D axis = Transform.RotateVectorUsingQuaternion(Orientation.ModelDirectionRight, WorldOrientation.rotation);
+        Quaternion rotation = new Quaternion(Cos(semiAngle), axis * Sin(semiAngle));
+        WorldOrientation = new Orientation((rotation * WorldOrientation.rotation).Normalise());
+
+        //Matrix4x4 transformationDown = Transform.Rotate(WorldOrientation.DirectionRight, angle);
+        //WorldOrientation = Orientation.CreateOrientationForwardUp((Vector3D)(transformationDown * WorldOrientation.DirectionForward), (Vector3D)(transformationDown * WorldOrientation.DirectionUp));
         InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
     }
     public void RollLeft(float angle)
     {
-        Matrix4x4 transformationRollLeft = Transform.Rotate(WorldOrientation.DirectionForward, angle);
-        WorldOrientation = Orientation.CreateOrientationUpRight((Vector3D)(transformationRollLeft * WorldOrientation.DirectionUp), (Vector3D)(transformationRollLeft * WorldOrientation.DirectionRight));
+        float semiAngle = angle / 2;
+        Vector3D axis = Transform.RotateVectorUsingQuaternion(Orientation.ModelDirectionForward, WorldOrientation.rotation);
+        Quaternion rotation = new Quaternion(Cos(semiAngle), axis * Sin(semiAngle));
+        WorldOrientation = new Orientation((rotation * WorldOrientation.rotation).Normalise());
+
+        //Matrix4x4 transformationRollLeft = Transform.Rotate(WorldOrientation.DirectionForward, angle);
+        //WorldOrientation = Orientation.CreateOrientationUpRight((Vector3D)(transformationRollLeft * WorldOrientation.DirectionUp), (Vector3D)(transformationRollLeft * WorldOrientation.DirectionRight));
         InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
     }
     public void RollRight(float angle)
     {
-        Matrix4x4 transformationRollRight = Transform.Rotate(WorldOrientation.DirectionForward, -angle);
-        WorldOrientation = Orientation.CreateOrientationUpRight((Vector3D)(transformationRollRight * WorldOrientation.DirectionUp), (Vector3D)(transformationRollRight * WorldOrientation.DirectionRight));
+        float semiAngle = angle / 2;
+        Vector3D axis = Transform.RotateVectorUsingQuaternion(Orientation.ModelDirectionForward, WorldOrientation.rotation);
+        Quaternion rotation = new Quaternion(Cos(semiAngle), axis * Sin(-semiAngle));
+        WorldOrientation = new Orientation((rotation * WorldOrientation.rotation).Normalise());
+
+        //Matrix4x4 transformationRollRight = Transform.Rotate(WorldOrientation.DirectionForward, -angle);
+        //WorldOrientation = Orientation.CreateOrientationUpRight((Vector3D)(transformationRollRight * WorldOrientation.DirectionUp), (Vector3D)(transformationRollRight * WorldOrientation.DirectionRight));
         InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
     }
 }

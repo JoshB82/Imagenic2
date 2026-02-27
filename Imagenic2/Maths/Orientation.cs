@@ -37,6 +37,8 @@ public struct Orientation : IEquatable<Orientation>
     public static readonly Orientation OrientationNegativeZNegativeX = new(Vector3D.UnitNegativeZ, Vector3D.UnitNegativeX, Vector3D.UnitNegativeY);
     public static readonly Orientation OrientationNegativeZNegativeY = new(Vector3D.UnitNegativeZ, Vector3D.UnitNegativeY, Vector3D.UnitX);
 
+    public Quaternion rotation = Quaternion.Identity;
+
     public Vector3D DirectionForward { get; private set; }
     public Vector3D DirectionUp { get; private set; }
     public Vector3D DirectionRight { get; private set; }
@@ -50,6 +52,12 @@ public struct Orientation : IEquatable<Orientation>
         DirectionForward = directionForward;
         DirectionUp = directionUp;
         DirectionRight = directionRight;
+    }
+
+    public Orientation(Quaternion rotation)
+    {
+        this.rotation = rotation;
+        SetDirectionForwardUp(ExtractForward(rotation), ExtractUp(rotation));
     }
 
     public static Orientation CreateOrientationForwardUp(Vector3D directionForward, Vector3D directionUp)
@@ -73,6 +81,13 @@ public struct Orientation : IEquatable<Orientation>
         return newOrientation;
     }
 
+    public static Orientation CreateOrientationQuaternion(Quaternion rotation)
+    {
+        Orientation newOrientation = new();
+        newOrientation.SetRotation(rotation);
+        return newOrientation;
+    }
+
     #endregion
 
     #region Methods
@@ -86,6 +101,7 @@ public struct Orientation : IEquatable<Orientation>
         DirectionForward = directionForward.Normalise();
         DirectionUp = directionUp.Normalise();
         DirectionRight = Transform.CalculateDirectionRight(directionForward, directionUp).Normalise();
+        rotation = ExtractRotation(DirectionForward, DirectionUp, DirectionRight);
     }
 
     public void SetDirectionUpRight(Vector3D directionUp, Vector3D directionRight)
@@ -97,6 +113,7 @@ public struct Orientation : IEquatable<Orientation>
         DirectionForward = Transform.CalculateDirectionForward(directionUp, directionRight).Normalise();
         DirectionUp = directionUp.Normalise();
         DirectionRight = directionRight.Normalise();
+        rotation = ExtractRotation(DirectionForward, DirectionUp, DirectionRight);
     }
 
     public void SetDirectionRightForward(Vector3D directionRight, Vector3D directionForward)
@@ -108,7 +125,24 @@ public struct Orientation : IEquatable<Orientation>
         DirectionForward = directionForward.Normalise();
         DirectionUp = Transform.CalculateDirectionUp(directionRight, directionForward).Normalise();
         DirectionRight = directionRight.Normalise();
+        rotation = ExtractRotation(DirectionForward, DirectionUp, DirectionRight);
     }
+
+    public void SetRotation(Quaternion rotation)
+    {
+        DirectionForward = ExtractForward(rotation);
+        DirectionUp = ExtractUp(rotation);
+        DirectionRight = Transform.CalculateDirectionRight(DirectionForward, DirectionUp).Normalise();
+        this.rotation = rotation;
+    }
+
+    public static Vector3D ExtractForward(Quaternion q) => new Vector3D(2 * (q.q2 * q.q4 - q.q3 * q.q1), 2 * (q.q3 * q.q4 + q.q2 * q.q1), 1 - 2 * (q.q2 * q.q2 + q.q3 * q.q3));
+
+    public static Vector3D ExtractUp(Quaternion q) => new Vector3D(2 * (q.q2 * q.q3 + q.q4 * q.q1), 1 - 2 * (q.q2 * q.q2 + q.q4 * q.q4), 2 * (q.q3 * q.q4 - q.q2 * q.q1));
+
+    public static Vector3D ExtractRight(Quaternion q) => new Vector3D(1 - 2 * (q.q3 * q.q3 + q.q4 * q.q4), 2 * (q.q2 * q.q3 - q.q4 * q.q1), 2 * (q.q2 * q.q4 + q.q3 * q.q1));
+
+    public static Quaternion ExtractRotation(Vector3D directionForward, Vector3D directionUp, Vector3D directionRight) => throw new NotImplementedException();
 
     public bool Equals(Orientation other) => (DirectionForward, DirectionUp, DirectionRight) == (other.DirectionForward, other.DirectionUp, other.DirectionRight);
 
