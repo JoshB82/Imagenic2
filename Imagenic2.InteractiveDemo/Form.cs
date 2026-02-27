@@ -196,4 +196,13 @@ public partial class Form : System.Windows.Forms.Form
     {
         pictureBox.Image?.Dispose();
     }
+
+    int mouseX = 500, mouseY = 500;
+    private void Form_MouseMove(object sender, MouseEventArgs e)
+    {
+        renderCamera.RotateRight(e.X - mouseX);
+        renderCamera.RotateUp(e.Y - mouseY);
+        mouseX = e.X;
+        mouseY = e.Y;
+    }
 }

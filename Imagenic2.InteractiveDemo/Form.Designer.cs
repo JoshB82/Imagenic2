@@ -52,6 +52,7 @@
             FormClosed += Form_FormClosed;
             KeyDown += Form_KeyDown;
             KeyUp += Form_KeyUp;
+            MouseMove += Form_MouseMove;
             Resize += Form_Resize;
             ((System.ComponentModel.ISupportInitialize)pictureBox).EndInit();
             ResumeLayout(false);

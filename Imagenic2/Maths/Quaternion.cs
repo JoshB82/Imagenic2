@@ -74,9 +74,9 @@ public struct Quaternion : IEquatable<Quaternion>
         return new
         (
             q1.q1 * q2.q1 - q1.q2 * q2.q2 - q1.q3 * q2.q3 - q1.q4 * q2.q4,
-            q1.q1 * q2.q2 - q1.q2 * q2.q1 - q1.q3 * q2.q4 - q1.q4 * q2.q3,
-            q1.q1 * q2.q3 - q1.q2 * q2.q4 - q1.q3 * q2.q1 - q1.q4 * q2.q2,
-            q1.q1 * q2.q4 - q1.q2 * q2.q3 - q1.q3 * q2.q2 - q1.q4 * q2.q1
+            q1.q1 * q2.q2 + q1.q2 * q2.q1 + q1.q3 * q2.q4 - q1.q4 * q2.q3,
+            q1.q1 * q2.q3 - q1.q2 * q2.q4 + q1.q3 * q2.q1 + q1.q4 * q2.q2,
+            q1.q1 * q2.q4 + q1.q2 * q2.q3 - q1.q3 * q2.q2 + q1.q4 * q2.q1
         );
     }
 
