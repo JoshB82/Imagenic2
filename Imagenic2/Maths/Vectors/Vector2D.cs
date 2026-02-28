@@ -80,8 +80,8 @@ public struct Vector2D : IApproximatelyEquatable<Vector2D>
 
     public readonly float SquaredMagnitude() => x * x + y * y;
 
-    public readonly override string ToString() => $"({x}, {y})";
-    public string ToString(string? format, IFormatProvider? formatProvider) => $"({x.ToString(format, formatProvider)}, {y.ToString(format, formatProvider)})";
+    public readonly override string ToString() => $"(x: {x}, y: {y})";
+    public string ToString(string? format, IFormatProvider? formatProvider) => $"(x: {x.ToString(format, formatProvider)}, y: {y.ToString(format, formatProvider)})";
 
     public static Vector2D operator checked *(Vector2D v, float scalar) => checked(new(v.x * scalar, v.y * scalar));
     public static Vector2D operator *(Vector2D v, float scalar) => new(v.x * scalar, v.y * scalar);
@@ -114,7 +114,7 @@ public struct Vector2D : IApproximatelyEquatable<Vector2D>
 
     public override readonly bool Equals(object obj) => this == (Vector2D)obj;
 
-    public override int GetHashCode() => (x, y).GetHashCode();
+    public override readonly int GetHashCode() => (x, y).GetHashCode();
 
     public static implicit operator Vector3D(Vector2D v) => new(v);
 

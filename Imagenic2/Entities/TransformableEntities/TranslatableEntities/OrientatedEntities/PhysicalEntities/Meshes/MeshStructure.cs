@@ -1,6 +1,8 @@
-﻿namespace Imagenic2.Core.Entities;
+﻿using Imagenic2.Core.Enums;
 
-public class MeshStructure
+namespace Imagenic2.Core.Entities;
+
+public sealed class MeshStructure
 {
     #region Fields and Properties
 
@@ -9,6 +11,8 @@ public class MeshStructure
     public IReadOnlyList<Triangle> Triangles { get; set; }
     public IReadOnlyList<Face> Faces { get; set; }
     public IList<Texture> Textures { get; set; }
+
+    public MeshDimension MeshDimension { get; set; }
 
     // Line
     private static readonly IReadOnlyList<Vertex> lineVertices = new Vertex[2]
@@ -20,7 +24,7 @@ public class MeshStructure
     {
         new Edge(lineVertices[0], lineVertices[1]) // 0
     };
-    internal static readonly MeshStructure lineStructure = new MeshStructure(lineVertices, lineEdges);
+    internal static readonly MeshStructure lineStructure = new MeshStructure(MeshDimension._1D, lineVertices, lineEdges);
 
     // Plane
     private static readonly IReadOnlyList<Vertex> planeVertices = new Vertex[4]
@@ -46,7 +50,7 @@ public class MeshStructure
     {
         new Face(planeTriangles[0], planeTriangles[1]) // 0
     };
-    internal static readonly MeshStructure planeStructure = new MeshStructure(planeVertices, planeEdges, planeTriangles, planeFaces);
+    internal static readonly MeshStructure planeStructure = new MeshStructure(MeshDimension._2D, planeVertices, planeEdges, planeTriangles, planeFaces);
 
     // Cube
     private static float radical = MathF.Sqrt(3) / 3;
@@ -100,18 +104,20 @@ public class MeshStructure
         new Face(cuboidTriangles[8], cuboidTriangles[9]), // 4 [Top]
         new Face(cuboidTriangles[10], cuboidTriangles[11]) // 5 [Bottom]
     };
-    internal static readonly MeshStructure cubeStructure = new MeshStructure(cuboidVertices, cuboidEdges, cuboidTriangles, cuboidFaces);
+    internal static readonly MeshStructure cubeStructure = new MeshStructure(MeshDimension._3D, cuboidVertices, cuboidEdges, cuboidTriangles, cuboidFaces);
 
     #endregion
 
     #region Constructors
 
-    public MeshStructure(IReadOnlyList<Vertex> vertices,
+    public MeshStructure(MeshDimension meshDimension,
+                         IReadOnlyList<Vertex> vertices,
                          IReadOnlyList<Edge>? edges = null,
                          IReadOnlyList<Triangle>? triangles = null,
                          IReadOnlyList<Face>? faces = null,
                          IList<Texture>? textures = null)
     {
+        MeshDimension = meshDimension;
         Vertices = vertices;
         Edges = edges;
         Triangles = triangles;
@@ -179,7 +185,7 @@ public class MeshStructure
         IReadOnlyList<Triangle> triangles = GenerateCircleTriangles(vertices, resolution);
         IReadOnlyList<Face> faces = GenerateCircleFaces(triangles);
 
-        return new MeshStructure(vertices, edges, triangles, faces);
+        return new MeshStructure(MeshDimension._2D, vertices, edges, triangles, faces);
     }
 
     internal static IReadOnlyList<Vertex> GenerateConeVertices(MeshStructure circleStructure)
@@ -236,7 +242,7 @@ public class MeshStructure
         IReadOnlyList<Triangle> triangles = GenerateConeTriangles(circleStructure, vertices, resolution);
         IReadOnlyList<Face> faces = GenerateConeFaces(circleStructure, triangles, resolution);
 
-        return new MeshStructure(vertices, edges, triangles, faces);
+        return new MeshStructure(MeshDimension._3D, vertices, edges, triangles, faces);
     }
 
     internal static IReadOnlyList<Vertex> GenerateRingVertices(int resolution, float innerRadius, float outerRadius)
@@ -300,7 +306,7 @@ public class MeshStructure
         IReadOnlyList<Triangle> triangles = GenerateRingTriangles(vertices, resolution);
         IReadOnlyList<Face> faces = GenerateRingFaces(triangles);
 
-        return new MeshStructure(vertices, edges, triangles, faces);
+        return new MeshStructure(MeshDimension._2D, vertices, edges, triangles, faces);
     }
 
     internal static IReadOnlyList<Vertex> GenerateCylinderVertices(MeshStructure topCircleStructure, MeshStructure bottomCircleStructure)
@@ -359,7 +365,7 @@ public class MeshStructure
         IReadOnlyList<Triangle> triangles = GenerateCylinderTriangles(topCircleStructure, bottomCircleStructure, resolution);
         IReadOnlyList<Face> faces = GenerateCylinderFaces(triangles, topCircleStructure, bottomCircleStructure, resolution);
 
-        return new MeshStructure(vertices, edges, triangles, faces);
+        return new MeshStructure(MeshDimension._3D, vertices, edges, triangles, faces);
     }
 
     #endregion

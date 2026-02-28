@@ -1,4 +1,5 @@
 ﻿using Imagenic2.Core.Entities;
+using Imagenic2.Core.Enums;
 using System.Buffers;
 using System.Drawing;
 
@@ -86,9 +87,11 @@ public class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagenic2.Core
                         Matrix4x4 modelToView = RenderingOptions.RenderCamera.WorldToView * triangle.P1.ModelToWorld;
                         TransformTriangleVertices(triangle, modelToView);
 
-                        Vector3D normal = Vector3D.NormalFromPlane((Vector3D)(triangle.TransformedP1), (Vector3D)(triangle.TransformedP2), (Vector3D)(triangle.TransformedP3));
-                        if (normal * (Vector3D)(triangle.TransformedP1) >= 0) continue;
-
+                        if (mesh.Structure.MeshDimension == MeshDimension._3D)
+                        {
+                            Vector3D normal = Vector3D.NormalFromPlane((Vector3D)(triangle.TransformedP1), (Vector3D)(triangle.TransformedP2), (Vector3D)(triangle.TransformedP3));
+                            if (normal * (Vector3D)(triangle.TransformedP1) >= 0) continue;
+                        }
                         triangleQueue.Enqueue(triangle);
                         ClipTriangles(triangleQueue, RenderingOptions.RenderCamera.ViewClippingPlanes);
                         if (triangleQueue.Count == 0) continue;

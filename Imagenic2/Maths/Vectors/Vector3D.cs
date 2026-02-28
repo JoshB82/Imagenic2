@@ -91,7 +91,7 @@ public struct Vector3D : IEquatable<Vector3D>
         }
         return this / Magnitude();
     }
-    public bool TryNormalise(out Vector3D v, float epsilon = float.Epsilon)
+    public readonly bool TryNormalise(out Vector3D v, float epsilon = float.Epsilon)
     {
         v = Zero;
         if (IsZero(epsilon))
@@ -107,8 +107,8 @@ public struct Vector3D : IEquatable<Vector3D>
     public readonly float Magnitude() => Sqrt(SquaredMagnitude());
     public readonly float SquaredMagnitude() => x * x + y * y + z * z;
 
-    public override readonly string ToString() => $"({x}, {y}, {z})";
-    public readonly string ToString(string? format, IFormatProvider? formatProvider) => $"({x.ToString(format, formatProvider)}, {y.ToString(format, formatProvider)}, {z.ToString(format, formatProvider)})";
+    public override readonly string ToString() => $"(x: {x}, y: {y}, z: {z})";
+    public readonly string ToString(string? format, IFormatProvider? formatProvider) => $"(x: {x.ToString(format, formatProvider)}, y: {y.ToString(format, formatProvider)}, z: {z.ToString(format, formatProvider)})";
     
     // Operators
     public static Vector3D operator checked +(Vector3D v1, Vector3D v2) => checked(new(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z));
@@ -142,7 +142,7 @@ public struct Vector3D : IEquatable<Vector3D>
 
     public override readonly bool Equals(object obj) => this == (Vector3D)obj;
 
-    public override int GetHashCode() => (x, y, z).GetHashCode();
+    public override readonly int GetHashCode() => (x, y, z).GetHashCode();
 
     #endregion
 }

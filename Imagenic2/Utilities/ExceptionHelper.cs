@@ -40,6 +40,12 @@ internal static class ExceptionHelper
         if (param4 is null) throw new ArgumentNullException(param4Name);
     }
 
+    internal static void ThrowIfApproxZero(Quaternion param, float epsilon,
+        [CallerArgumentExpression(nameof(param))] string? paramName = null)
+    {
+        if (param.ApproxEquals(Quaternion.Zero, epsilon)) throw new CannotBeZeroException($"{paramName} cannot equal zero.");
+    }
+
     internal static void ThrowIfApproxZero(Vector3D param, float epsilon,
         [CallerArgumentExpression(nameof(param))] string? paramName = null)
     {

@@ -147,11 +147,11 @@ public struct Orientation : IEquatable<Orientation>
         this.rotation = rotation;
     }
 
-    public static Vector3D ExtractForward(Quaternion q) => new Vector3D(2 * (q.q2 * q.q4 - q.q3 * q.q1), 2 * (q.q3 * q.q4 + q.q2 * q.q1), 1 - 2 * (q.q2 * q.q2 + q.q3 * q.q3));
+    public static Vector3D ExtractForward(Quaternion q) => new Vector3D(2 * (q.x * q.z - q.y * q.w), 2 * (q.y * q.z + q.x * q.w), 1 - 2 * (q.x * q.x + q.y * q.y));
 
-    public static Vector3D ExtractUp(Quaternion q) => new Vector3D(2 * (q.q2 * q.q3 + q.q4 * q.q1), 1 - 2 * (q.q2 * q.q2 + q.q4 * q.q4), 2 * (q.q3 * q.q4 - q.q2 * q.q1));
+    public static Vector3D ExtractUp(Quaternion q) => new Vector3D(2 * (q.x * q.y + q.z * q.w), 1 - 2 * (q.x * q.x + q.z * q.z), 2 * (q.y * q.z - q.x * q.w));
 
-    public static Vector3D ExtractRight(Quaternion q) => new Vector3D(1 - 2 * (q.q3 * q.q3 + q.q4 * q.q4), 2 * (q.q2 * q.q3 - q.q4 * q.q1), 2 * (q.q2 * q.q4 + q.q3 * q.q1));
+    public static Vector3D ExtractRight(Quaternion q) => new Vector3D(1 - 2 * (q.y * q.y + q.z * q.z), 2 * (q.x * q.y - q.z * q.w), 2 * (q.x * q.z + q.y * q.w));
 
     public static Quaternion ExtractRotation(Vector3D directionForward, Vector3D directionUp, Vector3D directionRight)
     {

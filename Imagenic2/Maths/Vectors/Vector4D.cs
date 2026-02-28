@@ -102,9 +102,11 @@ public struct Vector4D
 
     public readonly float Magnitude() => Sqrt(SquaredMagnitude());
     public readonly float SquaredMagnitude() => x * x + y * y + z * z + w * w;
-    public override int GetHashCode() => (x, y, z, w).GetHashCode();
-    public override readonly string ToString() => $"({x}, {y}, {z}, {w})";
-    public readonly string ToString(string? format, IFormatProvider? formatProvider) => $"({x.ToString(format, formatProvider)}, {y.ToString(format, formatProvider)}, {z.ToString(format, formatProvider)}, {w.ToString(format, formatProvider)})";
+    public override readonly int GetHashCode() => (x, y, z, w).GetHashCode();
+
+    public override readonly string ToString() => $"(x: {x}, y: {y}, z: {z}, w: {w})";
+    public readonly string ToString(string? format, IFormatProvider? formatProvider) => $"(x: {x.ToString(format, formatProvider)}, y: {y.ToString(format, formatProvider)}, z: {z.ToString(format, formatProvider)}, w: {w.ToString(format, formatProvider)})";
+
     public static Vector4D operator checked +(Vector4D v1, Vector4D v2) => checked(new(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z, v1.w + v2.w));
     public static Vector4D operator +(Vector4D v1, Vector4D v2) => new(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z, v1.w + v2.w);
 

@@ -11,7 +11,10 @@ public partial class Form : System.Windows.Forms.Form
     private readonly Camera renderCamera;
     private Rasteriser<Imagenic2.Core.Images.Bitmap> renderer;
     private HashSet<Keys> keysPressed = new();
-    private float fieldOfView = MathF.PI / 3; // 60 degrees
+    private const float fieldOfView = MathF.PI / 3; // 60 degrees
+
+    private bool mouseControl = false;
+    private bool keyboardControl = true;
 
     public Form()
     {
@@ -151,19 +154,19 @@ public partial class Form : System.Windows.Forms.Form
                     break;
                 case Keys.I:
                     // Rotate up
-                    renderCamera.RotateUp(tiltAngle * deltaTime);
-                    break;
-                case Keys.J:
-                    // Rotate left
-                    renderCamera.RotateLeft(tiltAngle * deltaTime);
-                    break;
-                case Keys.L:
-                    // Rotate right
-                    renderCamera.RotateRight(tiltAngle * deltaTime);
+                    if (keyboardControl) renderCamera.RotateUp(tiltAngle * deltaTime);
                     break;
                 case Keys.K:
                     // Rotate down
-                    renderCamera.RotateDown(tiltAngle * deltaTime);
+                    if (keyboardControl) renderCamera.RotateDown(tiltAngle * deltaTime);
+                    break;
+                case Keys.J:
+                    // Rotate left
+                    if (keyboardControl) renderCamera.RotateLeft(tiltAngle * deltaTime);
+                    break;
+                case Keys.L:
+                    // Rotate right
+                    if (keyboardControl) renderCamera.RotateRight(tiltAngle * deltaTime);
                     break;
                 case Keys.U:
                     // Roll left
@@ -198,11 +201,31 @@ public partial class Form : System.Windows.Forms.Form
     }
 
     int mouseX = 500, mouseY = 500;
-    private void Form_MouseMove(object sender, MouseEventArgs e)
+    private void pictureBox_MouseMove(object sender, MouseEventArgs e)
     {
-        renderCamera.RotateRight(e.X - mouseX);
-        renderCamera.RotateUp(e.Y - mouseY);
-        mouseX = e.X;
-        mouseY = e.Y;
+        const float mouseDampener = 0.001f;
+        if (mouseControl)
+        {
+            renderCamera.RotateLeft((e.X - mouseX) * mouseDampener);
+            renderCamera.RotateDown((e.Y - mouseY) * mouseDampener);
+            mouseX = e.X;
+            mouseY = e.Y;
+        }
+    }
+
+    private void mouseToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        keyboardToolStripMenuItem.Checked = false;
+        mouseToolStripMenuItem.Checked = true;
+        keyboardControl = false;
+        mouseControl = true;
+    }
+
+    private void keyboardToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        keyboardToolStripMenuItem.Checked = true;
+        mouseToolStripMenuItem.Checked = false;
+        keyboardControl = true;
+        mouseControl = false;
     }
 }
