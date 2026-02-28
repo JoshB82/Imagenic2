@@ -24,7 +24,7 @@ public partial class Form : System.Windows.Forms.Form
         );
 
         Cone cone = new Cone(
-            worldOrigin: new Vector3D(30, 0, 0),
+            worldOrigin: new Vector3D(75, 0, 0),
             worldOrientation: Imagenic2.Core.Maths.Orientation.OrientationZY,
             height: 20,
             radius: 10,

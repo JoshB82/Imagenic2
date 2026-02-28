@@ -47,44 +47,72 @@ public class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagenic2.Core
         {
             if (physicalEntity is Mesh mesh)
             {
-                foreach (Triangle triangle in mesh.Structure.Triangles)
+                // Draw edges
+                if (mesh.DrawEdges)
                 {
-                    triangle.TransformedP1 = new Vector4D(triangle.P1.WorldOrigin, 1);
-                    triangle.TransformedP2 = new Vector4D(triangle.P2.WorldOrigin, 1);
-                    triangle.TransformedP3 = new Vector4D(triangle.P3.WorldOrigin, 1);
-
-                    Matrix4x4 modelToView = RenderingOptions.RenderCamera.WorldToView * triangle.P1.ModelToWorld;
-                    TransformTriangleVertices(triangle, modelToView);
-
-                    Vector3D normal = Vector3D.NormalFromPlane((Vector3D)(triangle.TransformedP1), (Vector3D)(triangle.TransformedP2), (Vector3D)(triangle.TransformedP3));
-                    if (normal * RenderingOptions.RenderCamera.WorldOrientation.DirectionForward > 0)
+                    foreach (Edge edge in mesh.Structure.Edges)
                     {
-                        continue;
-                    }
+                        edge.TransformedP1 = new Vector4D(edge.Vertex1.WorldOrigin, 1);
+                        edge.TransformedP2 = new Vector4D(edge.Vertex2.WorldOrigin, 1);
 
-                    triangleQueue.Enqueue(triangle);
-                    ClipTriangles(triangleQueue, RenderingOptions.RenderCamera.ViewClippingPlanes);
-                    if (triangleQueue.Count == 0) continue;
-
-                    foreach (Triangle clippedTriangle in triangleQueue)
-                    {
-                        TransformTriangleVertices(clippedTriangle, RenderingOptions.RenderCamera.viewToScreen);
-                        if (RenderingOptions.RenderCamera is PerspectiveCamera)
+                        Matrix4x4 modelToView = RenderingOptions.RenderCamera.WorldToView * edge.Vertex1.ModelToWorld;
+                        TransformEdgeVertices(edge, modelToView);
+                        if (ClipEdge(edge, RenderingOptions.RenderCamera.ViewClippingPlanes))
                         {
-                            clippedTriangle.TransformedP1 /= clippedTriangle.TransformedP1.w;
-                            clippedTriangle.TransformedP2 /= clippedTriangle.TransformedP2.w;
-                            clippedTriangle.TransformedP3 /= clippedTriangle.TransformedP3.w;
+                            TransformEdgeVertices(edge, RenderingOptions.RenderCamera.viewToScreen);
+                            if (RenderingOptions.RenderCamera is PerspectiveCamera)
+                            {
+                                edge.TransformedP1 /= edge.TransformedP1.w;
+                                edge.TransformedP2 /= edge.TransformedP2.w;
+                            }
+                            if (ClipEdge(edge, Renderer<TImage>.ScreenClippingPlanes))
+                            {
+                                TransformEdgeVertices(edge, RenderingOptions.ScreenToWindow);
+                                InterpolateEdge(edge, colourBuffer, zBuffer);
+                            }
                         }
                     }
+                }
 
-                    ClipTriangles(triangleQueue, Renderer<TImage>.ScreenClippingPlanes);
-                    foreach (Triangle clippedTriangle in triangleQueue)
+                // Draw triangles
+                if (mesh.DrawFaces)
+                {
+                    foreach (Triangle triangle in mesh.Structure.Triangles)
                     {
-                        TransformTriangleVertices(clippedTriangle, RenderingOptions.ScreenToWindow);
-                        Interpolate(clippedTriangle, colourBuffer, zBuffer);
-                    }
+                        triangle.TransformedP1 = new Vector4D(triangle.P1.WorldOrigin, 1);
+                        triangle.TransformedP2 = new Vector4D(triangle.P2.WorldOrigin, 1);
+                        triangle.TransformedP3 = new Vector4D(triangle.P3.WorldOrigin, 1);
 
-                    triangleQueue.Clear();
+                        Matrix4x4 modelToView = RenderingOptions.RenderCamera.WorldToView * triangle.P1.ModelToWorld;
+                        TransformTriangleVertices(triangle, modelToView);
+
+                        Vector3D normal = Vector3D.NormalFromPlane((Vector3D)(triangle.TransformedP1), (Vector3D)(triangle.TransformedP2), (Vector3D)(triangle.TransformedP3));
+                        if (normal * (Vector3D)(triangle.TransformedP1) >= 0) continue;
+
+                        triangleQueue.Enqueue(triangle);
+                        ClipTriangles(triangleQueue, RenderingOptions.RenderCamera.ViewClippingPlanes);
+                        if (triangleQueue.Count == 0) continue;
+
+                        foreach (Triangle clippedTriangle in triangleQueue)
+                        {
+                            TransformTriangleVertices(clippedTriangle, RenderingOptions.RenderCamera.viewToScreen);
+                            if (RenderingOptions.RenderCamera is PerspectiveCamera)
+                            {
+                                clippedTriangle.TransformedP1 /= clippedTriangle.TransformedP1.w;
+                                clippedTriangle.TransformedP2 /= clippedTriangle.TransformedP2.w;
+                                clippedTriangle.TransformedP3 /= clippedTriangle.TransformedP3.w;
+                            }
+                        }
+
+                        ClipTriangles(triangleQueue, Renderer<TImage>.ScreenClippingPlanes);
+                        foreach (Triangle clippedTriangle in triangleQueue)
+                        {
+                            TransformTriangleVertices(clippedTriangle, RenderingOptions.ScreenToWindow);
+                            InterpolateTriangle(clippedTriangle, colourBuffer, zBuffer);
+                        }
+
+                        triangleQueue.Clear();
+                    }
                 }
             }
         }
@@ -97,6 +125,78 @@ public class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagenic2.Core
         }
 
         return null;
+    }
+
+    private static void TransformEdgeVertices(Edge edge, Matrix4x4 transformationMatrix)
+    {
+        // Transform vertices
+        edge.TransformedP1 = transformationMatrix * edge.TransformedP1;
+        edge.TransformedP2 = transformationMatrix * edge.TransformedP2;
+    }
+
+    private static bool ClipEdge(Edge edge, ClippingPlane[] clippingPlanes)
+    {
+        foreach (ClippingPlane clippingPlane in clippingPlanes)
+        {
+            Vector3D p1 = (Vector3D)(edge.TransformedP1);
+            Vector3D p2 = (Vector3D)(edge.TransformedP2);
+            bool p1Inside = Vector3D.PointDistanceFromPlane(p1, clippingPlane.Point, clippingPlane.Normal) >= 0;
+            bool p2Inside = Vector3D.PointDistanceFromPlane(p2, clippingPlane.Point, clippingPlane.Normal) >= 0;
+
+            if (p1Inside && p2Inside)
+            {
+                // Both points are inside; don't change edge
+            }
+            else if (p1Inside)
+            {
+                // One point is inside; change edge
+                edge.TransformedP2 = new Vector4D(Vector3D.LineIntersectPlane(p1, p2, clippingPlane.Point, clippingPlane.Normal, out float _), 1);
+            }
+            else if (p2Inside)
+            {
+                // One point is inside; change edge
+                edge.TransformedP1 = new Vector4D(Vector3D.LineIntersectPlane(p2, p1, clippingPlane.Point, clippingPlane.Normal, out float _), 1);
+            }
+            else
+            {
+                // No points are inside; indicate that edge should not be displayed
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static void InterpolateEdge(Edge edge, Buffer2D<Color> colourBuffer, Buffer2D<float> zBuffer)
+    {
+        // Extract values
+        int x1 = edge.TransformedP1.x.RoundToInt();
+        int y1 = edge.TransformedP1.y.RoundToInt();
+        float z1 = edge.TransformedP1.z;
+        int x2 = edge.TransformedP2.x.RoundToInt();
+        int y2 = edge.TransformedP2.y.RoundToInt();
+        float z2 = edge.TransformedP2.z;
+
+        float tStep = 1 / Max(Abs(x2 - x1), Abs(y2 - y1));
+
+        for (float t = 0; t <= 1; t += tStep)
+        {
+            int x = ((1 - t) * x1 + t * x2).RoundToInt();
+            int y = ((1 - t) * y1 + t * y2).RoundToInt();
+            float z = (1 - t) * z1 + t * z2;
+
+            OnInterpolation(edge, colourBuffer, zBuffer, x, y, z);
+        }
+    }
+
+    private static void OnInterpolation(Edge edge, Buffer2D<Color> colourBuffer, Buffer2D<float> zBuffer, int x, int y, float z)
+    {
+        if (z.ApproxLessThan(zBuffer.Values[x][y], 1E-4f))
+        {
+            zBuffer.Values[x][y] = z;
+            Color colour = ((SolidEdgeStyle)(edge.EdgeStyle)).Colour;
+            colourBuffer.Values[x][y] = colour;
+        }
     }
 
     private static void TransformTriangleVertices(Triangle triangle, Matrix4x4 transformationMatrix)
@@ -201,7 +301,7 @@ public class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagenic2.Core
         }
     }
 
-    private static void Interpolate(Triangle triangle, Buffer2D<Color> colourBuffer, Buffer2D<float> zBuffer)
+    private static void InterpolateTriangle(Triangle triangle, Buffer2D<Color> colourBuffer, Buffer2D<float> zBuffer)
     {
         // Extract values
         int x1 = triangle.TransformedP1.x.RoundToInt();

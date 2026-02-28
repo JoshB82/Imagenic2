@@ -6,7 +6,7 @@ public class Mesh : PhysicalEntity
 {
     #region Fields and Properties
 
-    private bool drawEdges, drawTriangles, drawFaces;
+    private bool drawEdges = true, drawTriangles = true, drawFaces = true;
     public bool DrawEdges
     {
         get => drawEdges;

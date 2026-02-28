@@ -189,7 +189,7 @@ public class MeshStructure
         {
             coneVertices[i] = circleStructure.Vertices[i];
         }
-        coneVertices[circleStructure.Vertices.Count] = new Vertex(Vector3D.UnitZ);
+        coneVertices[circleStructure.Vertices.Count] = new Vertex(Vector3D.UnitY);
         return coneVertices.AsReadOnly();
     }
 
