@@ -5,7 +5,7 @@ using System.Drawing;
 
 namespace Imagenic2.Core.Renderers.Rasterising;
 
-public class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagenic2.Core.Images.Image
+public partial class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagenic2.Core.Images.Image
 {
     #region Fields and Properties
 
@@ -111,7 +111,8 @@ public class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagenic2.Core
                         foreach (Triangle clippedTriangle in triangleQueue)
                         {
                             TransformTriangleVertices(clippedTriangle, RenderingOptions.ScreenToWindow);
-                            InterpolateTriangle(clippedTriangle, colourBuffer, zBuffer);
+                            //InterpolateTriangle(clippedTriangle, colourBuffer, zBuffer);
+                            InterpolateTriangle(clippedTriangle);
                         }
 
                         triangleQueue.Clear();
