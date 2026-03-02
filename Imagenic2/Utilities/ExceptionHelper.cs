@@ -58,6 +58,18 @@ internal static class ExceptionHelper
     {
         if (!(param1 * param2).ApproxEquals(0, epsilon)) throw new MustBeOrthogonalException($"{param1Name} and {param2Name} must be orthogonal.");
     }
+
+    internal static void ThrowIfNotWithinRange(float param, float inclusiveStart, float inclusiveEnd,
+        [CallerArgumentExpression(nameof(param))] string? paramName = null)
+    {
+        if (param < inclusiveStart || param > inclusiveEnd) throw new ArgumentOutOfRangeException(paramName);
+    }
+
+    internal static void ThrowIfNonpositive(float param,
+        [CallerArgumentExpression(nameof(param))] string? paramName = null)
+    {
+        if (param <= 0) throw new ArgumentOutOfRangeException(paramName);
+    }
 }
 
 public class CannotBeZeroException : Exception

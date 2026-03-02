@@ -29,6 +29,8 @@ public partial class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagen
 
     public async override Task<TImage?> RenderAsync(CancellationToken token = default)
     {
+        if (!NewRenderNeeded) return LatestRender;
+
         if (RenderingOptions.RenderCamera is null)
         {
             throw new InvalidOperationException("Render camera must be set in order to render an image.");
@@ -56,7 +58,7 @@ public partial class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagen
                         edge.TransformedP1 = new Vector4D(edge.Vertex1.WorldOrigin, 1);
                         edge.TransformedP2 = new Vector4D(edge.Vertex2.WorldOrigin, 1);
 
-                        Matrix4x4 modelToView = RenderingOptions.RenderCamera.WorldToView * edge.Vertex1.ModelToWorld;
+                        Matrix4x4 modelToView = RenderingOptions.RenderCamera.WorldToView * mesh.ModelToWorld;
                         TransformEdgeVertices(edge, modelToView);
                         if (ClipEdge(edge, RenderingOptions.RenderCamera.ViewClippingPlanes))
                         {
@@ -84,7 +86,7 @@ public partial class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagen
                         triangle.TransformedP2 = new Vector4D(triangle.P2.WorldOrigin, 1);
                         triangle.TransformedP3 = new Vector4D(triangle.P3.WorldOrigin, 1);
 
-                        Matrix4x4 modelToView = RenderingOptions.RenderCamera.WorldToView * triangle.P1.ModelToWorld;
+                        Matrix4x4 modelToView = RenderingOptions.RenderCamera.WorldToView * mesh.ModelToWorld;
                         TransformTriangleVertices(triangle, modelToView);
 
                         if (mesh.Structure.MeshDimension == MeshDimension._3D)
@@ -125,7 +127,7 @@ public partial class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagen
 
         if (typeof(TImage) == typeof(Imagenic2.Core.Images.Bitmap))
         {
-            return new Imagenic2.Core.Images.Bitmap(colourBuffer) as TImage;
+            return LatestRender = new Imagenic2.Core.Images.Bitmap(colourBuffer) as TImage;
         }
 
         return null;

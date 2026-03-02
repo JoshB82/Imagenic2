@@ -50,20 +50,6 @@ public class Mesh : PhysicalEntity
         }
     }
 
-    public override Vector3D Scaling
-    {
-        get => base.Scaling;
-        set
-        {
-            base.Scaling = value;
-
-            foreach (Vertex vertex in Structure.Vertices)
-            {
-                vertex.Scaling = Scaling;
-            }
-        }
-    }
-
     #endregion
 
     #region Constructors
@@ -78,6 +64,15 @@ public class Mesh : PhysicalEntity
     #endregion
 
     #region Methods
+
+    public override Mesh ShallowCopy() => (Mesh)MemberwiseClone();
+
+    public override Mesh DeepCopy()
+    {
+        var mesh = (Mesh)base.DeepCopy();
+        mesh.Structure = Structure;
+        return mesh;
+    }
 
     #endregion
 }

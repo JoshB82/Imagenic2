@@ -1,6 +1,6 @@
 ﻿using Imagenic2.Core.Entities;
+using Imagenic2.Core.Enums;
 using Imagenic2.Core.Maths.Transformations;
-using Imagenic2.Core.Renderers.Rasterising;
 using System.Drawing;
 
 namespace Imagenic2.Core.Renderers;
@@ -9,10 +9,9 @@ public sealed class RenderingOptions
 {
     #region Fields and Properties
 
-    //internal Rasteriser<Imagenic2.Core.Images.Bitmap> Renderer { get; set; }
+    internal event Action<RenderUpdate>? RenderAlteringPropertyChanged;
 
-    public Matrix4x4 WindowToScreen { get; private set; }
-
+    // Render size
     private int renderWidth = 1920, renderHeight = 1080;
     public int RenderWidth
     {
@@ -20,13 +19,9 @@ public sealed class RenderingOptions
         set
         {
             if (value == renderWidth) return;
-            if (value < 0)
-            {
-                // error!
-            }
+            ThrowIfNonpositive(value);
             renderWidth = value;
             UpdateScreenToWindow();
-            UpdateBuffers();
         }
     }
     public int RenderHeight
@@ -35,22 +30,13 @@ public sealed class RenderingOptions
         set
         {
             if (value == renderHeight) return;
-            if (value < 0)
-            {
-                // error!
-            }
+            ThrowIfNonpositive(value);
             renderHeight = value;
             UpdateScreenToWindow();
-            UpdateBuffers();
         }
     }
 
-    private void UpdateBuffers()
-    {
-        //Renderer.colourBuffer = new Buffer2D<Color>(RenderWidth, RenderHeight);
-        //Renderer.zBuffer = new Buffer2D<float>(RenderWidth, RenderHeight);
-    }
-
+    // Render camera
     private Camera renderCamera;
     public Camera RenderCamera
     {
@@ -58,10 +44,12 @@ public sealed class RenderingOptions
         set
         {
             renderCamera = value;
-            //NewRenderNeeded = true;
+            renderCamera.RenderAlteringPropertyChanged += args => InvokeRenderEvent(args);
+            InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
 
+    // Background colour
     private Color backgroundColour = Color.White;
     public Color BackgroundColour
     {
@@ -69,27 +57,49 @@ public sealed class RenderingOptions
         set
         {
             backgroundColour = value;
-            //InvokeRenderEvent(RenderUpdate.NewRender);
+            InvokeRenderEvent(RenderUpdate.NewRender);
         }
     }
 
+    // Matrices
+    public Matrix4x4 WindowToScreen { get; private set; }
     public Matrix4x4 ScreenToWindow { get; private set; }
     private static readonly Matrix4x4 windowTranslate = Transform.Translate(new Vector3D(1, 1, 0));
     public void UpdateScreenToWindow()
     {
-
         ScreenToWindow = Transform.Scale(0.5f * (renderWidth - 1), 0.5f * (renderHeight - 1), 1) * windowTranslate;
     }
     
-    public IEnumerable<PhysicalEntity>? PhysicalEntitiesToRender { get; set; } = new List<PhysicalEntity>();
+    public List<PhysicalEntity>? PhysicalEntitiesToRender { get; private set; } = new List<PhysicalEntity>();
 
     #endregion
 
     #region Constructors
 
+    public RenderingOptions(Camera renderCamera)
+    {
+        RenderCamera = renderCamera;
+    }
+
     #endregion
 
     #region Methods
+
+    public RenderingOptions AddToRender(params IEnumerable<PhysicalEntity> physicalEntitiesToRender)
+    {
+        foreach (PhysicalEntity physicalEntity in physicalEntitiesToRender)
+        {
+            physicalEntity.RenderAlteringPropertyChanged += args => InvokeRenderEvent(args);
+            PhysicalEntitiesToRender.Add(physicalEntity);
+        }
+
+        return this;
+    }
+
+    private void InvokeRenderEvent(RenderUpdate args)
+    {
+        RenderAlteringPropertyChanged?.Invoke(args);
+    }
 
     #endregion
 }

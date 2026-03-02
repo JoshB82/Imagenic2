@@ -1,4 +1,5 @@
-﻿using Imagenic2.Core.Maths.Transformations;
+﻿using Imagenic2.Core.Enums;
+using Imagenic2.Core.Maths.Transformations;
 
 namespace Imagenic2.Core.Entities;
 
@@ -14,6 +15,7 @@ public abstract class PhysicalEntity : OrientatedEntity
         {
             if (value == castsShadows) return;
             castsShadows = value;
+            InvokeRenderEvent(RenderUpdate.NewRender);
         }
     }
 
@@ -24,11 +26,9 @@ public abstract class PhysicalEntity : OrientatedEntity
         set
         {
             if (value.ApproxEquals(opacity)) return;
-            if (opacity < 0 || opacity > 1)
-            {
-                throw new Exception("Opacity must be between 0 and 1 inclusive.");
-            }
+            ThrowIfNotWithinRange(value, 0, 1);
             opacity = value;
+            InvokeRenderEvent(RenderUpdate.NewRender);
         }
     }
 
@@ -40,13 +40,14 @@ public abstract class PhysicalEntity : OrientatedEntity
         {
             if (value == visible) return;
             visible = value;
+            InvokeRenderEvent(RenderUpdate.NewRender);
         }
     }
 
     private Matrix4x4 scalingMatrix = Matrix4x4.Identity;
     private Vector3D scaling = Vector3D.One;
 
-    public virtual Vector3D Scaling
+    public Vector3D Scaling
     {
         get => scaling;
         set
@@ -55,6 +56,7 @@ public abstract class PhysicalEntity : OrientatedEntity
             scaling = value;
 
             UpdateScalingMatrix();
+            InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
 
@@ -70,6 +72,13 @@ public abstract class PhysicalEntity : OrientatedEntity
     #endregion
 
     #region Methods
+
+    public override PhysicalEntity ShallowCopy() => (PhysicalEntity)MemberwiseClone();
+    public override PhysicalEntity DeepCopy()
+    {
+        var physicalEntity = (PhysicalEntity)base.DeepCopy();
+        return physicalEntity;
+    }
 
     private void UpdateScalingMatrix()
     {

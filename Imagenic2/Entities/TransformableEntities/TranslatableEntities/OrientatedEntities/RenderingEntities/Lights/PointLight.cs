@@ -17,5 +17,12 @@ public sealed class PointLight : Light
 
     #region Methods
 
+    public override PointLight ShallowCopy() => (PointLight)MemberwiseClone();
+    public override PointLight DeepCopy()
+    {
+        var pointLight = (PointLight)base.DeepCopy();
+        return pointLight;
+    }
+
     #endregion
 }

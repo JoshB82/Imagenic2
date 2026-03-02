@@ -109,5 +109,12 @@ public sealed class PerspectiveCamera : Camera
 
     #region Methods
 
+    public override PerspectiveCamera ShallowCopy() => (PerspectiveCamera)MemberwiseClone();
+    public override PerspectiveCamera DeepCopy()
+    {
+        var perspectiveCamera = (PerspectiveCamera)base.DeepCopy();
+        return perspectiveCamera;
+    }
+
     #endregion
 }

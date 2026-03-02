@@ -17,5 +17,12 @@ public sealed class StereoCamera : Camera
 
     #region Methods
 
+    public override StereoCamera ShallowCopy() => (StereoCamera)MemberwiseClone();
+    public override StereoCamera DeepCopy()
+    {
+        var stereoCamera = (StereoCamera)base.DeepCopy();
+        return stereoCamera;
+    }
+
     #endregion
 }

@@ -17,5 +17,12 @@ public sealed class DistantLight : Light
 
     #region Methods
 
+    public override DistantLight ShallowCopy() => (DistantLight)MemberwiseClone();
+    public override DistantLight DeepCopy()
+    {
+        var distantLight = (DistantLight)base.DeepCopy();
+        return distantLight;
+    }
+
     #endregion
 }

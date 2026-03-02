@@ -6,12 +6,14 @@ public abstract class RenderingEntity : OrientatedEntity
 {
     #region Fields and Properties
 
-    // Clipping Planes
+    // Clipping planes
     internal ClippingPlane[] ViewClippingPlanes { get; set; }
 
+    // Matrices
     public Matrix4x4 WorldToView { get; private set; }
     internal Matrix4x4 viewToScreen;
 
+    // View volume
     private float viewWidth, viewHeight, zNear, zFar;
     /// <summary>
     /// The width of the <see cref="RenderingEntity">RenderingEntity's</see> view/near plane.
@@ -72,7 +74,9 @@ public abstract class RenderingEntity : OrientatedEntity
         get => volumeStyle;
         set
         {
+            if (value == volumeStyle) return;
             volumeStyle = value;
+            InvokeRenderEvent(RenderUpdate.NewRender);
         }
     }
 
@@ -102,6 +106,14 @@ public abstract class RenderingEntity : OrientatedEntity
     #endregion
 
     #region Methods
+
+    public override RenderingEntity ShallowCopy() => (RenderingEntity)MemberwiseClone();
+    public override RenderingEntity DeepCopy()
+    {
+        var renderingEntity = (RenderingEntity)base.DeepCopy();
+        renderingEntity.ViewClippingPlanes = (ClippingPlane[])ViewClippingPlanes.Clone();
+        return renderingEntity;
+    }
 
     protected override void UpdateModelToWorldMatrix()
     {

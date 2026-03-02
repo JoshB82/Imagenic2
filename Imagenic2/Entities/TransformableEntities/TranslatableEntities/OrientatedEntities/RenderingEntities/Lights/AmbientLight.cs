@@ -17,5 +17,12 @@ public sealed class AmbientLight : Light
 
     #region Methods
 
+    public override AmbientLight ShallowCopy() => (AmbientLight)MemberwiseClone();
+    public override AmbientLight DeepCopy()
+    {
+        var ambientLight = (AmbientLight)base.DeepCopy();
+        return ambientLight;
+    }
+
     #endregion
 }

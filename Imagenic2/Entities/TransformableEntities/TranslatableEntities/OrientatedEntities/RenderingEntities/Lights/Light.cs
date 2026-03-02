@@ -23,5 +23,12 @@ public abstract class Light : RenderingEntity
 
     #region Methods
 
+    public override Light ShallowCopy() => (Light)MemberwiseClone();
+    public override Light DeepCopy()
+    {
+        var light = (Light)base.DeepCopy();
+        return light;
+    }
+
     #endregion
 }

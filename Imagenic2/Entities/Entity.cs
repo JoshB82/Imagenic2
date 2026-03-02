@@ -7,7 +7,7 @@ public abstract class Entity
     #region Fields and Properties
 
     private static int id;
-    public int Id => id++;
+    public int Id { get; private set; }
 
     internal event Action<RenderUpdate>? RenderAlteringPropertyChanged;
 
@@ -17,7 +17,7 @@ public abstract class Entity
 
     protected Entity()
     {
-
+        Id = id++;
     }
 
     #endregion
@@ -28,6 +28,8 @@ public abstract class Entity
     public virtual Entity DeepCopy()
     {
         var entity = ShallowCopy();
+        entity.Id = id++;
+        entity.RenderAlteringPropertyChanged = null;
         return entity;
     }
 

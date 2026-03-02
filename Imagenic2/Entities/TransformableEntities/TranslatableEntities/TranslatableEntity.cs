@@ -1,4 +1,5 @@
-﻿using Imagenic2.Core.Maths.Transformations;
+﻿using Imagenic2.Core.Enums;
+using Imagenic2.Core.Maths.Transformations;
 
 namespace Imagenic2.Core.Entities;
 
@@ -17,6 +18,7 @@ public abstract class TranslatableEntity : TransformableEntity
             worldOrigin = value;
 
             UpdateTranslationMatrix();
+            InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
 
@@ -32,6 +34,13 @@ public abstract class TranslatableEntity : TransformableEntity
     #endregion
 
     #region Methods
+
+    public override TranslatableEntity ShallowCopy() => (TranslatableEntity)MemberwiseClone();
+    public override TranslatableEntity DeepCopy()
+    {
+        var translatableEntity = (TranslatableEntity)base.DeepCopy();
+        return translatableEntity;
+    }
 
     private void UpdateTranslationMatrix()
     {

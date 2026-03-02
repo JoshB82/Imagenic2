@@ -34,6 +34,13 @@ public partial class Form : System.Windows.Forms.Form
             resolution: 10
         );
 
+        Circle circle = new Circle(
+            worldOrigin: new Vector3D(0, 0, 100),
+            worldOrientation: Imagenic2.Core.Maths.Orientation.OrientationZY,
+            radius: 30,
+            resolution: 15
+        );
+
         float aspectRatio = pictureBox.Width / (float)(pictureBox.Height);
         float zNear = 1;
         float zFar = 750;
@@ -49,13 +56,12 @@ public partial class Form : System.Windows.Forms.Form
             zFar: zFar
         );
 
-        RenderingOptions renderingOptions = new RenderingOptions()
+        RenderingOptions renderingOptions = new RenderingOptions(renderCamera)
         {
             RenderWidth = pictureBox.Width,
-            RenderHeight = pictureBox.Height,
-            PhysicalEntitiesToRender = new List<PhysicalEntity>() { cube, cone },
-            RenderCamera = renderCamera
+            RenderHeight = pictureBox.Height
         };
+        renderingOptions.AddToRender(new List<PhysicalEntity>() { cube, cone, circle });
 
         renderer = new Rasteriser<Imagenic2.Core.Images.Bitmap>(renderingOptions);
 
@@ -176,6 +182,10 @@ public partial class Form : System.Windows.Forms.Form
                     // Roll right
                     renderCamera.RollRight(tiltAngle * deltaTime);
                     break;
+                case Keys.Escape:
+                    // Switch from mouse to keyboard input
+                    this.Invoke(() => SwitchToKeyboardControl());
+                    break;
             }
         }
     }
@@ -200,32 +210,44 @@ public partial class Form : System.Windows.Forms.Form
         pictureBox.Image?.Dispose();
     }
 
-    int mouseX = 500, mouseY = 500;
+    bool checkMouseMove = true;
     private void pictureBox_MouseMove(object sender, MouseEventArgs e)
     {
         const float mouseDampener = 0.001f;
-        if (mouseControl)
+        if (mouseControl && checkMouseMove)
         {
-            renderCamera.RotateLeft((e.X - mouseX) * mouseDampener);
-            renderCamera.RotateDown((e.Y - mouseY) * mouseDampener);
-            mouseX = e.X;
-            mouseY = e.Y;
+            renderCamera.RotateLeft((e.X - pictureBox.Width / 2) * mouseDampener);
+            renderCamera.RotateDown((e.Y - pictureBox.Height / 2) * mouseDampener);
+            CentreCursor();
+            checkMouseMove = false;
+        }
+        else
+        {
+            checkMouseMove = true;
         }
     }
 
-    private void mouseToolStripMenuItem_Click(object sender, EventArgs e)
-    {
-        keyboardToolStripMenuItem.Checked = false;
-        mouseToolStripMenuItem.Checked = true;
-        keyboardControl = false;
-        mouseControl = true;
-    }
+    private void CentreCursor() => Cursor.Position = PointToScreen(new Point(pictureBox.Width / 2, pictureBox.Height / 2));
 
-    private void keyboardToolStripMenuItem_Click(object sender, EventArgs e)
+    private void SwitchToKeyboardControl()
     {
         keyboardToolStripMenuItem.Checked = true;
         mouseToolStripMenuItem.Checked = false;
         keyboardControl = true;
         mouseControl = false;
+        Cursor.Show();
     }
+
+    private void SwitchToMouseControl()
+    {
+        keyboardToolStripMenuItem.Checked = false;
+        mouseToolStripMenuItem.Checked = true;
+        keyboardControl = false;
+        mouseControl = true;
+        Cursor.Hide();
+    }
+
+    private void mouseToolStripMenuItem_Click(object sender, EventArgs e) => SwitchToMouseControl();
+
+    private void keyboardToolStripMenuItem_Click(object sender, EventArgs e) => SwitchToKeyboardControl();
 }

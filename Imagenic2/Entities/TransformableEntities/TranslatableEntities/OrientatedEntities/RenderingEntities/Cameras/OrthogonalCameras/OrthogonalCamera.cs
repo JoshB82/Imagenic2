@@ -102,5 +102,12 @@ public sealed class OrthogonalCamera : Camera
 
     #region Methods
 
+    public override OrthogonalCamera ShallowCopy() => (OrthogonalCamera)MemberwiseClone();
+    public override OrthogonalCamera DeepCopy()
+    {
+        var orthogonalCamera = (OrthogonalCamera)base.DeepCopy();
+        return orthogonalCamera;
+    }
+
     #endregion
 }

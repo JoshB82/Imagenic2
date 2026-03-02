@@ -1,4 +1,5 @@
 ﻿using Imagenic2.Core.Entities;
+using Imagenic2.Core.Enums;
 using Imagenic2.Core.Images;
 
 namespace Imagenic2.Core.Renderers;
@@ -18,7 +19,8 @@ public abstract class Renderer<TImage> where TImage : Image
     };
     
     internal Buffer2D<float> zBuffer;
-    internal bool NewRenderNeeded { get; set; }
+    internal bool NewRenderNeeded { get; set; } = true;
+    internal bool NewShadowMapNeeded { get; set; } = true;
 
     private RenderingOptions renderingOptions;
     public RenderingOptions RenderingOptions
@@ -30,6 +32,8 @@ public abstract class Renderer<TImage> where TImage : Image
         }
     }
 
+    public TImage LatestRender { get; protected set; }
+
     #endregion
 
     #region Constructors
@@ -37,12 +41,22 @@ public abstract class Renderer<TImage> where TImage : Image
     public Renderer(RenderingOptions renderingOptions)
     {
         RenderingOptions = renderingOptions;
+        renderingOptions.RenderAlteringPropertyChanged += OnRenderingAlteringPropertyChanged;
+        
+
+        
         //RenderingOptions.Renderer = this;
     }
 
     #endregion
 
     #region Methods
+
+    private void OnRenderingAlteringPropertyChanged(RenderUpdate args)
+    {
+        if (args.HasFlag(RenderUpdate.NewRender)) NewRenderNeeded = true;
+        if (args.HasFlag(RenderUpdate.NewRender)) NewShadowMapNeeded = true;
+    }
 
     public abstract Task<TImage?> RenderAsync(CancellationToken token);
 

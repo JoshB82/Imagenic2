@@ -17,5 +17,12 @@ public sealed class Spotlight : Light
 
     #region Methods
 
+    public override Spotlight ShallowCopy() => (Spotlight)MemberwiseClone();
+    public override Spotlight DeepCopy()
+    {
+        var spotlight = (Spotlight)base.DeepCopy();
+        return spotlight;
+    }
+
     #endregion
 }
