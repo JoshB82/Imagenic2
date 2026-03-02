@@ -217,9 +217,9 @@ public sealed class MeshStructure
 
         for (int i = 0; i < resolution - 1; i++)
         {
-            topTriangles[i] = new Triangle(vertices[i + 1], vertices[resolution + 1], vertices[i + 2]);
+            topTriangles[i] = new Triangle(vertices[i + 1], vertices[i + 2], vertices[resolution + 1]);
         }
-        topTriangles[resolution - 1] = new Triangle(vertices[resolution], vertices[resolution + 1], vertices[1]);
+        topTriangles[resolution - 1] = new Triangle(vertices[resolution], vertices[1], vertices[resolution + 1]);
 
         return topTriangles.Concat(circleStructure.Triangles).ToList();
     }

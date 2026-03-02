@@ -39,10 +39,6 @@ public sealed class Ellipse : Mesh
             if (value == resolution) return;
             resolution = value;
             Structure = MeshStructure.GenerateCircleStructure(resolution);
-            foreach (Vertex vertex in Structure.Vertices)
-            {
-                vertex.Scaling = new Vector3D(radiusX, radiusZ, 1);
-            }
             InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
@@ -56,6 +52,17 @@ public sealed class Ellipse : Mesh
         RadiusX = radiusX;
         RadiusZ = radiusZ;
         Resolution = resolution;
+    }
+
+    #endregion
+
+    #region Methods
+
+    public override Ellipse ShallowCopy() => (Ellipse)MemberwiseClone();
+    public override Ellipse DeepCopy()
+    {
+        var ellipse = (Ellipse)base.DeepCopy();
+        return ellipse;
     }
 
     #endregion

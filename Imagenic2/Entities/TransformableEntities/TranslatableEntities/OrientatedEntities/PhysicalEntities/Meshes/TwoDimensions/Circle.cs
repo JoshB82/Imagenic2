@@ -31,10 +31,6 @@ public sealed class Circle : Mesh
             if (value == resolution) return;
             resolution = value;
             Structure = MeshStructure.GenerateCircleStructure(resolution);
-            foreach (Vertex vertex in Structure.Vertices)
-            {
-                vertex.Scaling = new Vector3D(radius, radius, 1);
-            }
             InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
@@ -47,6 +43,17 @@ public sealed class Circle : Mesh
     {
         Radius = radius;
         Resolution = resolution;
+    }
+
+    #endregion
+
+    #region Methods
+
+    public override Circle ShallowCopy() => (Circle)MemberwiseClone();
+    public override Circle DeepCopy()
+    {
+        var circle = (Circle)base.DeepCopy();
+        return circle;
     }
 
     #endregion

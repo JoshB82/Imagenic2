@@ -48,4 +48,15 @@ public sealed class Plane : Mesh
     }
 
     #endregion
+
+    #region Methods
+
+    public override Plane ShallowCopy() => (Plane)MemberwiseClone();
+    public override Plane DeepCopy()
+    {
+        var plane = (Plane)base.DeepCopy();
+        return plane;
+    }
+
+    #endregion
 }

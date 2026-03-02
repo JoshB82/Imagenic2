@@ -13,6 +13,8 @@ public partial class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagen
     internal Buffer2D<Color> colourBuffer;
     internal Buffer2D<float> zBuffer;
 
+    private List<Buffer2D<float>> shadowMaps = new List<Buffer2D<float>>();
+
     #endregion
 
     #region Constructors
@@ -131,6 +133,11 @@ public partial class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagen
         }
 
         return null;
+    }
+
+    private void RenderTriangles()
+    {
+
     }
 
     private static void TransformEdgeVertices(Edge edge, Matrix4x4 transformationMatrix)

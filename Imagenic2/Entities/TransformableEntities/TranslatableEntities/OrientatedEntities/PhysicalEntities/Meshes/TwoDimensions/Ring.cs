@@ -55,4 +55,15 @@ public sealed class Ring : Mesh
     }
 
     #endregion
+
+    #region Methods
+
+    public override Ring ShallowCopy() => (Ring)MemberwiseClone();
+    public override Ring DeepCopy()
+    {
+        var ring = (Ring)base.DeepCopy();
+        return ring;
+    }
+
+    #endregion
 }

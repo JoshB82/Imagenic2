@@ -22,6 +22,7 @@ public sealed class RenderingOptions
             ThrowIfNonpositive(value);
             renderWidth = value;
             UpdateScreenToWindow();
+            InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
     public int RenderHeight
@@ -33,6 +34,7 @@ public sealed class RenderingOptions
             ThrowIfNonpositive(value);
             renderHeight = value;
             UpdateScreenToWindow();
+            InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
 
@@ -72,6 +74,8 @@ public sealed class RenderingOptions
     
     public List<PhysicalEntity>? PhysicalEntitiesToRender { get; private set; } = new List<PhysicalEntity>();
 
+    public List<Light> Lights { get; private set; } = new List<Light>();
+
     #endregion
 
     #region Constructors
@@ -93,6 +97,16 @@ public sealed class RenderingOptions
             PhysicalEntitiesToRender.Add(physicalEntity);
         }
 
+        return this;
+    }
+
+    public RenderingOptions AddToRender(params IEnumerable<Light> lights)
+    {
+        foreach (Light light in lights)
+        {
+            light.RenderAlteringPropertyChanged += args => InvokeRenderEvent(args);
+            Lights.Add(light);
+        }
         return this;
     }
 

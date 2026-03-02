@@ -26,13 +26,11 @@ public partial class Form : System.Windows.Forms.Form
             zFar: 750
         );
 
-        RenderingOptions renderingOptions = new RenderingOptions()
+        RenderingOptions renderingOptions = new RenderingOptions(renderCamera)
         {
             RenderWidth = pictureBox.Width,
-            RenderHeight = pictureBox.Height,
-            PhysicalEntitiesToRender = new List<PhysicalEntity>() { cube },
-            RenderCamera = renderCamera
-        };
+            RenderHeight = pictureBox.Height
+        }.AddToRender(cube);
 
         Rasteriser<Imagenic2.Core.Images.Bitmap> renderer = new Rasteriser<Imagenic2.Core.Images.Bitmap>(renderingOptions);
 

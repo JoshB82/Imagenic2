@@ -39,11 +39,7 @@ public sealed class Cone : Mesh
         {
             if (value == resolution) return;
             resolution = value;
-            Structure = MeshStructure.GenerateConeStructure(resolution);
-            foreach (Vertex vertex in Structure.Vertices)
-            {
-                vertex.Scaling = new Vector3D(radius, height, radius);
-            }
+            Structure = MeshStructure.GenerateConeStructure(resolution);            
             InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }

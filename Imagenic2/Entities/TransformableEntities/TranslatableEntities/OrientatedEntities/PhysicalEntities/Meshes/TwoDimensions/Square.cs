@@ -35,6 +35,13 @@ public sealed class Square : Mesh
 
     #region Methods
 
+    public override Square ShallowCopy() => (Square)MemberwiseClone();
+    public override Square DeepCopy()
+    {
+        var square = (Square)base.DeepCopy();
+        return square;
+    }
+
     public static implicit operator Plane(Square square)
     {
         Plane plane = new Plane(square.WorldOrigin, square.WorldOrientation, square.sideLength, square.sideLength);

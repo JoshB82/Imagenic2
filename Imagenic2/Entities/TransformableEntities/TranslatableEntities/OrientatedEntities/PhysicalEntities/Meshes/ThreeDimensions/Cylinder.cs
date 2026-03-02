@@ -39,10 +39,6 @@ public sealed class Cylinder : Mesh
             if (value == resolution) return;
             resolution = value;
             Structure = MeshStructure.GenerateCylinderStructure(resolution);
-            foreach (Vertex vertex in Structure.Vertices)
-            {
-                vertex.Scaling = new Vector3D(radius, height, radius);
-            }
             InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
@@ -58,8 +54,15 @@ public sealed class Cylinder : Mesh
         Resolution = resolution;
     }
     #endregion
-    
+
     #region Methods
-    
+
+    public override Cylinder ShallowCopy() => (Cylinder)MemberwiseClone();
+    public override Cylinder DeepCopy()
+    {
+        var cylinder = (Cylinder)base.DeepCopy();
+        return cylinder;
+    }
+
     #endregion
 }

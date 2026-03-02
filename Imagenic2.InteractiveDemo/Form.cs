@@ -196,6 +196,7 @@ public partial class Form : System.Windows.Forms.Form
 
     private void Form_Resize(object sender, System.EventArgs e)
     {
+        /*
         float aspectRatio = pictureBox.Width / (float)(pictureBox.Height);
         float viewHeight = 2 * renderer.RenderingOptions.RenderCamera.ZNear * MathF.Tan(fieldOfView / 2);
         float viewWidth = viewHeight * aspectRatio;
@@ -203,6 +204,7 @@ public partial class Form : System.Windows.Forms.Form
         renderCamera.ViewHeight = viewHeight;
         renderer.RenderingOptions.RenderWidth = pictureBox.Width;
         renderer.RenderingOptions.RenderHeight = pictureBox.Height;
+        */
     }
 
     private void Form_FormClosed(object sender, FormClosedEventArgs e)

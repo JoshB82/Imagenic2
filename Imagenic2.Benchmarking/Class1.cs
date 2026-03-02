@@ -5,21 +5,18 @@ using Imagenic2.Core.Maths.Vectors;
 using Imagenic2.Core.Renderers;
 using Imagenic2.Core.Renderers.Rasterising;
 
-namespace Imagenic2.Benchmarking
+namespace Imagenic2.Benchmarking;
+
+public class Program
 {
-    public class Program
+    public async static void Main()
     {
-        public async static void Main()
-        {
-            Cube cube = new Cube(Vector3D.Zero, Orientation.OrientationXY, 10);
+        Cube cube = new Cube(Vector3D.Zero, Orientation.OrientationXY, 10);
 
-            Rasteriser<Bitmap> renderer = new Rasteriser<Bitmap>(new RenderingOptions()
-            {
-                PhysicalEntitiesToRender = new PhysicalEntity[] { cube },
-                RenderCamera = new OrthogonalCamera(Vector3D.Zero, Orientation.OrientationXY, 10, 10, 1, 10)
-            });
+        OrthogonalCamera renderCamera = new OrthogonalCamera(new Vector3D(0, 0, -100), Orientation.OrientationZY, 100, 100, 1, 750);
 
-            Bitmap bitmap = await renderer.RenderAsync();
-        }
+        Rasteriser<Bitmap> renderer = new Rasteriser<Bitmap>(new RenderingOptions(renderCamera).AddToRender(cube));
+
+        Bitmap bitmap = await renderer.RenderAsync();
     }
 }

@@ -1,8 +1,10 @@
 ﻿namespace Imagenic2.Core.Entities;
 
-public sealed class Vertex : PhysicalEntity
+public sealed class Vertex
 {
     #region Fields and Properties
+
+    public Vector3D WorldOrigin { get; set; }
 
     private Vector3D? normal;
     public Vector3D? Normal
@@ -19,13 +21,14 @@ public sealed class Vertex : PhysicalEntity
 
     #region Constructors
 
-    public Vertex(Vector3D worldOrigin) : base(worldOrigin, Orientation.OrientationZY)
+    public Vertex(Vector3D worldOrigin)
     {
-        
+        WorldOrigin = worldOrigin;
     }
 
-    public Vertex(Vector3D worldOrigin, Vector3D? normal) : base(worldOrigin, Orientation.OrientationZY)
+    public Vertex(Vector3D worldOrigin, Vector3D? normal)
     {
+        WorldOrigin = worldOrigin;
         Normal = normal;
     }
 
