@@ -1,6 +1,9 @@
-﻿namespace Imagenic2.Core.Renderers;
+﻿using Imagenic2.Core.Renderers.Rasterising;
+using System.Drawing;
 
-public class Buffer2D<T>
+namespace Imagenic2.Core.Renderers;
+
+public sealed class Buffer2D<T>
 {
     #region Fields and Properties
 
@@ -92,6 +95,38 @@ public class Buffer2D<T>
         T[] array = new T[buffer.firstDimensionSize * buffer.secondDimensionSize];
         buffer.ForEach((t, i, j) => array[i * buffer.firstDimensionSize + j] = buffer.Values[i][j]);
         return array;
+    }
+
+    public TImage ToImage<TImage>() where TImage : Imagenic2.Core.Images.Image
+    {
+        Buffer2D<Color> imageValues = null;
+        if (typeof(T) == typeof(Color))
+        {
+            imageValues = this as Buffer2D<Color>;
+        }
+        else if (typeof(T) == typeof(float))
+        {
+            imageValues = new Buffer2D<Color>(firstDimensionSize, secondDimensionSize);
+            imageValues.ForEach((colour, x, y) =>
+            {
+                float value = (float)((object)(Values[x][y]));
+                int scaledDepth = value == Rasteriser<TImage>.backgroundValue ? 255 : (value * 255).RoundToInt();
+                imageValues.Values[x][y] = Color.FromArgb(scaledDepth, scaledDepth, scaledDepth);
+            });
+        }
+        else
+        {
+            throw new Exception();
+        }
+
+        if (typeof(TImage) == typeof(Imagenic2.Core.Images.Bitmap))
+        {
+            return new Imagenic2.Core.Images.Bitmap(imageValues) as TImage;
+        }
+        else
+        {
+            throw new Exception();
+        }
     }
 
     #endregion

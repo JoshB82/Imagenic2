@@ -59,8 +59,8 @@ public partial class Form : System.Windows.Forms.Form
         DistantLight light = new DistantLight(
             worldOrigin: new Vector3D(0, 100, 0),
             worldOrientation: Imagenic2.Core.Maths.Orientation.OrientationZY,
-            viewWidth: 100,
-            viewHeight: 100,
+            viewWidth: 1000,
+            viewHeight: 1000,
             zNear: 1,
             zFar: 1000
         );

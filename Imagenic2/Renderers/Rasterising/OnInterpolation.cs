@@ -5,15 +5,15 @@ namespace Imagenic2.Core.Renderers.Rasterising;
 
 public partial class Rasteriser<TImage>
 {
-    private void ProduceShadowMaps(Triangle triangle, int x, int y, float z)
+    private void ProduceShadowMaps(Triangle triangle, Buffer2D<float> buffer, int x, int y, float z)
     {
-        if (z.ApproxLessThan(shadowMaps[shadowMapListIndexCount].Values[x][y], 1E-4f))
+        if (z.ApproxLessThan(buffer.Values[x][y], 1E-4f))
         {
             shadowMaps[shadowMapListIndexCount].Values[x][y] = z;
         }
     }
 
-    private void OnInterpolation(Triangle triangle, int x, int y, float z)
+    private void OnInterpolation(Triangle triangle, Buffer2D<float> zBuffer, int x, int y, float z)
     {
         if (z.ApproxLessThan(zBuffer.Values[x][y], 1E-4f))
         {

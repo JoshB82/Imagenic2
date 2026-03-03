@@ -17,6 +17,8 @@ public partial class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagen
     private List<Buffer2D<float>> shadowMaps = new List<Buffer2D<float>>();
     private int shadowMapListIndexCount = 0;
 
+    internal const float backgroundValue = 1.1f;
+
     #endregion
 
     #region Constructors
@@ -54,16 +56,19 @@ public partial class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagen
                 foreach (ShadowMap shadowMap in light.ShadowMaps)
                 {
                     //shadowMaps.Add(shadowMap);
-                    shadowMaps[shadowMapListIndexCount].SetAllToValue(1.1f); // A number > 1
-                    RenderTriangles(light, ProduceShadowMaps);
+                    shadowMap.Data.SetAllToValue(backgroundValue); // A number > 1
+                    RenderTriangles(light, shadowMap.Data, ProduceShadowMaps);
                     shadowMapListIndexCount++;
                 }
             }
 
             NewShadowMapNeeded = false;
         }
-        
-        RenderTriangles(RenderingOptions.RenderCamera, OnInterpolation);
+
+        Imagenic2.Core.Images.Bitmap b = RenderingOptions.Lights[0].ShadowMaps.First().Data.ToImage<Imagenic2.Core.Images.Bitmap>();
+        //b.Export("C:\\Users\\joshd\\Documents\\test.bmp");
+
+        RenderTriangles(RenderingOptions.RenderCamera, zBuffer, OnInterpolation);
 
 
         //var triangleQueue = new Queue<Triangle>();

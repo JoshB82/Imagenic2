@@ -7,8 +7,8 @@ public abstract class Light : RenderingEntity
 {
     #region Fields and Properties
 
-    private IEnumerable<ShadowMap> shadowMaps = new List<ShadowMap>();
-    public IEnumerable<ShadowMap> ShadowMaps
+    private List<ShadowMap> shadowMaps = new List<ShadowMap>();
+    public List<ShadowMap> ShadowMaps
     {
         get => shadowMaps;
         set

@@ -1,4 +1,5 @@
-﻿using Imagenic2.Core.Renderers;
+﻿using Imagenic2.Core.Maths.Transformations;
+using Imagenic2.Core.Renderers;
 
 namespace Imagenic2.Core.Entities.Lights;
 
@@ -13,6 +14,7 @@ public sealed class ShadowMap
         set
         {
             width = value;
+            UpdateScreenToWindow();
         }
     }
     public int Height
@@ -21,7 +23,14 @@ public sealed class ShadowMap
         set
         {
             height = value;
+            UpdateScreenToWindow();
         }
+    }
+
+    public Matrix4x4 ScreenToWindow { get; private set; }
+    public void UpdateScreenToWindow()
+    {
+        ScreenToWindow = Transform.Scale(0.5f * (width - 1), 0.5f * (height - 1), 1) * RenderingOptions.windowTranslate;
     }
 
     internal Buffer2D<float> Data { get; set; }

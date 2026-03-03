@@ -4,7 +4,9 @@ namespace Imagenic2.Core.Renderers.Rasterising;
 
 public partial class Rasteriser<TImage>
 {
-    private void InterpolateTriangle(Triangle triangle, Action<Triangle, int, int, float> onInterpolation)
+    private static void InterpolateTriangle(Triangle triangle,
+                                            Buffer2D<float> buffer,
+                                            Action<Triangle, Buffer2D<float>, int, int, float> onInterpolation)
     {
         // Extract values
         float x1 = triangle.TransformedP1.x;
@@ -55,7 +57,7 @@ public partial class Rasteriser<TImage>
                     (e3 < 0 || (e3 == 0 && ((y1 == y3 && x1 < x3) || (y1 < y3)))))
                 {
                     // Point is inside triangle
-                    onInterpolation(triangle, x, y, z);
+                    onInterpolation(triangle, buffer, x, y, z);
                 }
                 e1 += xStep1;
                 e2 += xStep2;

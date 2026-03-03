@@ -31,7 +31,9 @@ public abstract class Image
 
     public bool Export(string filePath)
     {
-        return false; // Temporary
+        System.Drawing.Bitmap bitmap = ((Bitmap)(this)).ToSystemDrawingBitmap();
+        //bitmap.Save(filePath);
+        return true; // Temporary
     }
 
     #endregion

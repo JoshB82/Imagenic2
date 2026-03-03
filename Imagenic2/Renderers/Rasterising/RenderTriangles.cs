@@ -8,10 +8,11 @@ public partial class Rasteriser<TImage>
     private Queue<Triangle> triangleQueue = new Queue<Triangle>();
 
     private void RenderTriangles(RenderingEntity renderingEntity,
-                                 Action<Triangle, int, int, float> onInterpolation)
+                                 Buffer2D<float> buffer,
+                                 Action<Triangle, Buffer2D<float>, int, int, float> onInterpolation)
     {
         // Reset values
-        zBuffer.SetAllToValue(1.1f); // A number > 1
+        zBuffer.SetAllToValue(backgroundValue); // A number > 1
 
         foreach (PhysicalEntity physicalEntity in RenderingOptions.PhysicalEntitiesToRender)
         {
@@ -52,8 +53,7 @@ public partial class Rasteriser<TImage>
                         foreach (Triangle clippedTriangle in triangleQueue)
                         {
                             TransformTriangleVertices(clippedTriangle, RenderingOptions.ScreenToWindow);
-                            //InterpolateTriangle(clippedTriangle, colourBuffer, zBuffer);
-                            InterpolateTriangle(clippedTriangle, onInterpolation);
+                            InterpolateTriangle(clippedTriangle, buffer, onInterpolation);
                         }
 
                         triangleQueue.Clear();
