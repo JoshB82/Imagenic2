@@ -110,7 +110,7 @@ public sealed class Buffer2D<T>
             imageValues.ForEach((colour, x, y) =>
             {
                 float value = (float)((object)(Values[x][y]));
-                int scaledDepth = value == Rasteriser<TImage>.backgroundValue ? 255 : (value * 255).RoundToInt();
+                int scaledDepth = value == Rasteriser<TImage>.backgroundValue ? 255 : ((value + 1) * 255 / 2).RoundToInt();
                 imageValues.Values[x][y] = Color.FromArgb(scaledDepth, scaledDepth, scaledDepth);
             });
         }

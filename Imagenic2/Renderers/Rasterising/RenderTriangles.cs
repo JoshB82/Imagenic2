@@ -9,6 +9,7 @@ public partial class Rasteriser<TImage>
 
     private void RenderTriangles(RenderingEntity renderingEntity,
                                  Buffer2D<float> buffer,
+                                 Matrix4x4 screenToWindow,
                                  Action<Triangle, Buffer2D<float>, int, int, float> onInterpolation)
     {
         // Reset values
@@ -52,7 +53,7 @@ public partial class Rasteriser<TImage>
                         ClipTriangles(triangleQueue, Renderer<TImage>.ScreenClippingPlanes);
                         foreach (Triangle clippedTriangle in triangleQueue)
                         {
-                            TransformTriangleVertices(clippedTriangle, RenderingOptions.ScreenToWindow);
+                            TransformTriangleVertices(clippedTriangle, screenToWindow);
                             InterpolateTriangle(clippedTriangle, buffer, onInterpolation);
                         }
 

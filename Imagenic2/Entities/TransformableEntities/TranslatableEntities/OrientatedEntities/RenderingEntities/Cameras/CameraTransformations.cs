@@ -12,7 +12,7 @@ public abstract partial class Camera
     public void PanForward(float distance)
     {
         this.Translate(WorldOrientation.DirectionForward * distance);
-        InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
+        InvokeRenderEvent(RenderUpdate.NewRender);
     }
     /// <summary>
     /// Pans the camera in the left direction.
@@ -21,7 +21,7 @@ public abstract partial class Camera
     public void PanLeft(float distance)
     {
         this.Translate(WorldOrientation.DirectionRight * -distance);
-        InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
+        InvokeRenderEvent(RenderUpdate.NewRender);
     }
     /// <summary>
     /// Pans the camera in the right direction.
@@ -30,7 +30,7 @@ public abstract partial class Camera
     public void PanRight(float distance)
     {
         this.Translate(WorldOrientation.DirectionRight * distance);
-        InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
+        InvokeRenderEvent(RenderUpdate.NewRender);
     }
     /// <summary>
     /// Pans the camera in the backward direction.
@@ -39,7 +39,7 @@ public abstract partial class Camera
     public void PanBackward(float distance)
     {
         this.Translate(WorldOrientation.DirectionForward * -distance);
-        InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
+        InvokeRenderEvent(RenderUpdate.NewRender);
     }
     /// <summary>
     /// Pans the camera in the up direction.
@@ -48,7 +48,7 @@ public abstract partial class Camera
     public void PanUp(float distance)
     {
         this.Translate(WorldOrientation.DirectionUp * distance);
-        InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
+        InvokeRenderEvent(RenderUpdate.NewRender);
     }
     /// <summary>
     /// Pans the camera in the down direction.
@@ -57,7 +57,7 @@ public abstract partial class Camera
     public void PanDown(float distance)
     {
         this.Translate(WorldOrientation.DirectionUp * -distance);
-        InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
+        InvokeRenderEvent(RenderUpdate.NewRender);
     }
 
     public void RotateUp(float angle)
@@ -71,7 +71,7 @@ public abstract partial class Camera
         Quaternion q = Orientation.ExtractRotation(Vector3D.UnitNegativeY, Vector3D.UnitZ, Vector3D.UnitX);
         Matrix4x4 r = Transform.QuaternionToMatrix(q);
 
-        InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
+        InvokeRenderEvent(RenderUpdate.NewRender);
     }
     public void RotateDown(float angle)
     {
@@ -81,7 +81,7 @@ public abstract partial class Camera
         Vector3D directionUp = Transform.RotateVectorUsingQuaternion(WorldOrientation.DirectionUp, rotation);
         WorldOrientation = Orientation.CreateOrientationForwardUp(directionForward, directionUp);
 
-        InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
+        InvokeRenderEvent(RenderUpdate.NewRender);
     }
     public void RotateLeft(float angle)
     {
@@ -91,7 +91,7 @@ public abstract partial class Camera
         Vector3D directionUp = Transform.RotateVectorUsingQuaternion(WorldOrientation.DirectionUp, rotation);
         WorldOrientation = Orientation.CreateOrientationForwardUp(directionForward, directionUp);
 
-        InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
+        InvokeRenderEvent(RenderUpdate.NewRender);
     }
     public void RotateRight(float angle)
     {
@@ -101,7 +101,7 @@ public abstract partial class Camera
         Vector3D directionUp = Transform.RotateVectorUsingQuaternion(WorldOrientation.DirectionUp, rotation);
         WorldOrientation = Orientation.CreateOrientationForwardUp(directionForward, directionUp);
 
-        InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
+        InvokeRenderEvent(RenderUpdate.NewRender);
     }
     public void RollLeft(float angle)
     {
@@ -111,7 +111,7 @@ public abstract partial class Camera
         Vector3D directionUp = Transform.RotateVectorUsingQuaternion(WorldOrientation.DirectionUp, rotation);
         WorldOrientation = Orientation.CreateOrientationForwardUp(directionForward, directionUp);
 
-        InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
+        InvokeRenderEvent(RenderUpdate.NewRender);
     }
     public void RollRight(float angle)
     {
@@ -121,6 +121,6 @@ public abstract partial class Camera
         Vector3D directionUp = Transform.RotateVectorUsingQuaternion(WorldOrientation.DirectionUp, rotation);
         WorldOrientation = Orientation.CreateOrientationForwardUp(directionForward, directionUp);
         
-        InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
+        InvokeRenderEvent(RenderUpdate.NewRender);
     }
 }

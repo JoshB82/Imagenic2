@@ -18,7 +18,6 @@ public abstract class Renderer<TImage> where TImage : Image
         new(Vector3D.One, Vector3D.UnitNegativeZ) // Far
     };
     
-    internal Buffer2D<float> zBuffer;
     internal bool NewRenderNeeded { get; set; } = true;
     internal bool NewShadowMapNeeded { get; set; } = true;
 
@@ -29,6 +28,7 @@ public abstract class Renderer<TImage> where TImage : Image
         set
         {
             renderingOptions = value;
+            renderingOptions.RenderAlteringPropertyChanged += OnRenderingAlteringPropertyChanged;
         }
     }
 
@@ -42,10 +42,6 @@ public abstract class Renderer<TImage> where TImage : Image
     {
         RenderingOptions = renderingOptions;
         renderingOptions.RenderAlteringPropertyChanged += OnRenderingAlteringPropertyChanged;
-        
-
-        
-        //RenderingOptions.Renderer = this;
     }
 
     #endregion

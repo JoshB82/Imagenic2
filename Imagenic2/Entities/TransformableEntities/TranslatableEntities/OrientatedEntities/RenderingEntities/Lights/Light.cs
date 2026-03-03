@@ -1,5 +1,6 @@
 ﻿using Imagenic2.Core.Entities.Lights;
 using Imagenic2.Core.Enums;
+using System.Drawing;
 
 namespace Imagenic2.Core.Entities;
 
@@ -17,6 +18,8 @@ public abstract class Light : RenderingEntity
             InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
+
+    public Color Colour { get; set; } = Color.Blue;
 
     #endregion
 

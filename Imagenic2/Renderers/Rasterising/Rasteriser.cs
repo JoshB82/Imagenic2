@@ -1,6 +1,5 @@
 ﻿using Imagenic2.Core.Entities;
 using Imagenic2.Core.Entities.Lights;
-using Imagenic2.Core.Enums;
 using System.Buffers;
 using System.Drawing;
 
@@ -13,9 +12,6 @@ public partial class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagen
     private static ArrayPool<Vector3D> Vector3DArrayPool = ArrayPool<Vector3D>.Shared;
     internal Buffer2D<Color> colourBuffer;
     internal Buffer2D<float> zBuffer;
-
-    private List<Buffer2D<float>> shadowMaps = new List<Buffer2D<float>>();
-    private int shadowMapListIndexCount = 0;
 
     internal const float backgroundValue = 1.1f;
 
@@ -55,21 +51,19 @@ public partial class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagen
             {
                 foreach (ShadowMap shadowMap in light.ShadowMaps)
                 {
-                    //shadowMaps.Add(shadowMap);
                     shadowMap.Data.SetAllToValue(backgroundValue); // A number > 1
-                    RenderTriangles(light, shadowMap.Data, ProduceShadowMaps);
-                    shadowMapListIndexCount++;
+                    RenderTriangles(light, shadowMap.Data, shadowMap.ScreenToWindow, ProduceShadowMaps);
                 }
             }
 
             NewShadowMapNeeded = false;
         }
 
-        Imagenic2.Core.Images.Bitmap b = RenderingOptions.Lights[0].ShadowMaps.First().Data.ToImage<Imagenic2.Core.Images.Bitmap>();
+        //Imagenic2.Core.Images.Bitmap b = RenderingOptions.Lights[0].ShadowMaps.First().Data.ToImage<Imagenic2.Core.Images.Bitmap>();
         //b.Export("C:\\Users\\joshd\\Documents\\test.bmp");
 
-        RenderTriangles(RenderingOptions.RenderCamera, zBuffer, OnInterpolation);
-
+        RenderTriangles(RenderingOptions.RenderCamera, zBuffer, RenderingOptions.ScreenToWindow, OnInterpolation);
+        RenderEdges();
 
         //var triangleQueue = new Queue<Triangle>();
         /*
@@ -77,32 +71,7 @@ public partial class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagen
         {
             if (physicalEntity is Mesh mesh)
             {
-                // Draw edges
-                if (mesh.DrawEdges)
-                {
-                    foreach (Edge edge in mesh.Structure.Edges)
-                    {
-                        edge.TransformedP1 = new Vector4D(edge.Vertex1.WorldOrigin, 1);
-                        edge.TransformedP2 = new Vector4D(edge.Vertex2.WorldOrigin, 1);
-
-                        Matrix4x4 modelToView = RenderingOptions.RenderCamera.WorldToView * mesh.ModelToWorld;
-                        TransformEdgeVertices(edge, modelToView);
-                        if (ClipEdge(edge, RenderingOptions.RenderCamera.ViewClippingPlanes))
-                        {
-                            TransformEdgeVertices(edge, RenderingOptions.RenderCamera.viewToScreen);
-                            if (RenderingOptions.RenderCamera is PerspectiveCamera)
-                            {
-                                edge.TransformedP1 /= edge.TransformedP1.w;
-                                edge.TransformedP2 /= edge.TransformedP2.w;
-                            }
-                            if (ClipEdge(edge, Renderer<TImage>.ScreenClippingPlanes))
-                            {
-                                TransformEdgeVertices(edge, RenderingOptions.ScreenToWindow);
-                                InterpolateEdge(edge, colourBuffer, zBuffer);
-                            }
-                        }
-                    }
-                }
+                
 
                 // Draw triangles
                 if (mesh.DrawFaces)
@@ -176,42 +145,6 @@ public partial class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagen
         triangle.TransformedP2 = transformationMatrix * triangle.TransformedP2;
         triangle.TransformedP3 = transformationMatrix * triangle.TransformedP3;
     }
-
-    /*
-    private static void InterpolateEdge(Edge edge, Buffer2D<Color> colourBuffer, Buffer2D<float> zBuffer)
-    {
-        // Extract values
-        int x1 = edge.TransformedP1.x.RoundToInt();
-        int y1 = edge.TransformedP1.y.RoundToInt();
-        float z1 = edge.TransformedP1.z;
-        int x2 = edge.TransformedP2.x.RoundToInt();
-        int y2 = edge.TransformedP2.y.RoundToInt();
-        float z2 = edge.TransformedP2.z;
-
-        float tStep = 1 / Max(Abs(x2 - x1), Abs(y2 - y1));
-
-        for (float t = 0; t <= 1; t += tStep)
-        {
-            int x = ((1 - t) * x1 + t * x2).RoundToInt();
-            int y = ((1 - t) * y1 + t * y2).RoundToInt();
-            float z = (1 - t) * z1 + t * z2;
-
-            OnInterpolation(edge, colourBuffer, zBuffer, x, y, z);
-        }
-    }*/
-
-    /*
-    private static void OnInterpolation(Edge edge, Buffer2D<Color> colourBuffer, Buffer2D<float> zBuffer, int x, int y, float z)
-    {
-        if (z.ApproxLessThan(zBuffer.Values[x][y], 1E-4f))
-        {
-            zBuffer.Values[x][y] = z;
-            Color colour = ((SolidEdgeStyle)(edge.EdgeStyle)).Colour;
-            colourBuffer.Values[x][y] = colour;
-        }
-    }
-
-    */
 
     /*
 
