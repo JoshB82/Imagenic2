@@ -56,12 +56,22 @@ public partial class Form : System.Windows.Forms.Form
             zFar: zFar
         );
 
+        DistantLight light = new DistantLight(
+            worldOrigin: new Vector3D(0, 100, 0),
+            worldOrientation: Imagenic2.Core.Maths.Orientation.OrientationZY,
+            viewWidth: 100,
+            viewHeight: 100,
+            zNear: 1,
+            zFar: 1000
+        );
+
         RenderingOptions renderingOptions = new RenderingOptions(renderCamera)
         {
             RenderWidth = pictureBox.Width,
             RenderHeight = pictureBox.Height
-        };
-        renderingOptions.AddToRender(new List<PhysicalEntity>() { cube, cone, circle });
+        }
+        .AddToRender(new List<PhysicalEntity>() { cube, cone, circle })
+        .AddToRender(light);
 
         renderer = new Rasteriser<Imagenic2.Core.Images.Bitmap>(renderingOptions);
 
