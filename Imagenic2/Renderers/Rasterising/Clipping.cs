@@ -37,6 +37,7 @@ public partial class Rasteriser<TImage>
         return true;
     }
 
+    /*
     private static void ClipTriangles(Queue<Triangle> triangleQueue, ClippingPlane[] clippingPlanes)
     {
         foreach (ClippingPlane clippingPlane in clippingPlanes)
@@ -130,4 +131,5 @@ public partial class Rasteriser<TImage>
             Vector3DArrayPool.Return(outsidePoints, true);
         }
     }
+    */
 }
