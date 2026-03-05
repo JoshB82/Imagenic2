@@ -29,12 +29,16 @@ public partial class Rasteriser<TImage>
                 {
                     Vector4D point = new Vector4D(x, y, z, 1);
 
-                    point = light.viewToScreen * light.WorldToView * RenderingOptions.RenderCamera.WorldToView.Inverse() * RenderingOptions.RenderCamera.viewToScreen.Inverse() * point;
+                    point = RenderingOptions.RenderCamera.viewToScreen.Inverse() * RenderingOptions.ScreenToWindow.Inverse() * point;
 
                     //if (light is Spotlight)
                     //{
                         point /= point.w;
                     //}
+
+                    point = light.viewToScreen * light.WorldToView * RenderingOptions.RenderCamera.WorldToView.Inverse() * point;
+
+                    point /= point.w;
 
                     if (point.x.ApproxLessThan(-1) || point.x.ApproxMoreThan(1) ||
                         point.y.ApproxLessThan(-1) || point.y.ApproxMoreThan(1))
