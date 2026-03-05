@@ -60,10 +60,11 @@ public partial class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagen
         }
 
         //Imagenic2.Core.Images.Bitmap b = RenderingOptions.Lights[0].ShadowMaps.First().Data.ToImage<Imagenic2.Core.Images.Bitmap>();
-        //b.Export("C:\\Users\\joshd\\Documents\\test.bmp");
+        //b.Export("");
 
         RenderTriangles(RenderingOptions.RenderCamera, zBuffer, RenderingOptions.ScreenToWindow, OnInterpolation);
         RenderEdges();
+        RenderViewVolumes();
 
         //var triangleQueue = new Queue<Triangle>();
         /*

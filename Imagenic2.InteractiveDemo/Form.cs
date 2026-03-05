@@ -1,4 +1,5 @@
 using Imagenic2.Core.Entities;
+using Imagenic2.Core.Enums;
 using Imagenic2.Core.Maths.Vectors;
 using Imagenic2.Core.Renderers;
 using Imagenic2.Core.Renderers.Rasterising;
@@ -20,6 +21,7 @@ public partial class Form : System.Windows.Forms.Form
     {
         InitializeComponent();
 
+        // Shapes
         Cube cube = new Cube(
             worldOrigin: Vector3D.Zero,
             worldOrientation: Imagenic2.Core.Maths.Orientation.OrientationZY,
@@ -35,12 +37,20 @@ public partial class Form : System.Windows.Forms.Form
         );
 
         Circle circle = new Circle(
-            worldOrigin: new Vector3D(0, 0, 100),
-            worldOrientation: Imagenic2.Core.Maths.Orientation.OrientationZY,
+            worldOrigin: new Vector3D(0, 100, 100),
+            worldOrientation: Imagenic2.Core.Maths.Orientation.OrientationYZ,
             radius: 30,
             resolution: 15
         );
 
+        Plane plane = new Plane(
+            worldOrigin: new Vector3D(-100, 0, -100),
+            worldOrientation: Imagenic2.Core.Maths.Orientation.OrientationZY,
+            length: 200,
+            width: 200
+        );
+
+        // Rendering entities
         float aspectRatio = pictureBox.Width / (float)(pictureBox.Height);
         float zNear = 1;
         float zFar = 750;
@@ -58,19 +68,21 @@ public partial class Form : System.Windows.Forms.Form
 
         DistantLight light = new DistantLight(
             worldOrigin: new Vector3D(0, 100, 0),
-            worldOrientation: Imagenic2.Core.Maths.Orientation.OrientationZY,
-            viewWidth: 1000,
-            viewHeight: 1000,
+            worldOrientation: Imagenic2.Core.Maths.Orientation.OrientationNegativeYZ,
+            viewWidth: 100,
+            viewHeight: 100,
             zNear: 1,
-            zFar: 1000
+            zFar: 200
         );
+        light.VolumeStyle = VolumeOutline.Far;
 
+        // Renderer
         RenderingOptions renderingOptions = new RenderingOptions(renderCamera)
         {
             RenderWidth = pictureBox.Width,
             RenderHeight = pictureBox.Height
         }
-        .AddToRender(new List<PhysicalEntity>() { cube, cone, circle })
+        .AddToRender(new List<PhysicalEntity>() { cube, cone, circle, plane })
         .AddToRender(light);
 
         renderer = new Rasteriser<Imagenic2.Core.Images.Bitmap>(renderingOptions);

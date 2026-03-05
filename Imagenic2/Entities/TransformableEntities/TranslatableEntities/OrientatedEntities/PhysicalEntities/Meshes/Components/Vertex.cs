@@ -1,6 +1,6 @@
 ﻿namespace Imagenic2.Core.Entities;
 
-public sealed class Vertex
+public struct Vertex
 {
     #region Fields and Properties
 

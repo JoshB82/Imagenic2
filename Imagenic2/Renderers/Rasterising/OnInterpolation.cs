@@ -31,10 +31,10 @@ public partial class Rasteriser<TImage>
 
                     point = light.viewToScreen * light.WorldToView * RenderingOptions.RenderCamera.WorldToView.Inverse() * RenderingOptions.RenderCamera.viewToScreen.Inverse() * point;
 
-                    if (light is Spotlight)
-                    {
+                    //if (light is Spotlight)
+                    //{
                         point /= point.w;
-                    }
+                    //}
 
                     if (point.x.ApproxLessThan(-1) || point.x.ApproxMoreThan(1) ||
                         point.y.ApproxLessThan(-1) || point.y.ApproxMoreThan(1))

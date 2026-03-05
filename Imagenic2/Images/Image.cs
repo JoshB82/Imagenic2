@@ -32,7 +32,7 @@ public abstract class Image
     public bool Export(string filePath)
     {
         System.Drawing.Bitmap bitmap = ((Bitmap)(this)).ToSystemDrawingBitmap();
-        //bitmap.Save(filePath);
+        bitmap.Save(filePath);
         return true; // Temporary
     }
 
