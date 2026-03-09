@@ -1,4 +1,6 @@
-﻿namespace Imagenic2.Core.Entities;
+﻿using Imagenic2.Core.Entities.Lights;
+
+namespace Imagenic2.Core.Entities;
 
 public sealed class Spotlight : Light
 {
@@ -103,6 +105,7 @@ public sealed class Spotlight : Light
     public Spotlight(Vector3D worldOrigin, Orientation worldOrientation, float viewWidth, float viewHeight, float zNear, float zFar) : base(worldOrigin, worldOrientation, viewWidth, viewHeight, zNear, zFar)
     {
         viewToScreen.m32 = 1;
+        ShadowMaps.Add(new ShadowMap(1000, 1000));
     }
 
     #endregion

@@ -23,23 +23,23 @@ public partial class Form : System.Windows.Forms.Form
 
         // Shapes
         Cube cube = new Cube(
-            worldOrigin: Vector3D.Zero,
+            worldOrigin: new Vector3D(0, 20, 0),
             worldOrientation: Imagenic2.Core.Maths.Orientation.OrientationZY,
             sideLength: 10
         );
 
         Cone cone = new Cone(
-            worldOrigin: new Vector3D(75, 0, 0),
-            worldOrientation: Imagenic2.Core.Maths.Orientation.OrientationZY,
+            worldOrigin: new Vector3D(85, 15, 0),
+            worldOrientation: Imagenic2.Core.Maths.Orientation.OrientationZNegativeX,
             height: 20,
             radius: 10,
             resolution: 10
         );
 
         Circle circle = new Circle(
-            worldOrigin: new Vector3D(0, 100, 100),
-            worldOrientation: Imagenic2.Core.Maths.Orientation.OrientationYZ,
-            radius: 30,
+            worldOrigin: new Vector3D(-20, 70, 0),
+            worldOrientation: Imagenic2.Core.Maths.Orientation.OrientationZNegativeY,
+            radius: 15,
             resolution: 15
         );
 
@@ -66,15 +66,26 @@ public partial class Form : System.Windows.Forms.Form
             zFar: zFar
         );
 
-        DistantLight light = new DistantLight(
+        DistantLight blueTopLight = new DistantLight(
             worldOrigin: new Vector3D(0, 100, 0),
             worldOrientation: Imagenic2.Core.Maths.Orientation.OrientationNegativeYZ,
-            viewWidth: 100,
-            viewHeight: 100,
+            viewWidth: 150,
+            viewHeight: 150,
             zNear: 1,
             zFar: 200
         );
-        light.VolumeStyle = VolumeOutline.Far;
+        blueTopLight.VolumeStyle = VolumeOutline.Far;
+
+        Spotlight redRightLight = new Spotlight(
+            worldOrigin: new Vector3D(150, 0, 0),
+            worldOrientation: Imagenic2.Core.Maths.Orientation.OrientationNegativeXY,
+            viewWidth: 15,
+            viewHeight: 15,
+            zNear: 10,
+            zFar: 300
+        );
+        redRightLight.VolumeStyle = VolumeOutline.Far;
+        redRightLight.Colour = Color.Red;
 
         // Renderer
         RenderingOptions renderingOptions = new RenderingOptions(renderCamera)
@@ -83,7 +94,7 @@ public partial class Form : System.Windows.Forms.Form
             RenderHeight = pictureBox.Height
         }
         .AddToRender(new List<PhysicalEntity>() { cube, cone, circle, plane })
-        .AddToRender(light);
+        .AddToRender(blueTopLight, redRightLight);
 
         renderer = new Rasteriser<Imagenic2.Core.Images.Bitmap>(renderingOptions);
 

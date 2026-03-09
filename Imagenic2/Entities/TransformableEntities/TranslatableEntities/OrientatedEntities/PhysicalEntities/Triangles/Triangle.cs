@@ -38,6 +38,10 @@ public class Triangle
     internal Vector4D ViewSpaceP2 { get; set; }
     internal Vector4D ViewSpaceP3 { get; set; }
 
+    internal float invW1 { get; set; }
+    internal float invW2 { get; set; }
+    internal float invW3 { get; set; }
+
     #endregion
 
     #region Constructors

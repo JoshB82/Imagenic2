@@ -19,10 +19,10 @@ public static class Extensions
     }
 
     public static bool ApproxEquals(this float v1, float v2, float epsilon = float.Epsilon) => Math.Abs(v1 - v2) <= epsilon;
-    public static bool ApproxLessThanEquals(this float v1, float v2, float epsilon = float.Epsilon) => v1 <= v2 + epsilon;
-    public static bool ApproxMoreThanEquals(this float v1, float v2, float epsilon = float.Epsilon) => v1 >= v2 - epsilon;
-    public static bool ApproxLessThan(this float v1, float v2, float epsilon = float.Epsilon) => v1 < v2 + epsilon;
-    public static bool ApproxMoreThan(this float v1, float v2, float epsilon = float.Epsilon) => v1 > v2 - epsilon;
+    public static bool ApproxLessThanEquals(this float v1, float v2, float epsilon = float.Epsilon) => v1 < v2 || ApproxEquals(v1, v2, epsilon);
+    public static bool ApproxMoreThanEquals(this float v1, float v2, float epsilon = float.Epsilon) => v1 > v2 || ApproxEquals(v1, v2, epsilon);
+    public static bool ApproxLessThan(this float v1, float v2, float epsilon = float.Epsilon) => v1 < v2 && !ApproxEquals(v1, v2, epsilon);
+    public static bool ApproxMoreThan(this float v1, float v2, float epsilon = float.Epsilon) => v1 > v2 && !ApproxEquals(v1, v2, epsilon);
 
     internal static int RoundToInt(this float num) => (int)(num >= 0 ? num + 0.5f : num - 0.5f);
 

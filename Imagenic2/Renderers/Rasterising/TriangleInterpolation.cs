@@ -6,28 +6,29 @@ public partial class Rasteriser<TImage>
 {
     private static void InterpolateTriangle(Triangle triangle,
                                             Buffer2D<float> buffer,
-                                            Action<Triangle, Buffer2D<float>, int, int, float, float, float, float> onInterpolation)
+                                            Action<Triangle, Buffer2D<float>, int, int, float, float, float, float> onInterpolation,
+                                            float invW1, float invW2, float invW3)
     {
         // Extract values
         float x1 = triangle.TransformedP1.x;
         float y1 = triangle.TransformedP1.y;
-        float z1 = triangle.TransformedP1.z;
+        float z1 = triangle.TransformedP1.z * invW1;
         float x2 = triangle.TransformedP2.x;
         float y2 = triangle.TransformedP2.y;
-        float z2 = triangle.TransformedP2.z;
+        float z2 = triangle.TransformedP2.z * invW2;
         float x3 = triangle.TransformedP3.x;
         float y3 = triangle.TransformedP3.y;
-        float z3 = triangle.TransformedP3.z;
+        float z3 = triangle.TransformedP3.z * invW3;
 
-        float vx1 = triangle.ViewSpaceP1.x;
-        float vy1 = triangle.ViewSpaceP1.y;
-        float vz1 = triangle.ViewSpaceP1.z;
-        float vx2 = triangle.ViewSpaceP2.x;
-        float vy2 = triangle.ViewSpaceP2.y;
-        float vz2 = triangle.ViewSpaceP2.z;
-        float vx3 = triangle.ViewSpaceP3.x;
-        float vy3 = triangle.ViewSpaceP3.y;
-        float vz3 = triangle.ViewSpaceP3.z;
+        float vx1 = triangle.ViewSpaceP1.x * invW1;
+        float vy1 = triangle.ViewSpaceP1.y * invW1;
+        float vz1 = triangle.ViewSpaceP1.z * invW1;
+        float vx2 = triangle.ViewSpaceP2.x * invW2;
+        float vy2 = triangle.ViewSpaceP2.y * invW2;
+        float vz2 = triangle.ViewSpaceP2.z * invW2;
+        float vx3 = triangle.ViewSpaceP3.x * invW3;
+        float vy3 = triangle.ViewSpaceP3.y * invW3;
+        float vz3 = triangle.ViewSpaceP3.z * invW3;
 
         // Calculate bounding rectangle
         int bottomLeftX = (int)(Floor(Min(Min(x1, x2), x3)));
@@ -56,12 +57,15 @@ public partial class Rasteriser<TImage>
         float vyStepY = ((x3 - x2) * vy1 + (x1 - x3) * vy2 + (x2 - x1) * vy3) / area;
         float vzStepX = ((y2 - y3) * vz1 + (y3 - y1) * vz2 + (y1 - y2) * vz3) / area;
         float vzStepY = ((x3 - x2) * vz1 + (x1 - x3) * vz2 + (x2 - x1) * vz3) / area;
+        float invWStepX = ((y2 - y3) * invW1 + (y3 - y1) * invW2 + (y1 - y2) * invW3) / area;
+        float invWStepY = ((x3 - x2) * invW1 + (x1 - x3) * invW2 + (x2 - x1) * invW3) / area;
 
         float C = z1 - zStepX * x1 - zStepY * y1;
         float startZ = zStepX * px + zStepY * py + C;
         float startVx = vxStepX * px + vxStepY * py + (vx1 - vxStepX * x1 - vxStepY * y1);
         float startVy = vyStepX * px + vyStepY * py + (vy1 - vyStepX * x1 - vyStepY * y1);
         float startVz = vzStepX * px + vzStepY * py + (vz1 - vzStepX * x1 - vzStepY * y1);
+        float startInvW = invWStepX * px + invWStepY * py + (invW1 - invWStepX * x1 - invWStepY * y1);
 
         for (int y = bottomLeftY; y <= topRightY; y++)
         {
@@ -70,6 +74,7 @@ public partial class Rasteriser<TImage>
             float e3 = start3;
             float z = startZ;
             float vx = startVx, vy = startVy, vz = startVz;
+            float invW = startInvW;
 
             for (int x = bottomLeftX; x <= topRightX; x++)
             {
@@ -78,7 +83,8 @@ public partial class Rasteriser<TImage>
                     (e3 < 0 || (e3 == 0 && ((y1 == y3 && x1 < x3) || (y1 < y3)))))
                 {
                     // Point is inside triangle
-                    onInterpolation(triangle, buffer, x, y, z, vx, vy, vz);
+                    float w = 1 / invW;
+                    onInterpolation(triangle, buffer, x, y, z * w, vx * w, vy * w, vz * w);
                 }
                 e1 += xStep1;
                 e2 += xStep2;
@@ -87,6 +93,7 @@ public partial class Rasteriser<TImage>
                 vx += vxStepX;
                 vy += vyStepX;
                 vz += vzStepX;
+                invW += invWStepX;
             }
             start1 += yStep1;
             start2 += yStep2;
@@ -95,23 +102,25 @@ public partial class Rasteriser<TImage>
             startVx += vxStepY;
             startVy += vyStepY;
             startVz += vzStepY;
+            startInvW += invWStepY;
         }
     }
 
-    private static void InterpolateTriangle(Triangle triangle,
+    private static void ShadowMapInterpolateTriangle(Triangle triangle,
                                             Buffer2D<float> buffer,
-                                            Action<Triangle, Buffer2D<float>, int, int, float> onInterpolation)
+                                            Action<Triangle, Buffer2D<float>, int, int, float> onInterpolation,
+                                            float invW1, float invW2, float invW3)
     {
         // Extract values
         float x1 = triangle.TransformedP1.x;
         float y1 = triangle.TransformedP1.y;
-        float z1 = triangle.TransformedP1.z;
+        float z1 = triangle.TransformedP1.z * invW1;
         float x2 = triangle.TransformedP2.x;
         float y2 = triangle.TransformedP2.y;
-        float z2 = triangle.TransformedP2.z;
+        float z2 = triangle.TransformedP2.z * invW2;
         float x3 = triangle.TransformedP3.x;
         float y3 = triangle.TransformedP3.y;
-        float z3 = triangle.TransformedP3.z;
+        float z3 = triangle.TransformedP3.z * invW3;
 
         // Calculate bounding rectangle
         int bottomLeftX = (int)(Floor(Min(Min(x1, x2), x3)));
@@ -134,8 +143,12 @@ public partial class Rasteriser<TImage>
         float area = (x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1);
         float zStepX = ((y2 - y3) * z1 + (y3 - y1) * z2 + (y1 - y2) * z3) / area;
         float zStepY = ((x3 - x2) * z1 + (x1 - x3) * z2 + (x2 - x1) * z3) / area;
+        float invWStepX = ((y2 - y3) * invW1 + (y3 - y1) * invW2 + (y1 - y2) * invW3) / area;
+        float invWStepY = ((x3 - x2) * invW1 + (x1 - x3) * invW2 + (x2 - x1) * invW3) / area;
+
         float C = z1 - zStepX * x1 - zStepY * y1;
         float startZ = zStepX * px + zStepY * py + C;
+        float startInvW = invWStepX * px + invWStepY * py + (invW1 - invWStepX * x1 - invWStepY * y1);
 
         for (int y = bottomLeftY; y <= topRightY; y++)
         {
@@ -143,6 +156,7 @@ public partial class Rasteriser<TImage>
             float e2 = start2;
             float e3 = start3;
             float z = startZ;
+            float invW = startInvW;
 
             for (int x = bottomLeftX; x <= topRightX; x++)
             {
@@ -151,17 +165,20 @@ public partial class Rasteriser<TImage>
                     (e3 < 0 || (e3 == 0 && ((y1 == y3 && x1 < x3) || (y1 < y3)))))
                 {
                     // Point is inside triangle
-                    onInterpolation(triangle, buffer, x, y, z);
+                    float w = 1 / invW;
+                    onInterpolation(triangle, buffer, x, y, z * w);
                 }
                 e1 += xStep1;
                 e2 += xStep2;
                 e3 += xStep3;
                 z += zStepX;
+                invW += invWStepX;
             }
             start1 += yStep1;
             start2 += yStep2;
             start3 += yStep3;
             startZ += zStepY;
+            startInvW += invWStepY;
         }
     }
 }

@@ -52,7 +52,7 @@ public partial class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagen
                 foreach (ShadowMap shadowMap in light.ShadowMaps)
                 {
                     shadowMap.Data.SetAllToValue(backgroundValue); // A number > 1
-                    RenderTriangles(light, shadowMap.Data, shadowMap.ScreenToWindow, ProduceShadowMaps);
+                    ShadowMapRenderTriangles(light, shadowMap.Data, shadowMap.ScreenToWindow, ProduceShadowMaps);
                 }
             }
 

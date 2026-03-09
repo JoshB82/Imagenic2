@@ -19,8 +19,8 @@ public partial class Rasteriser<TImage>
         if (z.ApproxLessThan(zBuffer.Values[x][y], 1E-4f))
         {
             zBuffer.Values[x][y] = z;
-            Color pixelColour = Color.Black;
-            bool firstLight = true;
+            Color pixelColour = ((SolidStyle)(triangle.FrontStyle)).Colour;
+            bool anyLights = false;
 
             // Check if pixel is in shadow
             foreach (Light light in RenderingOptions.Lights)
@@ -47,27 +47,20 @@ public partial class Rasteriser<TImage>
                     int xLookUp = point.x.RoundToInt();
                     int yLookUp = point.y.RoundToInt();
 
-                    if (shadowMap.Data.Values[xLookUp][yLookUp].ApproxLessThan(point.z, 1e-4f))
+                    if (shadowMap.Data.Values[xLookUp][yLookUp].ApproxLessThan(point.z, 1e-3f))
                     {
                         // Pixel is not affected by this light
                     }
                     else
                     {
                         // Pixel is affected by this light
-                        if (firstLight)
-                        {
-                            pixelColour = light.Colour;
-                            firstLight = false;
-                        }
-                        else
-                        {
-                            pixelColour = pixelColour.Mix(light.Colour);
-                        }
+                        pixelColour = pixelColour.Mix(light.Colour);
+                        anyLights = true;
                     }
                 }
             }
             
-            colourBuffer.Values[x][y] = pixelColour;
+            colourBuffer.Values[x][y] = anyLights ? pixelColour : Color.Black;
         }
     }
 

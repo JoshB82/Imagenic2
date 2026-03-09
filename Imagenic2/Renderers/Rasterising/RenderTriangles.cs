@@ -7,7 +7,7 @@ public partial class Rasteriser<TImage>
 {
     private Queue<Triangle> triangleQueue = new Queue<Triangle>();
 
-    private void RenderTriangles(RenderingEntity renderingEntity,
+    private void ShadowMapRenderTriangles(RenderingEntity renderingEntity,
                                  Buffer2D<float> buffer,
                                  Matrix4x4 screenToWindow,
                                  Action<Triangle, Buffer2D<float>, int, int, float> onInterpolation)
@@ -42,6 +42,11 @@ public partial class Rasteriser<TImage>
                         foreach (Triangle clippedTriangle in triangleQueue)
                         {
                             TransformTriangleVertices(clippedTriangle, renderingEntity.viewToScreen);
+
+                            clippedTriangle.invW1 = 1 / clippedTriangle.TransformedP1.w;
+                            clippedTriangle.invW2 = 1 / clippedTriangle.TransformedP2.w;
+                            clippedTriangle.invW3 = 1 / clippedTriangle.TransformedP3.w;
+
                             if (RenderingOptions.RenderCamera is PerspectiveCamera)
                             {
                                 clippedTriangle.TransformedP1 /= clippedTriangle.TransformedP1.w;
@@ -54,7 +59,7 @@ public partial class Rasteriser<TImage>
                         foreach (Triangle clippedTriangle in triangleQueue)
                         {
                             TransformTriangleVertices(clippedTriangle, screenToWindow);
-                            InterpolateTriangle(clippedTriangle, buffer, onInterpolation);
+                            ShadowMapInterpolateTriangle(clippedTriangle, buffer, onInterpolation, clippedTriangle.invW1, clippedTriangle.invW2, clippedTriangle.invW3);
                         }
 
                         triangleQueue.Clear();
@@ -98,11 +103,16 @@ public partial class Rasteriser<TImage>
 
                         foreach (Triangle clippedTriangle in triangleQueue)
                         {
-                            triangle.ViewSpaceP1 = triangle.TransformedP1;
-                            triangle.ViewSpaceP2 = triangle.TransformedP2;
-                            triangle.ViewSpaceP3 = triangle.TransformedP3;
+                            clippedTriangle.ViewSpaceP1 = clippedTriangle.TransformedP1;
+                            clippedTriangle.ViewSpaceP2 = clippedTriangle.TransformedP2;
+                            clippedTriangle.ViewSpaceP3 = clippedTriangle.TransformedP3;
 
                             TransformTriangleVertices(clippedTriangle, renderingEntity.viewToScreen);
+
+                            clippedTriangle.invW1 = 1 / clippedTriangle.TransformedP1.w;
+                            clippedTriangle.invW2 = 1 / clippedTriangle.TransformedP2.w;
+                            clippedTriangle.invW3 = 1 / clippedTriangle.TransformedP3.w;
+
                             if (RenderingOptions.RenderCamera is PerspectiveCamera)
                             {
                                 clippedTriangle.TransformedP1 /= clippedTriangle.TransformedP1.w;
@@ -115,7 +125,7 @@ public partial class Rasteriser<TImage>
                         foreach (Triangle clippedTriangle in triangleQueue)
                         {
                             TransformTriangleVertices(clippedTriangle, screenToWindow);
-                            InterpolateTriangle(clippedTriangle, buffer, onInterpolation);
+                            InterpolateTriangle(clippedTriangle, buffer, onInterpolation, clippedTriangle.invW1, clippedTriangle.invW2, clippedTriangle.invW3);
                         }
 
                         triangleQueue.Clear();
