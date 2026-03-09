@@ -14,7 +14,7 @@ public partial class Rasteriser<TImage>
         }
     }
 
-    private void OnInterpolation(Triangle triangle, Buffer2D<float> zBuffer, int x, int y, float z)
+    private void OnInterpolation(Triangle triangle, Buffer2D<float> zBuffer, int x, int y, float z, float vx, float vy, float vz)
     {
         if (z.ApproxLessThan(zBuffer.Values[x][y], 1E-4f))
         {
@@ -27,25 +27,30 @@ public partial class Rasteriser<TImage>
             {
                 foreach (ShadowMap shadowMap in light.ShadowMaps)
                 {
-                    Vector4D point = new Vector4D(x, y, z, 1);
+                    //Vector4D point = new Vector4D(x, y, z, 1);
 
-                    point = RenderingOptions.RenderCamera.viewToScreen.Inverse() * RenderingOptions.ScreenToWindow.Inverse() * point;
+                    //point = RenderingOptions.RenderCamera.viewToScreen.Inverse() * RenderingOptions.ScreenToWindow.Inverse() * point;
 
                     //if (light is Spotlight)
                     //{
-                        point /= point.w;
+                    //point /= point.w;
                     //}
 
+                    //point = light.viewToScreen * light.WorldToView * RenderingOptions.RenderCamera.WorldToView.Inverse() * point;
+
+                    //point /= point.w;
+
+
+
+                    //if (point.x.ApproxLessThan(-1) || point.x.ApproxMoreThan(1) ||
+                    //    point.y.ApproxLessThan(-1) || point.y.ApproxMoreThan(1))
+                    //{
+                    //    continue;
+                    //}
+
+                    Vector4D point = new Vector4D(vx, vy, vz, 1);
                     point = light.viewToScreen * light.WorldToView * RenderingOptions.RenderCamera.WorldToView.Inverse() * point;
-
                     point /= point.w;
-
-                    if (point.x.ApproxLessThan(-1) || point.x.ApproxMoreThan(1) ||
-                        point.y.ApproxLessThan(-1) || point.y.ApproxMoreThan(1))
-                    {
-                        continue;
-                    }
-
                     point = shadowMap.ScreenToWindow * point;
                     int xLookUp = point.x.RoundToInt();
                     int yLookUp = point.y.RoundToInt();

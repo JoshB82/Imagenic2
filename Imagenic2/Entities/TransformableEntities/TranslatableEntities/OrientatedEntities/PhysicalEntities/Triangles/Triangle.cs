@@ -34,6 +34,10 @@ public class Triangle
     internal Vector4D TransformedP2 { get; set; }
     internal Vector4D TransformedP3 { get; set; }
 
+    internal Vector4D ViewSpaceP1 { get; set; }
+    internal Vector4D ViewSpaceP2 { get; set; }
+    internal Vector4D ViewSpaceP3 { get; set; }
+
     #endregion
 
     #region Constructors
