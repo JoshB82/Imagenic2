@@ -25,42 +25,35 @@ public partial class Rasteriser<TImage>
             // Check if pixel is in shadow
             foreach (Light light in RenderingOptions.Lights)
             {
+                Matrix4x4 cameraViewToLightScreen = light.viewToScreen * light.WorldToView * RenderingOptions.RenderCamera.WorldToView.Inverse();
+
                 foreach (ShadowMap shadowMap in light.ShadowMaps)
                 {
-                    //Vector4D point = new Vector4D(x, y, z, 1);
-
-                    //point = RenderingOptions.RenderCamera.viewToScreen.Inverse() * RenderingOptions.ScreenToWindow.Inverse() * point;
-
-                    //if (light is Spotlight)
-                    //{
-                    //point /= point.w;
-                    //}
-
-                    //point = light.viewToScreen * light.WorldToView * RenderingOptions.RenderCamera.WorldToView.Inverse() * point;
-
-                    //point /= point.w;
-
-
-
-                    //if (point.x.ApproxLessThan(-1) || point.x.ApproxMoreThan(1) ||
-                    //    point.y.ApproxLessThan(-1) || point.y.ApproxMoreThan(1))
-                    //{
-                    //    continue;
-                    //}
-
                     Vector4D point = new Vector4D(vx, vy, vz, 1);
-                    point = light.viewToScreen * light.WorldToView * RenderingOptions.RenderCamera.WorldToView.Inverse() * point;
-                    point /= point.w;
+                    point = cameraViewToLightScreen * point;
+                    
+                    if (light is Spotlight)
+                    {
+                        point /= point.w;
+                    }
+
+                    if (point.x.ApproxLessThan(-1) || point.x.ApproxMoreThan(1) ||
+                        point.y.ApproxLessThan(-1) || point.y.ApproxMoreThan(1))
+                    {
+                        continue;
+                    }
+
                     point = shadowMap.ScreenToWindow * point;
                     int xLookUp = point.x.RoundToInt();
                     int yLookUp = point.y.RoundToInt();
 
-                    if (shadowMap.Data.Values[xLookUp][yLookUp].ApproxLessThan(point.z))
+                    if (shadowMap.Data.Values[xLookUp][yLookUp].ApproxLessThan(point.z, 1e-4f))
                     {
-                        // Pixel is in shadow
+                        // Pixel is not affected by this light
                     }
                     else
                     {
+                        // Pixel is affected by this light
                         if (firstLight)
                         {
                             pixelColour = light.Colour;

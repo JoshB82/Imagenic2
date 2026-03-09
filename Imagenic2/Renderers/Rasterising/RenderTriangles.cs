@@ -33,7 +33,7 @@ public partial class Rasteriser<TImage>
                         if (mesh.Structure.MeshDimension == MeshDimension._3D)
                         {
                             Vector3D normal = Vector3D.NormalFromPlane((Vector3D)(triangle.TransformedP1), (Vector3D)(triangle.TransformedP2), (Vector3D)(triangle.TransformedP3));
-                            if (normal * (Vector3D)(triangle.TransformedP1) >= 0) continue;
+                            if ((normal * (Vector3D)(triangle.TransformedP1)).ApproxMoreThanEquals(0)) continue;
                         }
                         triangleQueue.Enqueue(triangle);
                         ClipTriangles(triangleQueue, renderingEntity.ViewClippingPlanes);
@@ -90,7 +90,7 @@ public partial class Rasteriser<TImage>
                         if (mesh.Structure.MeshDimension == MeshDimension._3D)
                         {
                             Vector3D normal = Vector3D.NormalFromPlane((Vector3D)(triangle.TransformedP1), (Vector3D)(triangle.TransformedP2), (Vector3D)(triangle.TransformedP3));
-                            if (normal * (Vector3D)(triangle.TransformedP1) >= 0) continue;
+                            if ((normal * (Vector3D)(triangle.TransformedP1)).ApproxMoreThanEquals(0)) continue;
                         }
                         triangleQueue.Enqueue(triangle);
                         ClipTriangles(triangleQueue, renderingEntity.ViewClippingPlanes);
