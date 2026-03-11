@@ -27,11 +27,12 @@ public class Bitmap : Image
         PixelFormat = bitmap.PixelFormat;
         BitmapData data = bitmap.LockBits(new Rectangle(0, 0, Width, Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
 
-        Parallel.For(0, bitmap.Height, y =>
+        int width = bitmap.Width, height = bitmap.Height;
+        Parallel.For(0, height, y =>
         {
             byte* rowStart = (byte*)data.Scan0 + y * data.Stride;
-            int yIndex = bitmap.Height - 1 - y;
-            for (int x = 0; x < bitmap.Width; x++)
+            int yIndex = height - 1 - y;
+            for (int x = 0; x < width; x++)
             {
                 ColourBuffer.Values[x][yIndex] = Color.FromArgb(rowStart[x * 3 + 2], rowStart[x * 3 + 1], rowStart[x * 3]);
             }

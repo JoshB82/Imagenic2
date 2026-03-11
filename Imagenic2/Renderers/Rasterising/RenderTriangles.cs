@@ -89,6 +89,10 @@ public partial class Rasteriser<TImage>
                         triangle.TransformedP2 = new Vector4D(triangle.P2.WorldOrigin, 1);
                         triangle.TransformedP3 = new Vector4D(triangle.P3.WorldOrigin, 1);
 
+                        triangle.invW1 = 1;
+                        triangle.invW2 = 1;
+                        triangle.invW3 = 1;
+
                         Matrix4x4 modelToView = renderingEntity.WorldToView * mesh.ModelToWorld;
                         TransformTriangleVertices(triangle, modelToView);
                         
@@ -118,6 +122,13 @@ public partial class Rasteriser<TImage>
                                 clippedTriangle.TransformedP1 /= clippedTriangle.TransformedP1.w;
                                 clippedTriangle.TransformedP2 /= clippedTriangle.TransformedP2.w;
                                 clippedTriangle.TransformedP3 /= clippedTriangle.TransformedP3.w;
+
+                                if (clippedTriangle.FrontStyle is TextureStyle)
+                                {
+                                    clippedTriangle.TextureP1 *= clippedTriangle.invW1;
+                                    clippedTriangle.TextureP2 *= clippedTriangle.invW2;
+                                    clippedTriangle.TextureP3 *= clippedTriangle.invW3;
+                                }
                             }
                         }
 

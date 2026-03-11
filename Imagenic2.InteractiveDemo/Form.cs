@@ -51,10 +51,10 @@ public partial class Form : System.Windows.Forms.Form
         );
 
         // Textures
-        string filePath = "";
-        //TextureStyle ts = new TextureStyle(new Imagenic2.Core.Images.Bitmap(new Bitmap(filePath)));
-        //cube.Structure.Triangles[0].FrontStyle = ts;
-        //cube.Structure.Triangles[1].FrontStyle = ts;
+        string filePath = "C:\\Users\\joshd\\Downloads\\smiley.bmp";
+        TextureStyle ts = new TextureStyle(new Imagenic2.Core.Images.Bitmap(new Bitmap(filePath)));
+        cube.Structure.Triangles[2].FrontStyle = ts;
+        cube.Structure.Triangles[3].FrontStyle = ts;
 
         // Cameras
         float aspectRatio = pictureBox.Width / (float)(pictureBox.Height);

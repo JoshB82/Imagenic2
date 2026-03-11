@@ -28,13 +28,24 @@ public partial class Rasteriser<TImage>
     private void OnTextureInterpolation(Triangle triangle, Buffer2D<float> zBuffer, int x, int y, float z, Vector3D v, Vector2D t)
     {
         float vx = v.x, vy = v.y, vz = v.z;
-        int tu = t.x.RoundToInt(), tv = t.y.RoundToInt();
+        float tu = t.x, tv = t.y;
 
         if (z.ApproxLessThan(zBuffer.Values[x][y], 1E-4f))
         {
             zBuffer.Values[x][y] = z;
-            Imagenic2.Core.Images.Image textureImage = ((TextureStyle)(triangle.FrontStyle)).Image;
-            Color pixelColour = textureImage.ColourBuffer.Values[tu][tv];
+            Color pixelColour;
+            TextureStyle ts = (TextureStyle)(triangle.FrontStyle);
+            Imagenic2.Core.Images.Image textureImage = ts.Image;
+            if (tu.ApproxLessThan(0) || tu.ApproxMoreThan(1) ||
+                tv.ApproxLessThan(0) || tv.ApproxMoreThan(1))
+            {
+                pixelColour = ts.OutsideColour;
+            }
+            else
+            {
+                int mappedTu = (tu * (textureImage.Width - 1)).RoundToInt(), mappedTv = (tv * (textureImage.Height - 1)).RoundToInt();
+                pixelColour = textureImage.ColourBuffer.Values[mappedTu][mappedTv];
+            }
             colourBuffer.Values[x][y] = ShadowMapCheck(pixelColour, vx, vy, vz);
         }
     }

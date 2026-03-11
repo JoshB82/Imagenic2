@@ -38,9 +38,9 @@ public class Triangle
     internal Vector4D ViewSpaceP2 { get; set; }
     internal Vector4D ViewSpaceP3 { get; set; }
 
-    internal float invW1 { get; set; }
-    internal float invW2 { get; set; }
-    internal float invW3 { get; set; }
+    internal float invW1 { get; set; } = 1;
+    internal float invW2 { get; set; } = 1;
+    internal float invW3 { get; set; } = 1;
 
     public Vector2D TextureP1 { get; set; }
     public Vector2D TextureP2 { get; set; }

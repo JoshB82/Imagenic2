@@ -9,7 +9,16 @@ public sealed class TextureStyle : FaceStyle, IDisposable
     public IEnumerable<Vector3D> Vertices { get; set; }
     public Color OutsideColour { get; set; } = Color.Black;
 
-    public Imagenic2.Core.Images.Image Image { get; set; }
+    private Imagenic2.Core.Images.Image image;
+    public Imagenic2.Core.Images.Image Image
+    {
+        get => image;
+        set
+        {
+            image = value;
+            
+        }
+    }
 
     #endregion
 

@@ -1,4 +1,7 @@
-﻿namespace Imagenic2.Core.Maths.Vectors;
+﻿using System.Numerics;
+using System.Runtime.CompilerServices;
+
+namespace Imagenic2.Core.Maths.Vectors;
 
 public struct Vector3D : IEquatable<Vector3D>
 {
@@ -143,6 +146,8 @@ public struct Vector3D : IEquatable<Vector3D>
     public override readonly bool Equals(object obj) => this == (Vector3D)obj;
 
     public override readonly int GetHashCode() => (x, y, z).GetHashCode();
+
+    public static explicit operator Vector2D(Vector3D v) => new Vector2D(v.x, v.y);
 
     #endregion
 }
