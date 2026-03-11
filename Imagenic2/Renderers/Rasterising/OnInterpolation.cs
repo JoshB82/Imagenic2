@@ -14,54 +14,74 @@ public partial class Rasteriser<TImage>
         }
     }
 
-    private void OnInterpolation(Triangle triangle, Buffer2D<float> zBuffer, int x, int y, float z, float vx, float vy, float vz)
+    private void OnInterpolation(Triangle triangle, Buffer2D<float> zBuffer, int x, int y, float z, Vector3D v, Vector2D t)
     {
+        float vx = v.x, vy = v.y, vz = v.z;
         if (z.ApproxLessThan(zBuffer.Values[x][y], 1E-4f))
         {
             zBuffer.Values[x][y] = z;
             Color pixelColour = ((SolidStyle)(triangle.FrontStyle)).Colour;
-            bool anyLights = false;
+            colourBuffer.Values[x][y] = ShadowMapCheck(pixelColour, vx, vy, vz);
+        }
+    }
 
-            // Check if pixel is in shadow
-            foreach (Light light in RenderingOptions.Lights)
+    private void OnTextureInterpolation(Triangle triangle, Buffer2D<float> zBuffer, int x, int y, float z, Vector3D v, Vector2D t)
+    {
+        float vx = v.x, vy = v.y, vz = v.z;
+        int tu = t.x.RoundToInt(), tv = t.y.RoundToInt();
+
+        if (z.ApproxLessThan(zBuffer.Values[x][y], 1E-4f))
+        {
+            zBuffer.Values[x][y] = z;
+            Imagenic2.Core.Images.Image textureImage = ((TextureStyle)(triangle.FrontStyle)).Image;
+            Color pixelColour = textureImage.ColourBuffer.Values[tu][tv];
+            colourBuffer.Values[x][y] = ShadowMapCheck(pixelColour, vx, vy, vz);
+        }
+    }
+
+    private Color ShadowMapCheck(Color pixelColour, float vx, float vy, float vz)
+    {
+        bool anyLights = false;
+
+        // Check if pixel is in shadow
+        foreach (Light light in RenderingOptions.Lights)
+        {
+            Matrix4x4 cameraViewToLightScreen = light.viewToScreen * light.WorldToView * RenderingOptions.RenderCamera.WorldToView.Inverse();
+
+            foreach (ShadowMap shadowMap in light.ShadowMaps)
             {
-                Matrix4x4 cameraViewToLightScreen = light.viewToScreen * light.WorldToView * RenderingOptions.RenderCamera.WorldToView.Inverse();
+                Vector4D point = new Vector4D(vx, vy, vz, 1);
+                point = cameraViewToLightScreen * point;
 
-                foreach (ShadowMap shadowMap in light.ShadowMaps)
+                if (light is Spotlight)
                 {
-                    Vector4D point = new Vector4D(vx, vy, vz, 1);
-                    point = cameraViewToLightScreen * point;
-                    
-                    if (light is Spotlight)
-                    {
-                        point /= point.w;
-                    }
+                    point /= point.w;
+                }
 
-                    if (point.x.ApproxLessThan(-1) || point.x.ApproxMoreThan(1) ||
-                        point.y.ApproxLessThan(-1) || point.y.ApproxMoreThan(1))
-                    {
-                        continue;
-                    }
+                if (point.x.ApproxLessThan(-1) || point.x.ApproxMoreThan(1) ||
+                    point.y.ApproxLessThan(-1) || point.y.ApproxMoreThan(1))
+                {
+                    continue;
+                }
 
-                    point = shadowMap.ScreenToWindow * point;
-                    int xLookUp = point.x.RoundToInt();
-                    int yLookUp = point.y.RoundToInt();
+                point = shadowMap.ScreenToWindow * point;
+                int xLookUp = point.x.RoundToInt();
+                int yLookUp = point.y.RoundToInt();
 
-                    if (shadowMap.Data.Values[xLookUp][yLookUp].ApproxLessThan(point.z, 1e-3f))
-                    {
-                        // Pixel is not affected by this light
-                    }
-                    else
-                    {
-                        // Pixel is affected by this light
-                        pixelColour = pixelColour.Mix(light.Colour);
-                        anyLights = true;
-                    }
+                if (shadowMap.Data.Values[xLookUp][yLookUp].ApproxLessThan(point.z, 1e-3f))
+                {
+                    // Pixel is not affected by this light
+                }
+                else
+                {
+                    // Pixel is affected by this light
+                    pixelColour = pixelColour.Mix(light.Colour);
+                    anyLights = true;
                 }
             }
-            
-            colourBuffer.Values[x][y] = anyLights ? pixelColour : Color.Black;
         }
+
+        return anyLights ? pixelColour : Color.Black;
     }
 
     private void OnInterpolation(Edge edge, int x, int y, float z)

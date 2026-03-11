@@ -22,6 +22,24 @@ public class Bitmap : Image
 
     }
 
+    public unsafe Bitmap(System.Drawing.Bitmap bitmap) : base(bitmap.Width, bitmap.Height, new Buffer2D<Color>(bitmap.Width, bitmap.Height))
+    {
+        PixelFormat = bitmap.PixelFormat;
+        BitmapData data = bitmap.LockBits(new Rectangle(0, 0, Width, Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+
+        Parallel.For(0, bitmap.Height, y =>
+        {
+            byte* rowStart = (byte*)data.Scan0 + y * data.Stride;
+            int yIndex = bitmap.Height - 1 - y;
+            for (int x = 0; x < bitmap.Width; x++)
+            {
+                ColourBuffer.Values[x][yIndex] = Color.FromArgb(rowStart[x * 3 + 2], rowStart[x * 3 + 1], rowStart[x * 3]);
+            }
+        });
+
+        bitmap.UnlockBits(data);
+    }
+
     #endregion
 
     #region Methods

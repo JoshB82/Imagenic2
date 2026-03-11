@@ -72,7 +72,7 @@ public partial class Rasteriser<TImage>
     private void RenderTriangles(RenderingEntity renderingEntity,
                                  Buffer2D<float> buffer,
                                  Matrix4x4 screenToWindow,
-                                 Action<Triangle, Buffer2D<float>, int, int, float, float, float, float> onInterpolation)
+                                 Action<Triangle, Buffer2D<float>, int, int, float, Vector3D, Vector2D> onInterpolation)
     {
         // Reset values
         zBuffer.SetAllToValue(backgroundValue); // A number > 1
@@ -125,7 +125,15 @@ public partial class Rasteriser<TImage>
                         foreach (Triangle clippedTriangle in triangleQueue)
                         {
                             TransformTriangleVertices(clippedTriangle, screenToWindow);
-                            InterpolateTriangle(clippedTriangle, buffer, onInterpolation, clippedTriangle.invW1, clippedTriangle.invW2, clippedTriangle.invW3);
+                            switch (clippedTriangle.FrontStyle)
+                            {
+                                case SolidStyle:
+                                    InterpolateTriangle(clippedTriangle, buffer, onInterpolation, clippedTriangle.invW1, clippedTriangle.invW2, clippedTriangle.invW3);
+                                    break;
+                                case TextureStyle:
+                                    InterpolateTextureTriangle(clippedTriangle, buffer, OnTextureInterpolation, clippedTriangle.invW1, clippedTriangle.invW2, clippedTriangle.invW3);
+                                    break;
+                            }
                         }
 
                         triangleQueue.Clear();

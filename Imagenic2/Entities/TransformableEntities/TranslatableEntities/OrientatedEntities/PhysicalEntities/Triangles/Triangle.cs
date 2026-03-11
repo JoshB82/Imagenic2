@@ -42,6 +42,10 @@ public class Triangle
     internal float invW2 { get; set; }
     internal float invW3 { get; set; }
 
+    public Vector2D TextureP1 { get; set; }
+    public Vector2D TextureP2 { get; set; }
+    public Vector2D TextureP3 { get; set; }
+
     #endregion
 
     #region Constructors
@@ -62,6 +66,16 @@ public class Triangle
         P3 = p3;
     }
 
+    public Triangle(Vertex p1, Vertex p2, Vertex p3, Vector2D txp1, Vector2D txp2, Vector2D txp3)
+    {
+        P1 = p1;
+        P2 = p2;
+        P3 = p3;
+        TextureP1 = txp1;
+        TextureP2 = txp2;
+        TextureP3 = txp3;
+    }
+
     #endregion
 
     #region Methods
@@ -73,6 +87,15 @@ public class Triangle
         triangle.TransformedP1 = TransformedP1;
         triangle.TransformedP2 = TransformedP2;
         triangle.TransformedP3 = TransformedP3;
+        triangle.ViewSpaceP1 = ViewSpaceP1;
+        triangle.ViewSpaceP2 = ViewSpaceP2;
+        triangle.ViewSpaceP3 = ViewSpaceP3;
+        triangle.invW1 = invW1;
+        triangle.invW2 = invW2;
+        triangle.invW3 = invW3;
+        triangle.TextureP1 = TextureP1;
+        triangle.TextureP2 = TextureP2;
+        triangle.TextureP3 = TextureP3;
         triangle.FrontStyle = FrontStyle;
         triangle.BackStyle = BackStyle;
         return triangle;

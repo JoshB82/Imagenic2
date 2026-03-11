@@ -10,7 +10,7 @@ public sealed class MeshStructure
     public IReadOnlyList<Edge> Edges { get; set; }
     public IReadOnlyList<Triangle> Triangles { get; set; }
     public IReadOnlyList<Face> Faces { get; set; }
-    public IList<Texture> Textures { get; set; }
+    public IList<TextureStyle> Textures { get; set; }
 
     public MeshDimension MeshDimension { get; set; }
 
@@ -82,18 +82,18 @@ public sealed class MeshStructure
     };
     private static readonly IReadOnlyList<Triangle> cuboidTriangles = new Triangle[12]
     {
-        new Triangle(cuboidVertices[0], cuboidVertices[1], cuboidVertices[2]), // 0 [Back-1]
-        new Triangle(cuboidVertices[0], cuboidVertices[2], cuboidVertices[3]), // 1 [Back-2]
-        new Triangle(cuboidVertices[1], cuboidVertices[5], cuboidVertices[6]), // 2 [Right-1]
-        new Triangle(cuboidVertices[1], cuboidVertices[6], cuboidVertices[2]), // 3 [Right-2]
-        new Triangle(cuboidVertices[5], cuboidVertices[4], cuboidVertices[7]), // 4 [Front-1]
-        new Triangle(cuboidVertices[5], cuboidVertices[7], cuboidVertices[6]), // 5 [Front-2]
-        new Triangle(cuboidVertices[4], cuboidVertices[0], cuboidVertices[3]), // 6 [Left-1]
-        new Triangle(cuboidVertices[4], cuboidVertices[3], cuboidVertices[7]), // 7 [Left-2]
-        new Triangle(cuboidVertices[3], cuboidVertices[2], cuboidVertices[6]), // 8 [Top-1]
-        new Triangle(cuboidVertices[3], cuboidVertices[6], cuboidVertices[7]), // 9 [Top-2]
-        new Triangle(cuboidVertices[1], cuboidVertices[0], cuboidVertices[4]), // 10 [Bottom-1]
-        new Triangle(cuboidVertices[1], cuboidVertices[4], cuboidVertices[5])  // 11 [Bottom-2]
+        new Triangle(cuboidVertices[0], cuboidVertices[1], cuboidVertices[2], Vector2D.Zero, Vector2D.UnitX, Vector2D.One), // 0 [Back-1]
+        new Triangle(cuboidVertices[0], cuboidVertices[2], cuboidVertices[3], Vector2D.Zero, Vector2D.One, Vector2D.UnitY), // 1 [Back-2]
+        new Triangle(cuboidVertices[1], cuboidVertices[5], cuboidVertices[6], Vector2D.Zero, Vector2D.UnitY, Vector2D.One), // 2 [Right-1]
+        new Triangle(cuboidVertices[1], cuboidVertices[6], cuboidVertices[2], Vector2D.Zero, Vector2D.One, Vector2D.UnitX), // 3 [Right-2]
+        new Triangle(cuboidVertices[5], cuboidVertices[4], cuboidVertices[7], Vector2D.UnitX, Vector2D.Zero, Vector2D.UnitY), // 4 [Front-1]
+        new Triangle(cuboidVertices[5], cuboidVertices[7], cuboidVertices[6], Vector2D.UnitX, Vector2D.UnitY, Vector2D.One), // 5 [Front-2]
+        new Triangle(cuboidVertices[4], cuboidVertices[0], cuboidVertices[3], Vector2D.UnitY, Vector2D.Zero, Vector2D.UnitX), // 6 [Left-1]
+        new Triangle(cuboidVertices[4], cuboidVertices[3], cuboidVertices[7], Vector2D.UnitY, Vector2D.UnitX, Vector2D.One), // 7 [Left-2]
+        new Triangle(cuboidVertices[3], cuboidVertices[2], cuboidVertices[6], Vector2D.Zero, Vector2D.UnitX, Vector2D.One), // 8 [Top-1]
+        new Triangle(cuboidVertices[3], cuboidVertices[6], cuboidVertices[7], Vector2D.Zero, Vector2D.One, Vector2D.UnitY), // 9 [Top-2]
+        new Triangle(cuboidVertices[1], cuboidVertices[0], cuboidVertices[4], Vector2D.UnitX, Vector2D.Zero, Vector2D.UnitY), // 10 [Bottom-1]
+        new Triangle(cuboidVertices[1], cuboidVertices[4], cuboidVertices[5], Vector2D.UnitX, Vector2D.UnitY, Vector2D.One)  // 11 [Bottom-2]
     };
     private static readonly IReadOnlyList<Face> cuboidFaces = new Face[6]
     {
@@ -115,7 +115,7 @@ public sealed class MeshStructure
                          IReadOnlyList<Edge>? edges = null,
                          IReadOnlyList<Triangle>? triangles = null,
                          IReadOnlyList<Face>? faces = null,
-                         IList<Texture>? textures = null)
+                         IList<TextureStyle>? textures = null)
     {
         MeshDimension = meshDimension;
         Vertices = vertices;

@@ -4,7 +4,7 @@ using System.Drawing.Imaging;
 
 namespace Imagenic2.Core.Images;
 
-public abstract class Image
+public abstract class Image : IDisposable
 {
     #region Fields and Properties
 
@@ -34,6 +34,11 @@ public abstract class Image
         System.Drawing.Bitmap bitmap = ((Bitmap)(this)).ToSystemDrawingBitmap();
         bitmap.Save(filePath);
         return true; // Temporary
+    }
+
+    public void Dispose()
+    {
+        throw new NotImplementedException();
     }
 
     #endregion

@@ -50,7 +50,13 @@ public partial class Form : System.Windows.Forms.Form
             width: 200
         );
 
-        // Rendering entities
+        // Textures
+        string filePath = "";
+        //TextureStyle ts = new TextureStyle(new Imagenic2.Core.Images.Bitmap(new Bitmap(filePath)));
+        //cube.Structure.Triangles[0].FrontStyle = ts;
+        //cube.Structure.Triangles[1].FrontStyle = ts;
+
+        // Cameras
         float aspectRatio = pictureBox.Width / (float)(pictureBox.Height);
         float zNear = 1;
         float zFar = 750;
@@ -66,6 +72,7 @@ public partial class Form : System.Windows.Forms.Form
             zFar: zFar
         );
 
+        // Lights
         DistantLight blueTopLight = new DistantLight(
             worldOrigin: new Vector3D(0, 100, 0),
             worldOrientation: Imagenic2.Core.Maths.Orientation.OrientationNegativeYZ,
