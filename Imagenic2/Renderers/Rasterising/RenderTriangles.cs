@@ -36,7 +36,7 @@ public partial class Rasteriser<TImage>
                             if ((normal * (Vector3D)(triangle.TransformedP1)).ApproxMoreThanEquals(0)) continue;
                         }
                         triangleQueue.Enqueue(triangle);
-                        ClipTriangles(triangleQueue, renderingEntity.ViewClippingPlanes);
+                        ClipTriangles(triangleQueue, renderingEntity.ViewClippingPlanes, ShadowMapClipTriangle);
                         if (triangleQueue.Count == 0) continue;
 
                         foreach (Triangle clippedTriangle in triangleQueue)
@@ -55,7 +55,7 @@ public partial class Rasteriser<TImage>
                             }
                         }
 
-                        ClipTriangles(triangleQueue, Renderer<TImage>.ScreenClippingPlanes);
+                        //ClipTriangles(triangleQueue, Renderer<TImage>.ScreenClippingPlanes, ShadowMapClipTriangle);
                         foreach (Triangle clippedTriangle in triangleQueue)
                         {
                             TransformTriangleVertices(clippedTriangle, screenToWindow);
@@ -89,6 +89,10 @@ public partial class Rasteriser<TImage>
                         triangle.TransformedP2 = new Vector4D(triangle.P2.WorldOrigin, 1);
                         triangle.TransformedP3 = new Vector4D(triangle.P3.WorldOrigin, 1);
 
+                        triangle.TransformedTextureP1 = triangle.TextureP1;
+                        triangle.TransformedTextureP2 = triangle.TextureP2;
+                        triangle.TransformedTextureP3 = triangle.TextureP3;
+
                         triangle.invW1 = 1;
                         triangle.invW2 = 1;
                         triangle.invW3 = 1;
@@ -102,7 +106,7 @@ public partial class Rasteriser<TImage>
                             if ((normal * (Vector3D)(triangle.TransformedP1)).ApproxMoreThanEquals(0)) continue;
                         }
                         triangleQueue.Enqueue(triangle);
-                        ClipTriangles(triangleQueue, renderingEntity.ViewClippingPlanes);
+                        ClipTriangles(triangleQueue, renderingEntity.ViewClippingPlanes, ClipTriangle);
                         if (triangleQueue.Count == 0) continue;
 
                         foreach (Triangle clippedTriangle in triangleQueue)
@@ -125,14 +129,14 @@ public partial class Rasteriser<TImage>
 
                                 if (clippedTriangle.FrontStyle is TextureStyle)
                                 {
-                                    clippedTriangle.TextureP1 *= clippedTriangle.invW1;
-                                    clippedTriangle.TextureP2 *= clippedTriangle.invW2;
-                                    clippedTriangle.TextureP3 *= clippedTriangle.invW3;
+                                    clippedTriangle.TransformedTextureP1 *= clippedTriangle.invW1;
+                                    clippedTriangle.TransformedTextureP2 *= clippedTriangle.invW2;
+                                    clippedTriangle.TransformedTextureP3 *= clippedTriangle.invW3;
                                 }
                             }
                         }
 
-                        ClipTriangles(triangleQueue, Renderer<TImage>.ScreenClippingPlanes);
+                        //ClipTriangles(triangleQueue, Renderer<TImage>.ScreenClippingPlanes, ClipTriangle);
                         foreach (Triangle clippedTriangle in triangleQueue)
                         {
                             TransformTriangleVertices(clippedTriangle, screenToWindow);

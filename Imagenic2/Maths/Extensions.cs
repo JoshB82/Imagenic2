@@ -1,4 +1,6 @@
-﻿namespace Imagenic2.Core.Maths;
+﻿using static Imagenic2.Core.Maths.NumberHelpers;
+
+namespace Imagenic2.Core.Maths;
 
 public static class Extensions
 {
@@ -25,13 +27,6 @@ public static class Extensions
     public static bool ApproxMoreThan(this float v1, float v2, float epsilon = float.Epsilon) => v1 > v2 && !ApproxEquals(v1, v2, epsilon);
 
     internal static int RoundToInt(this float num) => (int)(num >= 0 ? num + 0.5f : num - 0.5f);
-
-    internal static void Swap<T>(ref T x1, ref T x2)
-    {
-        T temp = x1;
-        x1 = x2;
-        x2 = temp;
-    }
 
     internal static void SortByY(
             ref int x1, ref int y1, ref float z1,

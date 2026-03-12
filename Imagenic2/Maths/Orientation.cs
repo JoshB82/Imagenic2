@@ -156,6 +156,15 @@ public struct Orientation : IEquatable<Orientation>
     public override bool Equals(object obj) => obj is Orientation orientation && Equals(orientation);
 
     public readonly override string ToString() => $"[Forward: {DirectionForward}, Up: {DirectionUp}, Right: {DirectionRight}]";
+    public readonly string ToString(string? format, IFormatProvider? formatProvider) => $"[Forward: {DirectionForward.ToString(format, formatProvider)}, Up: {DirectionUp.ToString(format, formatProvider)}, Right: {DirectionRight.ToString(format, formatProvider)}]";
+
+    public void Rotate(Vector3D axis, float angle)
+    {
+        Matrix4x4 rotationMatrix = Transform.Rotate(axis, angle);
+        DirectionForward = (Vector3D)(rotationMatrix * new Vector4D(DirectionForward, 1));
+        DirectionUp = (Vector3D)(rotationMatrix * new Vector4D(DirectionUp, 1));
+        DirectionRight = (Vector3D)(rotationMatrix * new Vector4D(DirectionRight, 1));
+    }
 
     #endregion
 }

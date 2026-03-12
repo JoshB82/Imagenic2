@@ -1,6 +1,12 @@
-﻿namespace Imagenic2.Core.Maths.Vectors;
+﻿using System.Numerics;
 
-public struct Vector4D
+namespace Imagenic2.Core.Maths.Vectors;
+
+public struct Vector4D : IApproximatelyEquatable<Vector4D>,
+                         IAdditionOperators<Vector4D, Vector4D, Vector4D>,
+                         ISubtractionOperators<Vector4D, Vector4D, Vector4D>,
+                         IMultiplyOperators<Vector4D, float, Vector4D>,
+                         IDivisionOperators<Vector4D, float, Vector4D>
 {
     #region Fields and Methods
 

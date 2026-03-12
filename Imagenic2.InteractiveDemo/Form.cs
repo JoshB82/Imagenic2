@@ -148,7 +148,7 @@ public partial class Form : System.Windows.Forms.Form
 
             if (updateTime >= updateMinimumTime)
             {
-                //Update_Position(); uncomment
+                UpdateShapes();
                 noUpdates++; //?
                 updateTime -= updateMinimumTime;
             }
@@ -164,6 +164,11 @@ public partial class Form : System.Windows.Forms.Form
 
             Thread.Sleep(1);
         }
+    }
+
+    private void UpdateShapes()
+    {
+        renderer.RenderingOptions.PhysicalEntitiesToRender[0].Rotate(Vector3D.UnitY, MathF.PI / 8);
     }
 
     private void CheckKeyboard(float deltaTime)

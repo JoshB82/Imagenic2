@@ -46,6 +46,10 @@ public class Triangle
     public Vector2D TextureP2 { get; set; }
     public Vector2D TextureP3 { get; set; }
 
+    public Vector2D TransformedTextureP1 { get; set; }
+    public Vector2D TransformedTextureP2 { get; set; }
+    public Vector2D TransformedTextureP3 { get; set; }
+
     #endregion
 
     #region Constructors

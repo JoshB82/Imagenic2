@@ -1,9 +1,12 @@
 ﻿using System.Numerics;
-using System.Runtime.CompilerServices;
 
 namespace Imagenic2.Core.Maths.Vectors;
 
-public struct Vector3D : IEquatable<Vector3D>
+public struct Vector3D : IApproximatelyEquatable<Vector3D>,
+                         IAdditionOperators<Vector3D, Vector3D, Vector3D>,
+                         ISubtractionOperators<Vector3D, Vector3D, Vector3D>,
+                         IMultiplyOperators<Vector3D, float, Vector3D>,
+                         IDivisionOperators<Vector3D, float, Vector3D>
 {
     #region Fields and Properties
 

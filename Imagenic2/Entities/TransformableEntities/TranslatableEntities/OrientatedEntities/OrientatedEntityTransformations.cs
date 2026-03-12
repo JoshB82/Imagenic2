@@ -104,4 +104,13 @@ public static class OrientatedEntityTransformations
             return orientatedEntity;
         });
     }
+
+    //===========
+
+    public static TOrientatedEntity Rotate<TOrientatedEntity>(this TOrientatedEntity orientatedEntity, Vector3D axis, float angle) where TOrientatedEntity : OrientatedEntity
+    {
+        ThrowIfNull(orientatedEntity);
+        orientatedEntity.WorldOrientation.Rotate(axis, angle);
+        return orientatedEntity;
+    }
 }
