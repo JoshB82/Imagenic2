@@ -63,8 +63,8 @@ public partial class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagen
         //b.Export("");
 
         RenderTriangles(RenderingOptions.RenderCamera, zBuffer, RenderingOptions.ScreenToWindow, OnInterpolation);
-        RenderEdges();
-        RenderViewVolumes();
+        if (RenderEdges) RenderMeshEdges();
+        if (RenderViewVolumes) DrawViewVolumes();
 
         //var triangleQueue = new Queue<Triangle>();
         /*

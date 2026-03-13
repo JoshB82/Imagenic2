@@ -2,7 +2,7 @@
 
 namespace Imagenic2.Core.Maths;
 
-public struct Orientation : IEquatable<Orientation>
+public struct Orientation : IApproximatelyEquatable<Orientation>
 {
     #region Fields and Properties
 
@@ -81,8 +81,8 @@ public struct Orientation : IEquatable<Orientation>
 
     public void SetDirectionForwardUp(Vector3D directionForward, Vector3D directionUp)
     {
-        ThrowIfApproxZero(directionForward, float.Epsilon);
-        ThrowIfApproxZero(directionUp, float.Epsilon);
+        ThrowIfApproxZero(directionForward, epsilon);
+        ThrowIfApproxZero(directionUp, epsilon);
         ThrowIfNotOrthogonal(directionForward, directionUp, epsilon);
 
         DirectionForward = directionForward.Normalise();
@@ -92,8 +92,8 @@ public struct Orientation : IEquatable<Orientation>
 
     public void SetDirectionUpRight(Vector3D directionUp, Vector3D directionRight)
     {
-        ThrowIfApproxZero(directionUp, float.Epsilon);
-        ThrowIfApproxZero(directionRight, float.Epsilon);
+        ThrowIfApproxZero(directionUp, epsilon);
+        ThrowIfApproxZero(directionRight, epsilon);
         ThrowIfNotOrthogonal(directionUp, directionRight, epsilon);
 
         DirectionForward = Transform.CalculateDirectionForward(directionUp, directionRight).Normalise();
@@ -103,8 +103,8 @@ public struct Orientation : IEquatable<Orientation>
 
     public void SetDirectionRightForward(Vector3D directionRight, Vector3D directionForward)
     {
-        ThrowIfApproxZero(directionRight, float.Epsilon);
-        ThrowIfApproxZero(directionForward, float.Epsilon);
+        ThrowIfApproxZero(directionRight, epsilon);
+        ThrowIfApproxZero(directionForward, epsilon);
         ThrowIfNotOrthogonal(directionRight, directionForward, epsilon);
 
         DirectionForward = directionForward.Normalise();
@@ -145,15 +145,17 @@ public struct Orientation : IEquatable<Orientation>
         return resultQuaternion.Normalise();
     }
 
-    public bool Equals(Orientation other) => (DirectionForward, DirectionUp, DirectionRight) == (other.DirectionForward, other.DirectionUp, other.DirectionRight);
+    public readonly bool Equals(Orientation other) => (DirectionForward, DirectionUp, DirectionRight) == (other.DirectionForward, other.DirectionUp, other.DirectionRight);
 
-    public override int GetHashCode() => (DirectionForward, DirectionUp, DirectionRight).GetHashCode();
+    public readonly override int GetHashCode() => (DirectionForward, DirectionUp, DirectionRight).GetHashCode();
 
     public static bool operator ==(Orientation lhs, Orientation rhs) => lhs.Equals(rhs);
 
     public static bool operator !=(Orientation lhs, Orientation rhs) => !(lhs == rhs);
 
-    public override bool Equals(object obj) => obj is Orientation orientation && Equals(orientation);
+    public readonly override bool Equals(object obj) => obj is Orientation orientation && Equals(orientation);
+
+    public readonly bool ApproxEquals(Orientation other, float epsilon) => other.DirectionForward.ApproxEquals(DirectionForward, epsilon) && other.DirectionUp.ApproxEquals(DirectionUp, epsilon);
 
     public readonly override string ToString() => $"[Forward: {DirectionForward}, Up: {DirectionUp}, Right: {DirectionRight}]";
     public readonly string ToString(string? format, IFormatProvider? formatProvider) => $"[Forward: {DirectionForward.ToString(format, formatProvider)}, Up: {DirectionUp.ToString(format, formatProvider)}, Right: {DirectionRight.ToString(format, formatProvider)}]";

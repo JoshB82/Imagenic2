@@ -34,6 +34,30 @@ public abstract class Renderer<TImage> where TImage : Image
 
     public TImage LatestRender { get; protected set; }
 
+    public bool renderEdges;
+    public bool RenderEdges
+    {
+        get => renderEdges;
+        set
+        {
+            if (value == renderEdges) return;
+            renderEdges = value;
+            NewRenderNeeded = true;
+        }
+    }
+
+    public bool renderViewVolumes;
+    public bool RenderViewVolumes
+    {
+        get => renderViewVolumes;
+        set
+        {
+            if (value == renderViewVolumes) return;
+            renderViewVolumes = value;
+            NewRenderNeeded = true;
+        }
+    }
+
     #endregion
 
     #region Constructors

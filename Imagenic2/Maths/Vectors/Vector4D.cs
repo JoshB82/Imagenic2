@@ -6,11 +6,15 @@ public struct Vector4D : IApproximatelyEquatable<Vector4D>,
                          IAdditionOperators<Vector4D, Vector4D, Vector4D>,
                          ISubtractionOperators<Vector4D, Vector4D, Vector4D>,
                          IMultiplyOperators<Vector4D, float, Vector4D>,
-                         IDivisionOperators<Vector4D, float, Vector4D>
+                         IDivisionOperators<Vector4D, float, Vector4D>,
+                         IUnaryPlusOperators<Vector4D, Vector4D>,
+                         IUnaryNegationOperators<Vector4D, Vector4D>,
+                         IAdditiveIdentity<Vector4D, Vector4D>
 {
     #region Fields and Methods
 
     public static readonly Vector4D Zero = new();
+    public static Vector4D AdditiveIdentity => Zero;
     public static readonly Vector4D One = new(1, 1, 1, 1);
     public static readonly Vector4D NegativeOne = new(-1, -1, -1, -1);
     public static readonly Vector4D UnitX = new(1, 0, 0, 0);
@@ -22,10 +26,7 @@ public struct Vector4D : IApproximatelyEquatable<Vector4D>,
     public static readonly Vector4D UnitNegativeZ = new(0, 0, -1, 0);
     public static readonly Vector4D UnitNegativeW = new(0, 0, 0, -1);
 
-    public float x;
-    public float y;
-    public float z;
-    public float w;
+    public float x, y, z, w;
 
     #endregion
 
@@ -135,6 +136,7 @@ public struct Vector4D : IApproximatelyEquatable<Vector4D>,
     public static Vector4D operator /(Vector4D v, float scalar) => new(v.x / scalar, v.y / scalar, v.z / scalar, v.w / scalar);
 
     public static Vector4D operator checked -(Vector4D v) => checked(new(-v.x, -v.y, -v.z, -v.w));
+    public static Vector4D operator +(Vector4D v) => new(v.x, v.y, v.z, v.w);
     public static Vector4D operator -(Vector4D v) => new(-v.x, -v.y, -v.z, -v.w);
 
     public static bool operator ==(Vector4D v1, Vector4D v2) => v1.x == v2.x && v1.y == v2.y && v1.z == v2.z && v1.w == v2.w;
@@ -145,8 +147,7 @@ public struct Vector4D : IApproximatelyEquatable<Vector4D>,
         x.ApproxEquals(v.x, epsilon) && y.ApproxEquals(v.y, epsilon) &&
         z.ApproxEquals(v.z, epsilon) && w.ApproxEquals(v.w, epsilon);
 
-    public static implicit operator Vector4D(Vector3D v) => new(v);
-    public static explicit operator Vector3D(Vector4D v) => new(v.x, v.y, v.z);
+    public static explicit operator Vector3D(Vector4D v) => new Vector3D(v.x, v.y, v.z);
 
     #endregion
 }

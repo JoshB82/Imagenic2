@@ -29,9 +29,9 @@ public static class OrientatedEntityTransformations
     /// <exception cref="ArgumentNullException">None of this method's parameters can be null.</exception>
     [return: NotNull]
     public static TOrientatedEntity Orientate<TOrientatedEntity>([DisallowNull] this TOrientatedEntity orientatedEntity,
-        [DisallowNull] Orientation orientation) where TOrientatedEntity : OrientatedEntity
+        Orientation orientation) where TOrientatedEntity : OrientatedEntity
     {
-        ThrowIfNull(orientatedEntity, orientation);
+        ThrowIfNull(orientatedEntity);
         orientatedEntity.WorldOrientation = orientation;
         return orientatedEntity;
     }
@@ -59,9 +59,9 @@ public static class OrientatedEntityTransformations
     /// <returns>The <typeparamref name="TOrientatedEntity"/> sequence with each element having the new <see cref="Orientation"/>.</returns>
     [return: NotNull]
     public static IEnumerable<TOrientatedEntity> Orientate<TOrientatedEntity>([DisallowNull] this IEnumerable<TOrientatedEntity> orientatedEntities,
-        [DisallowNull] Orientation orientation) where TOrientatedEntity : OrientatedEntity
+        Orientation orientation) where TOrientatedEntity : OrientatedEntity
     {
-        ThrowIfNull(orientatedEntities, orientation);
+        ThrowIfNull(orientatedEntities);
         return orientatedEntities.Select(orientatedEntity =>
         {
             orientatedEntity.WorldOrientation = orientation;
@@ -92,9 +92,9 @@ public static class OrientatedEntityTransformations
     /// <returns>The <typeparamref name="TOrientatedEntity"/> sequence with each element that satisfied the predicate having the new <see cref="Orientation"/>.</returns>
     [return: NotNull]
     public static IEnumerable<TOrientatedEntity> Orientate<TOrientatedEntity>([DisallowNull] this IEnumerable<TOrientatedEntity> orientatedEntities,
-        [DisallowNull] Orientation orientation, [DisallowNull] Func<TOrientatedEntity, bool> predicate) where TOrientatedEntity : OrientatedEntity
+        Orientation orientation, [DisallowNull] Func<TOrientatedEntity, bool> predicate) where TOrientatedEntity : OrientatedEntity
     {
-        ThrowIfNull(orientatedEntities, orientation, predicate);
+        ThrowIfNull(orientatedEntities, predicate);
         return orientatedEntities.Select(orientatedEntity =>
         {
             if (predicate(orientatedEntity))
@@ -105,12 +105,57 @@ public static class OrientatedEntityTransformations
         });
     }
 
-    //===========
-
-    public static TOrientatedEntity Rotate<TOrientatedEntity>(this TOrientatedEntity orientatedEntity, Vector3D axis, float angle) where TOrientatedEntity : OrientatedEntity
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TOrientatedEntity"></typeparam>
+    /// <param name="orientatedEntity"></param>
+    /// <param name="axis"></param>
+    /// <param name="angle"></param>
+    /// <returns></returns>
+    public static TOrientatedEntity Rotate<TOrientatedEntity>([DisallowNull] this TOrientatedEntity orientatedEntity, Vector3D axis, float angle) where TOrientatedEntity : OrientatedEntity
     {
         ThrowIfNull(orientatedEntity);
-        orientatedEntity.WorldOrientation.Rotate(axis, angle);
+        Orientation newOrientation = orientatedEntity.WorldOrientation;
+        newOrientation.Rotate(axis, angle);
+        orientatedEntity.WorldOrientation = newOrientation;
         return orientatedEntity;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TOrientatedEntity"></typeparam>
+    /// <param name="orientatedEntities"></param>
+    /// <param name="axis"></param>
+    /// <param name="angle"></param>
+    /// <returns></returns>
+    public static IEnumerable<TOrientatedEntity> Rotate<TOrientatedEntity>([DisallowNull] this IEnumerable<TOrientatedEntity> orientatedEntities, Vector3D axis, float angle) where TOrientatedEntity : OrientatedEntity
+    {
+        ThrowIfNull(orientatedEntities);
+        return orientatedEntities.Select(orientatedEntity => orientatedEntity.Rotate(axis, angle));
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TOrientatedEntity"></typeparam>
+    /// <param name="orientatedEntities"></param>
+    /// <param name="axis"></param>
+    /// <param name="angle"></param>
+    /// <param name="predicate"></param>
+    /// <returns></returns>
+    public static IEnumerable<TOrientatedEntity> Rotate<TOrientatedEntity>([DisallowNull] this IEnumerable<TOrientatedEntity> orientatedEntities,
+        Vector3D axis, float angle, [DisallowNull] Func<TOrientatedEntity, bool> predicate) where TOrientatedEntity : OrientatedEntity
+    {
+        ThrowIfNull(orientatedEntities, predicate);
+        return orientatedEntities.Select(orientatedEntity =>
+        {
+            if (predicate(orientatedEntity))
+            {
+                orientatedEntity.Rotate(axis, angle);
+            }
+            return orientatedEntity;
+        });
     }
 }

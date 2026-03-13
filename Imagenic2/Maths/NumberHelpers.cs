@@ -15,4 +15,7 @@ internal static class NumberHelpers
         x1 = x2;
         x2 = temp;
     }
+
+    public static float DegToRad(float deg) => deg * MathF.PI / 180;
+    public static float RadToDeg(float rad) => rad * 180 / MathF.PI;
 }

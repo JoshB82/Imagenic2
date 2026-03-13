@@ -1,4 +1,6 @@
-﻿using Imagenic2.Core.Entities;
+﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Running;
+using Imagenic2.Core.Entities;
 using Imagenic2.Core.Images;
 using Imagenic2.Core.Maths;
 using Imagenic2.Core.Maths.Vectors;
@@ -9,14 +11,28 @@ namespace Imagenic2.Benchmarking;
 
 public class Program
 {
-    public async static void Main()
+    public static void Main()
     {
-        Cube cube = new Cube(Vector3D.Zero, Orientation.OrientationXY, 10);
+        var summary = BenchmarkRunner.Run<RenderTest>();
+    }
+}
 
-        OrthogonalCamera renderCamera = new OrthogonalCamera(new Vector3D(0, 0, -100), Orientation.OrientationZY, 100, 100, 1, 750);
+public class RenderTest
+{
+    private Cube cube;
+    private OrthogonalCamera renderCamera;
+    private Rasteriser<Bitmap> renderer;
 
-        Rasteriser<Bitmap> renderer = new Rasteriser<Bitmap>(new RenderingOptions(renderCamera).AddToRender(cube));
+    public RenderTest()
+    {
+        cube = new Cube(Vector3D.Zero, Orientation.OrientationXY, 10);
+        renderCamera = new OrthogonalCamera(new Vector3D(0, 0, -100), Orientation.OrientationZY, 100, 100, 1, 750);
+        renderer = new Rasteriser<Bitmap>(new RenderingOptions(renderCamera).AddToRender(cube));
+    }
 
-        Bitmap bitmap = await renderer.RenderAsync();
+    [Benchmark]
+    public void Render()
+    {
+        Bitmap bitmap = Task.Run(async () => await renderer.RenderAsync()).Result;
     }
 }

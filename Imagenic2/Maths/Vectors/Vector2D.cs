@@ -3,22 +3,26 @@
 namespace Imagenic2.Core.Maths.Vectors;
 
 public struct Vector2D : IApproximatelyEquatable<Vector2D>,
+                         IEqualityOperators<Vector2D, Vector2D, bool>,
                          IAdditionOperators<Vector2D, Vector2D, Vector2D>,
                          ISubtractionOperators<Vector2D, Vector2D, Vector2D>,
                          IMultiplyOperators<Vector2D, float, Vector2D>,
-                         IDivisionOperators<Vector2D, float, Vector2D>
+                         IDivisionOperators<Vector2D, float, Vector2D>,
+                         IUnaryPlusOperators<Vector2D, Vector2D>,
+                         IUnaryNegationOperators<Vector2D, Vector2D>,
+                         IAdditiveIdentity<Vector2D, Vector2D>
 {
     #region Fields and Properties
 
     public static readonly Vector2D Zero = new(0, 0);
+    public static Vector2D AdditiveIdentity => Zero;
     public static readonly Vector2D One = new(1, 1);
     public static readonly Vector2D UnitX = new(1, 0);
     public static readonly Vector2D UnitY = new(0, 1);
     public static readonly Vector2D UnitNegativeX = new(-1, 0);
     public static readonly Vector2D UnitNegativeY = new(0, -1);
 
-    public float x;
-    public float y;
+    public float x, y;
 
     #endregion
 
@@ -87,7 +91,7 @@ public struct Vector2D : IApproximatelyEquatable<Vector2D>,
     public readonly float SquaredMagnitude() => x * x + y * y;
 
     public readonly override string ToString() => $"(x: {x}, y: {y})";
-    public string ToString(string? format, IFormatProvider? formatProvider) => $"(x: {x.ToString(format, formatProvider)}, y: {y.ToString(format, formatProvider)})";
+    public readonly string ToString(string? format, IFormatProvider? formatProvider) => $"(x: {x.ToString(format, formatProvider)}, y: {y.ToString(format, formatProvider)})";
 
     public static Vector2D operator checked *(Vector2D v, float scalar) => checked(new(v.x * scalar, v.y * scalar));
     public static Vector2D operator *(Vector2D v, float scalar) => new(v.x * scalar, v.y * scalar);
@@ -108,6 +112,7 @@ public struct Vector2D : IApproximatelyEquatable<Vector2D>,
     public static Vector2D operator /(Vector2D v, float scalar) => new(v.x / scalar, v.y / scalar);
 
     public static Vector2D operator checked -(Vector2D v) => checked(new(-v.x, -v.y));
+    public static Vector2D operator +(Vector2D v) => new(v.x, v.y);
     public static Vector2D operator -(Vector2D v) => new(-v.x, -v.y);
 
     public static bool operator ==(Vector2D v1, Vector2D v2) => v1.x == v2.x && v1.y == v2.y;
@@ -122,7 +127,7 @@ public struct Vector2D : IApproximatelyEquatable<Vector2D>,
 
     public override readonly int GetHashCode() => (x, y).GetHashCode();
 
-    public static implicit operator Vector3D(Vector2D v) => new(v);
+    public static implicit operator Vector3D(Vector2D v) => new Vector3D(v);
 
     #endregion
 }

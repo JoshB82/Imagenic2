@@ -6,11 +6,15 @@ public struct Vector3D : IApproximatelyEquatable<Vector3D>,
                          IAdditionOperators<Vector3D, Vector3D, Vector3D>,
                          ISubtractionOperators<Vector3D, Vector3D, Vector3D>,
                          IMultiplyOperators<Vector3D, float, Vector3D>,
-                         IDivisionOperators<Vector3D, float, Vector3D>
+                         IDivisionOperators<Vector3D, float, Vector3D>,
+                         IUnaryPlusOperators<Vector3D, Vector3D>,
+                         IUnaryNegationOperators<Vector3D, Vector3D>,
+                         IAdditiveIdentity<Vector3D, Vector3D>
 {
     #region Fields and Properties
 
     public static readonly Vector3D Zero = new(0, 0, 0);
+    public static Vector3D AdditiveIdentity => Zero;
     public static readonly Vector3D One = new(1, 1, 1);
     public static readonly Vector3D NegativeOne = new(-1, -1, -1);
     public static readonly Vector3D UnitX = new(1, 0, 0);
@@ -20,9 +24,7 @@ public struct Vector3D : IApproximatelyEquatable<Vector3D>,
     public static readonly Vector3D UnitNegativeY = new(0, -1, 0);
     public static readonly Vector3D UnitNegativeZ = new(0, 0, -1);
 
-    public float x;
-    public float y;
-    public float z;
+    public float x, y, z;
 
     #endregion
 
@@ -52,7 +54,6 @@ public struct Vector3D : IApproximatelyEquatable<Vector3D>,
         float denominator = line * planeNormal;
         //if (denominator == 0) throw new ArgumentException("Line does not intersect plane or exists entirely on plane.");
 
-        // d = new length / old length
         d = (planePoint - lineStart) * planeNormal / denominator;
         // Round in direction of normal!?
         return line * d + lineStart;
@@ -136,6 +137,7 @@ public struct Vector3D : IApproximatelyEquatable<Vector3D>,
     public static Vector3D operator /(Vector3D v, float scalar) => new(v.x / scalar, v.y / scalar, v.z / scalar);
 
     public static Vector3D operator checked -(Vector3D v) => checked(new(-v.x, -v.y, -v.z));
+    public static Vector3D operator +(Vector3D v) => new(v.x, v.y, v.z);
     public static Vector3D operator -(Vector3D v) => new(-v.x, -v.y, -v.z);
 
     public static bool operator ==(Vector3D v1, Vector3D v2) => v1.x == v2.x && v1.y == v2.y && v1.z == v2.z;
@@ -150,6 +152,7 @@ public struct Vector3D : IApproximatelyEquatable<Vector3D>,
 
     public override readonly int GetHashCode() => (x, y, z).GetHashCode();
 
+    public static implicit operator Vector4D(Vector3D v) => new Vector4D(v);
     public static explicit operator Vector2D(Vector3D v) => new Vector2D(v.x, v.y);
 
     #endregion
