@@ -21,13 +21,14 @@ public partial class Rasteriser<TImage>
             {
                 if (mesh.DrawFaces)
                 {
+                    Matrix4x4 modelToView = renderingEntity.WorldToView * mesh.ModelToWorld;
+
                     foreach (Triangle triangle in mesh.Structure.Triangles)
                     {
                         triangle.TransformedP1 = new Vector4D(triangle.P1.WorldOrigin, 1);
                         triangle.TransformedP2 = new Vector4D(triangle.P2.WorldOrigin, 1);
                         triangle.TransformedP3 = new Vector4D(triangle.P3.WorldOrigin, 1);
-
-                        Matrix4x4 modelToView = renderingEntity.WorldToView * mesh.ModelToWorld;
+                        
                         TransformTriangleVertices(triangle, modelToView);
 
                         if (mesh.Structure.MeshDimension == MeshDimension._3D)
@@ -69,7 +70,7 @@ public partial class Rasteriser<TImage>
         }
     }
 
-    private void RenderTriangles(RenderingEntity renderingEntity,
+    private void RenderMeshTriangles(RenderingEntity renderingEntity,
                                  Buffer2D<float> buffer,
                                  Matrix4x4 screenToWindow,
                                  Action<Triangle, Buffer2D<float>, int, int, float, Vector3D, Vector2D> onInterpolation)
@@ -83,6 +84,8 @@ public partial class Rasteriser<TImage>
             {
                 if (mesh.DrawFaces)
                 {
+                    Matrix4x4 modelToView = renderingEntity.WorldToView * mesh.ModelToWorld;
+
                     foreach (Triangle triangle in mesh.Structure.Triangles)
                     {
                         triangle.TransformedP1 = new Vector4D(triangle.P1.WorldOrigin, 1);
@@ -96,8 +99,7 @@ public partial class Rasteriser<TImage>
                         triangle.invW1 = 1;
                         triangle.invW2 = 1;
                         triangle.invW3 = 1;
-
-                        Matrix4x4 modelToView = renderingEntity.WorldToView * mesh.ModelToWorld;
+                        
                         TransformTriangleVertices(triangle, modelToView);
                         
                         if (mesh.Structure.MeshDimension == MeshDimension._3D)

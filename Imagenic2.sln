@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Imagenic2.Core", "Imagenic2
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Imagenic2.Benchmarking", "Imagenic2.Benchmarking\Imagenic2.Benchmarking.csproj", "{ABD683D1-8115-4534-A39D-6AD7211F8F89}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Imagenic.WinForms", "Imagenic.WinForms\Imagenic.WinForms.csproj", "{80BC413D-B8B5-42E5-A42B-5F2B18B3CA52}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Imagenic2.WinForms", "Imagenic.WinForms\Imagenic2.WinForms.csproj", "{80BC413D-B8B5-42E5-A42B-5F2B18B3CA52}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Imagenic2.InteractiveDemo", "Imagenic2.InteractiveDemo\Imagenic2.InteractiveDemo.csproj", "{73ABFEDD-D447-4D04-A7B6-0D294DF4E4C9}"
 EndProject

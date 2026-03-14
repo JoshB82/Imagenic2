@@ -34,7 +34,7 @@ public abstract class Renderer<TImage> where TImage : Image
 
     public TImage LatestRender { get; protected set; }
 
-    public bool renderEdges;
+    private bool renderEdges;
     public bool RenderEdges
     {
         get => renderEdges;
@@ -46,7 +46,7 @@ public abstract class Renderer<TImage> where TImage : Image
         }
     }
 
-    public bool renderViewVolumes;
+    private bool renderViewVolumes;
     public bool RenderViewVolumes
     {
         get => renderViewVolumes;
@@ -54,6 +54,18 @@ public abstract class Renderer<TImage> where TImage : Image
         {
             if (value == renderViewVolumes) return;
             renderViewVolumes = value;
+            NewRenderNeeded = true;
+        }
+    }
+
+    private bool renderTriangles = true;
+    public bool RenderTriangles
+    {
+        get => renderTriangles;
+        set
+        {
+            if (value == renderTriangles) return;
+            renderTriangles = value;
             NewRenderNeeded = true;
         }
     }

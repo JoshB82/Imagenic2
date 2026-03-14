@@ -368,5 +368,53 @@ public sealed class MeshStructure
         return new MeshStructure(MeshDimension._3D, vertices, edges, triangles, faces);
     }
 
+    internal static IReadOnlyList<Vertex> GenerateSphereVertices(int latRes, int longRes)
+    {
+        IList<Vertex> vertices = new Vertex[(latRes + 1) * (longRes + 1) + 1];
+        vertices[0] = new Vertex(Vector3D.Zero);
+
+        for (int i = 0; i <= latRes; i++)
+        {
+            float phi = PI * i / latRes;
+
+            for (int j = 0; j <= longRes; j++)
+            {
+                float theta = 2 * PI * j / longRes;
+                float x = Sin(phi) * Cos(theta);
+                float y = Sin(phi) * Sin(theta);
+                float z = Cos(phi);
+
+                vertices[i * (latRes + 1) + j + 1] = new Vertex(new Vector3D(x, y, z));
+            }
+        }
+
+        return vertices.AsReadOnly();
+    }
+
+    internal static IReadOnlyList<Edge> GenerateSphereEdges(IReadOnlyList<Vertex> vertices, int latRes, int longRes)
+    {
+        return null;
+    }
+
+    internal static IReadOnlyList<Triangle> GenerateSphereTriangles(IReadOnlyList<Vertex> vertices, int latRes, int longRes)
+    {
+        return null;
+    }
+
+    internal static IReadOnlyList<Face> GenerateSphereFaces(IReadOnlyList<Triangle> vertices, int latRes, int longRes)
+    {
+        return null;
+    }
+
+    internal static MeshStructure GenerateSphereStructure(int latRes, int longRes)
+    {
+        IReadOnlyList<Vertex> vertices = GenerateSphereVertices(latRes, longRes);
+        IReadOnlyList<Edge> edges = GenerateSphereEdges(vertices, latRes, longRes);
+        IReadOnlyList<Triangle> triangles = GenerateSphereTriangles(vertices, latRes, longRes);
+        IReadOnlyList<Face> faces = GenerateSphereFaces(triangles, latRes, longRes);
+
+        return new MeshStructure(MeshDimension._3D, vertices, edges, triangles, faces);
+    }
+
     #endregion
 }
