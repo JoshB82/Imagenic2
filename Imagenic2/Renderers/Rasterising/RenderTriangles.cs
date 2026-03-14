@@ -70,14 +70,8 @@ public partial class Rasteriser<TImage>
         }
     }
 
-    private void RenderMeshTriangles(RenderingEntity renderingEntity,
-                                 Buffer2D<float> buffer,
-                                 Matrix4x4 screenToWindow,
-                                 Action<Triangle, Buffer2D<float>, int, int, float, Vector3D, Vector2D> onInterpolation)
+    private void GenerateTileTriangles(Buffer2D<Tile> tiles, RenderingEntity renderingEntity, Matrix4x4 screenToWindow, int renderWidth, int renderHeight)
     {
-        // Reset values
-        zBuffer.SetAllToValue(backgroundValue); // A number > 1
-
         foreach (PhysicalEntity physicalEntity in RenderingOptions.PhysicalEntitiesToRender)
         {
             if (physicalEntity is Mesh mesh)
@@ -96,17 +90,20 @@ public partial class Rasteriser<TImage>
                         triangle.TransformedTextureP2 = triangle.TextureP2;
                         triangle.TransformedTextureP3 = triangle.TextureP3;
 
-                        triangle.invW1 = 1;
-                        triangle.invW2 = 1;
-                        triangle.invW3 = 1;
-                        
+                        //triangle.invW1 = 1;
+                        //triangle.invW2 = 1;
+                        //triangle.invW3 = 1;
+
+                        // Transform triangle from model space to view space
                         TransformTriangleVertices(triangle, modelToView);
-                        
+
                         if (mesh.Structure.MeshDimension == MeshDimension._3D)
                         {
                             Vector3D normal = Vector3D.NormalFromPlane((Vector3D)(triangle.TransformedP1), (Vector3D)(triangle.TransformedP2), (Vector3D)(triangle.TransformedP3));
                             if ((normal * (Vector3D)(triangle.TransformedP1)).ApproxMoreThanEquals(0)) continue;
                         }
+
+                        // Clip the triangle in view space
                         triangleQueue.Enqueue(triangle);
                         ClipTriangles(triangleQueue, renderingEntity.ViewClippingPlanes, ClipTriangle);
                         if (triangleQueue.Count == 0) continue;
@@ -123,7 +120,7 @@ public partial class Rasteriser<TImage>
                             clippedTriangle.invW2 = 1 / clippedTriangle.TransformedP2.w;
                             clippedTriangle.invW3 = 1 / clippedTriangle.TransformedP3.w;
 
-                            if (RenderingOptions.RenderCamera is PerspectiveCamera)
+                            if (renderingEntity is PerspectiveCamera or Spotlight)
                             {
                                 clippedTriangle.TransformedP1 /= clippedTriangle.TransformedP1.w;
                                 clippedTriangle.TransformedP2 /= clippedTriangle.TransformedP2.w;
@@ -136,20 +133,41 @@ public partial class Rasteriser<TImage>
                                     clippedTriangle.TransformedTextureP3 *= clippedTriangle.invW3;
                                 }
                             }
-                        }
 
-                        //ClipTriangles(triangleQueue, Renderer<TImage>.ScreenClippingPlanes, ClipTriangle);
-                        foreach (Triangle clippedTriangle in triangleQueue)
-                        {
+                            // Transform triangle from screen space to window space
                             TransformTriangleVertices(clippedTriangle, screenToWindow);
-                            switch (clippedTriangle.FrontStyle)
+
+                            // Extract values
+                            float x1 = clippedTriangle.TransformedP1.x;
+                            float y1 = clippedTriangle.TransformedP1.y;
+                            float z1 = clippedTriangle.TransformedP1.z;
+                            float x2 = clippedTriangle.TransformedP2.x;
+                            float y2 = clippedTriangle.TransformedP2.y;
+                            float z2 = clippedTriangle.TransformedP2.z;
+                            float x3 = clippedTriangle.TransformedP3.x;
+                            float y3 = clippedTriangle.TransformedP3.y;
+                            float z3 = clippedTriangle.TransformedP3.z;
+
+                            // Calculate triangle's bounding box
+                            float minX = Min(x1, Min(x2, x3));
+                            float minY = Min(y1, Min(y2, y3));
+                            float maxX = Max(x1, Max(x2, x3));
+                            float maxY = Max(y1, Max(y2, y3));
+
+                            // Scale to tile size
+                            int tileMinX = (int)(minX * numberOfTilesHorizontal / renderWidth);
+                            int tileMinY = (int)(minY * numberOfTilesVertical / renderHeight);
+                            int tileMaxX = (int)(maxX * numberOfTilesHorizontal / renderWidth);
+                            int tileMaxY = (int)(maxY * numberOfTilesVertical / renderHeight);
+
+                            // Detect tiles the triangle overlaps
+                            for (int ty = tileMinY; ty <= tileMaxY; ty++)
                             {
-                                case SolidStyle:
-                                    InterpolateTriangle(clippedTriangle, buffer, onInterpolation, clippedTriangle.invW1, clippedTriangle.invW2, clippedTriangle.invW3);
-                                    break;
-                                case TextureStyle:
-                                    InterpolateTextureTriangle(clippedTriangle, buffer, OnTextureInterpolation, clippedTriangle.invW1, clippedTriangle.invW2, clippedTriangle.invW3);
-                                    break;
+                                for (int tx = tileMinX; tx <= tileMaxX; tx++)
+                                {
+                                    Tile tile = tiles[tx, ty];
+                                    tile.triangles.Add(clippedTriangle);
+                                }
                             }
                         }
 
@@ -158,5 +176,47 @@ public partial class Rasteriser<TImage>
                 }
             }
         }
+    }
+
+    private void ShadowTileTriangles(Buffer2D<Tile> tiles, Buffer2D<float> buffer, Action<Triangle, Buffer2D<float>, int, int, float> onInterpolation)
+    {
+        // Reset values
+        buffer.SetAllToValue(backgroundValue); // A number > 1
+
+        // Calculate triangles
+        tiles.ParallelForEach(tile =>
+        {
+            foreach (Triangle triangle in tile.triangles)
+            {
+                ShadowMapInterpolateTriangle(triangle, buffer, onInterpolation, triangle.invW1, triangle.invW2, triangle.invW3);
+            }
+
+            tile.triangles.Clear();
+        });
+    }
+
+    private void RenderTileTriangles(Buffer2D<Tile> tiles, Buffer2D<float> buffer, Action<Triangle, Buffer2D<float>, int, int, float, Vector3D, Vector2D> onInterpolation)
+    {
+        // Reset values
+        buffer.SetAllToValue(backgroundValue); // A number > 1
+
+        // Draw triangles
+        Tiles.ParallelForEach(tile =>
+        {
+            foreach (Triangle triangle in tile.triangles)
+            {
+                switch (triangle.FrontStyle)
+                {
+                    case SolidStyle:
+                        InterpolateTriangle(triangle, buffer, onInterpolation, triangle.invW1, triangle.invW2, triangle.invW3);
+                        break;
+                    case TextureStyle:
+                        InterpolateTextureTriangle(triangle, buffer, OnTextureInterpolation, triangle.invW1, triangle.invW2, triangle.invW3);
+                        break;
+                }
+            }
+
+            tile.triangles.Clear();
+        });
     }
 }

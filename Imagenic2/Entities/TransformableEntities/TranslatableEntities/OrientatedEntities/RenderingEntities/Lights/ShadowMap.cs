@@ -35,6 +35,30 @@ public sealed class ShadowMap
 
     internal Buffer2D<float> Data { get; set; }
 
+    internal Buffer2D<Tile> Tiles { get; set; }
+
+    private const int numberOfTilesHorizontal = 20;
+    private const int numberOfTilesVertical = 12;
+
+    private void ComputeTiles(int width, int height)
+    {
+        int sizeX = (int)(Ceiling((float)width / numberOfTilesHorizontal));
+        int sizeY = (int)(Ceiling((float)height / numberOfTilesVertical));
+
+        Tiles = new Buffer2D<Tile>(numberOfTilesHorizontal, numberOfTilesVertical);
+        for (int y = 0; y < numberOfTilesVertical; y++)
+        {
+            for (int x = 0; x < numberOfTilesHorizontal; x++)
+            {
+                int startX = x * sizeX, startY = y * sizeY;
+                int tileWidth = (int)(Min(sizeX, width - startX));
+                int tileHeight = (int)(Min(sizeY, height - startY));
+
+                Tiles.Values[x][y] = new Tile(startX, startY, startX + tileWidth, startY + tileHeight);
+            }
+        }
+    }
+
     #endregion
 
     #region Constructors
@@ -44,6 +68,7 @@ public sealed class ShadowMap
         Width = width;
         Height = height;
         Data = new Buffer2D<float>(width, height);
+        ComputeTiles(width, height);
     }
 
     #endregion

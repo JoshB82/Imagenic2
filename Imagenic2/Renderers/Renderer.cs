@@ -27,8 +27,10 @@ public abstract class Renderer<TImage> where TImage : Image
         get => renderingOptions;
         set
         {
+            if (value == renderingOptions) return;
             renderingOptions = value;
             renderingOptions.RenderAlteringPropertyChanged += OnRenderingAlteringPropertyChanged;
+            ComputeTiles(renderingOptions.RenderWidth, renderingOptions.RenderHeight);
         }
     }
 
@@ -70,6 +72,30 @@ public abstract class Renderer<TImage> where TImage : Image
         }
     }
 
+    internal Buffer2D<Tile> Tiles { get; set; }
+
+    protected const int numberOfTilesHorizontal = 20;
+    protected const int numberOfTilesVertical = 12;
+
+    private void ComputeTiles(int width, int height)
+    {
+        int sizeX = (int)(Ceiling((float)width / numberOfTilesHorizontal));
+        int sizeY = (int)(Ceiling((float)height / numberOfTilesVertical));
+
+        Tiles = new Buffer2D<Tile>(numberOfTilesHorizontal, numberOfTilesVertical);
+        for (int y = 0; y < numberOfTilesVertical; y++)
+        {
+            for (int x = 0; x < numberOfTilesHorizontal; x++)
+            {
+                int startX = x * sizeX, startY = y * sizeY;
+                int tileWidth = (int)(Min(sizeX, width - startX));
+                int tileHeight = (int)(Min(sizeY, height - startY));
+
+                Tiles.Values[x][y] = new Tile(startX, startY, startX + tileWidth, startY + tileHeight);
+            }
+        }
+    }
+
     #endregion
 
     #region Constructors
@@ -87,7 +113,7 @@ public abstract class Renderer<TImage> where TImage : Image
     private void OnRenderingAlteringPropertyChanged(RenderUpdate args)
     {
         if (args.HasFlag(RenderUpdate.NewRender)) NewRenderNeeded = true;
-        if (args.HasFlag(RenderUpdate.NewRender)) NewShadowMapNeeded = true;
+        if (args.HasFlag(RenderUpdate.NewShadowMap)) NewShadowMapNeeded = true;
     }
 
     public abstract Task<TImage?> RenderAsync(CancellationToken token);

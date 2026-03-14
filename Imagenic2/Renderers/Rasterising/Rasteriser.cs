@@ -50,7 +50,8 @@ public partial class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagen
                 foreach (ShadowMap shadowMap in light.ShadowMaps)
                 {
                     shadowMap.Data.SetAllToValue(backgroundValue); // A number > 1
-                    ShadowMapRenderTriangles(light, shadowMap.Data, shadowMap.ScreenToWindow, ProduceShadowMaps);
+                    GenerateTileTriangles(shadowMap.Tiles, light, shadowMap.ScreenToWindow, shadowMap.Width, shadowMap.Height);
+                    ShadowTileTriangles(shadowMap.Tiles, shadowMap.Data, ProduceShadowMaps);
                 }
             }
 
@@ -60,7 +61,11 @@ public partial class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagen
         //Imagenic2.Core.Images.Bitmap b = RenderingOptions.Lights[0].ShadowMaps.First().Data.ToImage<Imagenic2.Core.Images.Bitmap>();
         //b.Export("");
 
-        if (RenderTriangles) RenderMeshTriangles(RenderingOptions.RenderCamera, zBuffer, RenderingOptions.ScreenToWindow, OnInterpolation);
+        if (RenderTriangles)
+        {
+            GenerateTileTriangles(Tiles, RenderingOptions.RenderCamera, RenderingOptions.ScreenToWindow, RenderingOptions.RenderWidth, RenderingOptions.RenderHeight);
+            RenderTileTriangles(Tiles, zBuffer, OnInterpolation);
+        }
         if (RenderEdges) RenderMeshEdges();
         if (RenderViewVolumes) DrawViewVolumes();
 

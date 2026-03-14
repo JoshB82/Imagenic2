@@ -40,6 +40,12 @@ public sealed class Buffer2D<T>
 
     public T?[][] Values { get; set; }
 
+    internal T? this[int x, int y]
+    {
+        get => Values[x][y];
+        set => Values[x][y] = value;
+    }
+
     #endregion
 
     #region Constructors
@@ -88,6 +94,15 @@ public sealed class Buffer2D<T>
                 action(Values[i][j], i, j);
             }
         }
+    }
+
+    public void ParallelForEach(Action<T?> action)
+    {
+        Parallel.For(0, firstDimensionSize * secondDimensionSize, i =>
+        {
+            T? value = Values[i % firstDimensionSize][i / firstDimensionSize];
+            action(value);
+        });
     }
 
     public static explicit operator T[](Buffer2D<T> buffer)
