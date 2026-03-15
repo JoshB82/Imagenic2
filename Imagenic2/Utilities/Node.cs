@@ -2,7 +2,7 @@
 
 namespace Imagenic2.Core.Utilities;
 
-public class Node
+public partial class Node
 {
     #region Fields and Properties
 
@@ -72,6 +72,25 @@ public class Node
             }
         }
     }
+
+    #region Transformations
+
+    public Node TranslateX(float distanceX)
+    {
+        if (Content is TranslatableEntity translatableEntityNode)
+        {
+            translatableEntityNode.TranslateX(distanceX);
+        }
+        var descendants = GetDescendants(n => n.Content is TranslatableEntity);
+        foreach (Node node in descendants)
+        {
+            ((TranslatableEntity?)(node.Content)).TranslateX(distanceX);
+        }
+
+        return this;
+    }
+
+    #endregion
 
     #endregion
 }
