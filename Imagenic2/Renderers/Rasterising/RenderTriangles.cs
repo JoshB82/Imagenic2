@@ -174,7 +174,7 @@ public partial class Rasteriser<TImage>
                                     }
                                     else
                                     {
-                                        List<Triangle> tileClippedTriangles = ClipTriangle2D(clippedTriangle, tile.endY, tile.startX, tile.endX, tile.startY);
+                                        List<Triangle> tileClippedTriangles = ClipTriangle2D(clippedTriangle, tile.startY, tile.startX, tile.endX, tile.endY);
                                         tile.triangles.AddRange(tileClippedTriangles);
                                     }
                                 }

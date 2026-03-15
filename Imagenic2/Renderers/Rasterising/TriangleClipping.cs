@@ -207,7 +207,7 @@ public partial class Rasteriser<TImage>
 
         // Clip against bottom edge
         pointCount = ClipBoundary(polygonPoints1, pointCount, polygonPoints2,
-                                  v => v.position.y <= bottom,
+                                  v => v.position.y >= bottom,
                                   (v1,v2) =>
                                   {
                                       float t = (bottom - v1.position.y) / (v2.position.y - v1.position.y);
@@ -240,7 +240,7 @@ public partial class Rasteriser<TImage>
 
         // Clip against top edge
         pointCount = ClipBoundary(polygonPoints2, pointCount, polygonPoints1,
-                                  v => v.position.y >= top,
+                                  v => v.position.y <= top,
                                   (v1, v2) =>
                                   {
                                       float t = (top - v1.position.y) / (v2.position.y - v1.position.y);
@@ -264,7 +264,9 @@ public partial class Rasteriser<TImage>
                 invW3 = polygonPoints1[i + 1].invW,
                 ViewSpaceP1 = polygonPoints1[0].viewPosition,
                 ViewSpaceP2 = polygonPoints1[i].viewPosition,
-                ViewSpaceP3 = polygonPoints1[i + 1].viewPosition
+                ViewSpaceP3 = polygonPoints1[i + 1].viewPosition,
+                FrontStyle = triangle.FrontStyle,
+                BackStyle = triangle.BackStyle
             };
 
             clippedTriangles.Add(t);
