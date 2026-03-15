@@ -54,6 +54,11 @@ public class Triangle
 
     #region Constructors
 
+    public Triangle()
+    {
+        
+    }
+
     public Triangle(Vertex p1, Vertex p2, Vertex p3)
     {
         P1 = p1;

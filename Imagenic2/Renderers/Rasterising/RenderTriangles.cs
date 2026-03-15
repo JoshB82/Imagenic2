@@ -128,9 +128,9 @@ public partial class Rasteriser<TImage>
 
                                 if (clippedTriangle.FrontStyle is TextureStyle)
                                 {
-                                    clippedTriangle.TransformedTextureP1 *= clippedTriangle.invW1;
-                                    clippedTriangle.TransformedTextureP2 *= clippedTriangle.invW2;
-                                    clippedTriangle.TransformedTextureP3 *= clippedTriangle.invW3;
+                                    //clippedTriangle.TransformedTextureP1 *= clippedTriangle.invW1;
+                                    //clippedTriangle.TransformedTextureP2 *= clippedTriangle.invW2;
+                                    //clippedTriangle.TransformedTextureP3 *= clippedTriangle.invW3;
                                 }
                             }
 
@@ -166,7 +166,17 @@ public partial class Rasteriser<TImage>
                                 for (int tx = tileMinX; tx <= tileMaxX; tx++)
                                 {
                                     Tile tile = tiles[tx, ty];
-                                    tile.triangles.Add(clippedTriangle);
+
+                                    if (minX >= tile.startX && maxX <= tile.endX &&
+                                        minY >= tile.startY && maxY <= tile.endY)
+                                    {
+                                        tile.triangles.Add(clippedTriangle);
+                                    }
+                                    else
+                                    {
+                                        List<Triangle> tileClippedTriangles = ClipTriangle2D(clippedTriangle, tile.endY, tile.startX, tile.endX, tile.startY);
+                                        tile.triangles.AddRange(tileClippedTriangles);
+                                    }
                                 }
                             }
                         }
@@ -201,7 +211,7 @@ public partial class Rasteriser<TImage>
         buffer.SetAllToValue(backgroundValue); // A number > 1
 
         // Draw triangles
-        Tiles.ParallelForEach(tile =>
+        tiles.ParallelForEach(tile =>
         {
             foreach (Triangle triangle in tile.triangles)
             {

@@ -169,7 +169,7 @@ public partial class Form : System.Windows.Forms.Form
     private void UpdateShapes()
     {
         OrientatedEntity cube = renderer.RenderingOptions.PhysicalEntitiesToRender[0];
-        cube.Rotate(Vector3D.UnitY, MathF.PI / 8);
+        //cube.Rotate(Vector3D.UnitY, MathF.PI / 8);
     }
 
     private void CheckKeyboard(float deltaTime)
