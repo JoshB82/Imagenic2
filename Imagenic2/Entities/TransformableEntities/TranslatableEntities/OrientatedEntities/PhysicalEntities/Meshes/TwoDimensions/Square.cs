@@ -26,7 +26,7 @@ public sealed class Square : Mesh
 
     #region Constructors
 
-    public Square(Vector3D worldOrigin, Orientation worldOrientation, float sideLength) : base(worldOrigin, worldOrientation, MeshStructure.planeStructure)
+    public Square(Vector3D worldOrigin, Orientation worldOrientation, float sideLength) : base(worldOrigin, worldOrientation, MeshStructure.planeStructure.DeepCopy())
     {
         SideLength = sideLength;
     }

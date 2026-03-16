@@ -55,7 +55,7 @@ public class Cuboid : Mesh
 
     #region Constructors
 
-    public Cuboid(Vector3D worldOrigin, Orientation worldOrientation, float length, float width, float height) : base(worldOrigin, worldOrientation, MeshStructure.cubeStructure)
+    public Cuboid(Vector3D worldOrigin, Orientation worldOrientation, float length, float width, float height) : base(worldOrigin, worldOrientation, MeshStructure.cubeStructure.DeepCopy())
     {
         Length = length;
         Width = width;

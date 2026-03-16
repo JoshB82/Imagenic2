@@ -7,10 +7,10 @@ public sealed class MeshStructure
     #region Fields and Properties
 
     public IReadOnlyList<Vertex> Vertices { get; set; }
-    public IReadOnlyList<Edge> Edges { get; set; }
-    public IReadOnlyList<Triangle> Triangles { get; set; }
-    public IReadOnlyList<Face> Faces { get; set; }
-    public IList<TextureStyle> Textures { get; set; }
+    public IReadOnlyList<Edge>? Edges { get; set; }
+    public IReadOnlyList<Triangle>? Triangles { get; set; }
+    public IReadOnlyList<Face>? Faces { get; set; }
+    public IList<TextureStyle>? Textures { get; set; }
 
     public MeshDimension MeshDimension { get; set; }
 
@@ -128,6 +128,19 @@ public sealed class MeshStructure
     #endregion
 
     #region Methods
+
+    public MeshStructure DeepCopy()
+    {
+        MeshStructure copy = new MeshStructure(
+            this.MeshDimension,
+            this.Vertices.ToArray(),
+            this.Edges?.ToArray(),
+            this.Triangles?.ToArray(),
+            this.Faces?.ToArray(),
+            this.Textures?.ToArray()
+            );
+        return copy;
+    }
 
     internal static IReadOnlyList<Vertex> GenerateCircleVertices(int resolution)
     {

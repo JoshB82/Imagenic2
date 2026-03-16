@@ -41,7 +41,7 @@ public sealed class Plane : Mesh
     
     #region Constructors
     
-    public Plane(Vector3D worldOrigin, Orientation worldOrientation, float length, float width) : base(worldOrigin, worldOrientation, MeshStructure.planeStructure)
+    public Plane(Vector3D worldOrigin, Orientation worldOrientation, float length, float width) : base(worldOrigin, worldOrientation, MeshStructure.planeStructure.DeepCopy())
     {
         Length = length;
         Width = width;

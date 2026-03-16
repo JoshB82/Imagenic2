@@ -31,7 +31,7 @@ public sealed class Line : Mesh
     
     #region Constructors
     
-    public Line(Vector3D startPoint, Vector3D endPoint) : base(startPoint, Orientation.OrientationZY, MeshStructure.lineStructure)
+    public Line(Vector3D startPoint, Vector3D endPoint) : base(startPoint, Orientation.OrientationZY, MeshStructure.lineStructure.DeepCopy())
     {
         StartPoint = startPoint;
         EndPoint = endPoint;

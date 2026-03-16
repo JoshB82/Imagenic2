@@ -24,7 +24,7 @@ public class Cube : Mesh
 
     #region Constructors
 
-    public Cube(Vector3D worldOrigin, Orientation worldOrientation, float sideLength) : base(worldOrigin, worldOrientation, MeshStructure.cubeStructure)
+    public Cube(Vector3D worldOrigin, Orientation worldOrientation, float sideLength) : base(worldOrigin, worldOrientation, MeshStructure.cubeStructure.DeepCopy())
     {
         SideLength = sideLength;
     }
