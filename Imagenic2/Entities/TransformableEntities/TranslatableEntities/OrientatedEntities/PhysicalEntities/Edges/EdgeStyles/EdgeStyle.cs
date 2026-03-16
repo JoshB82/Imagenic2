@@ -10,4 +10,13 @@ public abstract class EdgeStyle
     }
 
     #endregion
+
+    #region Methods
+
+    public EdgeStyle DeepCopy()
+    {
+        return this; // Temporary
+    }
+
+    #endregion
 }

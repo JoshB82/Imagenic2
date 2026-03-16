@@ -17,5 +17,7 @@ public abstract class FaceStyle
 
     #region Methods
 
+    public abstract FaceStyle DeepCopy();
+
     #endregion
 }

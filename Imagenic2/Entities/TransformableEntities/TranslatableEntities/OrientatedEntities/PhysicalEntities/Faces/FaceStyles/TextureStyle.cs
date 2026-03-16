@@ -38,5 +38,10 @@ public sealed class TextureStyle : FaceStyle, IDisposable
 
     #region Methods
 
+    public override TextureStyle DeepCopy()
+    {
+        return new TextureStyle(Image.DeepCopy());
+    }
+
     #endregion
 }

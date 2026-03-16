@@ -45,6 +45,11 @@ public class Bitmap : Image
 
     #region Methods
 
+    public override Bitmap DeepCopy()
+    {
+        return new Bitmap(ColourBuffer.DeepCopy());
+    }
+
     public System.Drawing.Bitmap ToSystemDrawingBitmap()
     {
         System.Drawing.Bitmap systemDrawingBitmap = new System.Drawing.Bitmap(Width, Height);

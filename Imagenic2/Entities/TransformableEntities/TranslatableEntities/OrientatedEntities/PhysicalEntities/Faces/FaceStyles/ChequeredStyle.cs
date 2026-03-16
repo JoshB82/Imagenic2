@@ -17,5 +17,10 @@ public sealed class ChequeredStyle : FaceStyle
 
     #region Methods
 
+    public override ChequeredStyle DeepCopy()
+    {
+        return this; // Temporary
+    }
+
     #endregion
 }

@@ -134,10 +134,27 @@ public sealed class MeshStructure
         MeshStructure copy = new MeshStructure(
             this.MeshDimension,
             this.Vertices.ToArray(),
-            this.Edges?.ToArray(),
-            this.Triangles?.ToArray(),
-            this.Faces?.ToArray(),
-            this.Textures?.ToArray()
+            this.Edges?.Select(e =>
+            {
+                Edge newEdge = new Edge(e.Vertex1, e.Vertex2);
+                newEdge.EdgeStyle = e.EdgeStyle?.DeepCopy();
+                return newEdge;
+            }).ToArray(),
+            this.Triangles?.Select(t =>
+            {
+                Triangle newTriangle = new Triangle(t.P1, t.P2, t.P3, t.TextureP1, t.TextureP2, t.TextureP3);
+                newTriangle.FrontStyle = t.FrontStyle?.DeepCopy();
+                newTriangle.BackStyle = t.BackStyle?.DeepCopy();
+                return newTriangle;
+            }).ToArray(),
+            this.Faces?.Select(f =>
+            {
+                Face newFace = new Face(f.Triangles);
+                newFace.FrontStyle = f.FrontStyle?.DeepCopy();
+                newFace.BackStyle = f.BackStyle?.DeepCopy();
+                return newFace;
+            }).ToArray(),
+            this.Textures?.Select(t => new TextureStyle(t.Image)).ToArray()
             );
         return copy;
     }

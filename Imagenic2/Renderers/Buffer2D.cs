@@ -61,6 +61,13 @@ public sealed class Buffer2D<T>
 
     #region Methods
 
+    public Buffer2D<T> DeepCopy()
+    {
+        Buffer2D<T> newBuffer2D = new Buffer2D<T>(firstDimensionSize, secondDimensionSize);
+        newBuffer2D.ForEach((t, i, j) => t = Values[i][j]);
+        return newBuffer2D;
+    }
+
     public void SetAllToValue(T? value)
     {
         for (int i = 0; i < firstDimensionSize; i++)

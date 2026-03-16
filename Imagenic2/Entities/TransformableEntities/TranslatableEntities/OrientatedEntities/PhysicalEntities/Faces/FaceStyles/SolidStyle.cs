@@ -21,5 +21,12 @@ public class SolidStyle : FaceStyle
 
     #region Methods
 
+    public override SolidStyle DeepCopy()
+    {
+        SolidStyle newSolidStyle = new SolidStyle();
+        newSolidStyle.Colour = Colour;
+        return newSolidStyle;
+    }
+
     #endregion
 }

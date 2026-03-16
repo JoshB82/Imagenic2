@@ -17,5 +17,10 @@ public class GradientStyle : FaceStyle
 
     #region Methods
 
+    public override GradientStyle DeepCopy()
+    {
+        return this; // Temporary
+    }
+
     #endregion
 }

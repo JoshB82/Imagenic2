@@ -29,6 +29,8 @@ public abstract class Image : IDisposable
 
     #region Methods
 
+    public abstract Image DeepCopy();
+
     public bool Export(string filePath)
     {
         System.Drawing.Bitmap bitmap = ((Bitmap)(this)).ToSystemDrawingBitmap();
