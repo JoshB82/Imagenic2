@@ -4,6 +4,7 @@ using Imagenic2.Core.Maths.Vectors;
 using Imagenic2.Core.Renderers;
 using Imagenic2.Core.Renderers.Rasterising;
 using System.Diagnostics;
+using System.Drawing.Imaging;
 
 namespace Imagenic2.InteractiveDemo;
 
@@ -16,6 +17,8 @@ public partial class Form : System.Windows.Forms.Form
 
     private bool mouseControl = false;
     private bool keyboardControl = true;
+
+    private Bitmap renderBuffer;
 
     public Form()
     {
@@ -104,12 +107,12 @@ public partial class Form : System.Windows.Forms.Form
         .AddToRender(blueTopLight, redRightLight);
 
         renderer = new Rasteriser<Imagenic2.Core.Images.Bitmap>(renderingOptions);
+        renderBuffer = new Bitmap(pictureBox.Width, pictureBox.Height, PixelFormat.Format24bppRgb);
 
-        Thread thread = new(Loop) { IsBackground = true };
-        thread.Start();
+        Task.Run(Loop);
     }
 
-    private async void Loop()
+    private async Task Loop()
     {
         bool running = true;
 
@@ -135,13 +138,13 @@ public partial class Form : System.Windows.Forms.Form
 
             if (frameTime >= frameMinimumTime)
             {
-                this.Invoke((MethodInvoker)(async () =>
+                Imagenic2.Core.Images.Bitmap? renderedImage = await renderer.RenderAsync();
+                this.Invoke((MethodInvoker)(() =>
                 {
-                    var oldImage = pictureBox.Image;
-                    Imagenic2.Core.Images.Bitmap renderedImage = await renderer.RenderAsync();
-                    pictureBox.Image = renderedImage.ToSystemDrawingBitmap();
-                    oldImage?.Dispose();
+                    System.Drawing.Bitmap? image = renderedImage?.ToSystemDrawingBitmap(renderBuffer);
+                    pictureBox.Image = image;
                 }));
+
                 noFrames++;
                 frameTime -= frameMinimumTime;
             }
@@ -149,7 +152,7 @@ public partial class Form : System.Windows.Forms.Form
             if (updateTime >= updateMinimumTime)
             {
                 UpdateShapes();
-                noUpdates++; //?
+                noUpdates++;
                 updateTime -= updateMinimumTime;
             }
 
@@ -162,7 +165,7 @@ public partial class Form : System.Windows.Forms.Form
 
             CheckKeyboard((float)deltaTime);
 
-            Thread.Sleep(1);
+            await Task.Delay(1);
         }
     }
 

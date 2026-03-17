@@ -50,9 +50,9 @@ public class Bitmap : Image
         return new Bitmap(ColourBuffer.DeepCopy());
     }
 
-    public System.Drawing.Bitmap ToSystemDrawingBitmap()
+    public System.Drawing.Bitmap ToSystemDrawingBitmap(System.Drawing.Bitmap? systemDrawingBitmap = null)
     {
-        System.Drawing.Bitmap systemDrawingBitmap = new System.Drawing.Bitmap(Width, Height);
+        systemDrawingBitmap ??= new System.Drawing.Bitmap(Width, Height);
         BitmapData data = systemDrawingBitmap.LockBits(new Rectangle(0, 0, Width, Height), ImageLockMode.WriteOnly, PixelFormat);
 
         switch (PixelFormat)
@@ -72,7 +72,9 @@ public class Bitmap : Image
         BitmapData data,
         Buffer2D<Color> colourBuffer)
     {
-        Parallel.For(0, height, y =>
+        //Parallel.For(0, height, y =>
+        //{
+        for (int y = 0; y < height; y++)
         {
             byte* rowStart = (byte*)data.Scan0 + y * data.Stride;
             int yIndex = height - 1 - y;
@@ -82,7 +84,8 @@ public class Bitmap : Image
                 rowStart[x * 3 + 1] = colourBuffer.Values[x][yIndex].G; // Green
                 rowStart[x * 3 + 2] = colourBuffer.Values[x][yIndex].R; // Red
             }
-        });
+        }
+        //});
 
         /*
         const int noTasks = 4; // TODO: Move to configuration
