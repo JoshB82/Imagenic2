@@ -110,5 +110,13 @@ public class Triangle
         return triangle;
     }
 
+    internal void TransformTriangleVertices(Matrix4x4 transformationMatrix)
+    {
+        // Transform vertices
+        TransformedP1 = transformationMatrix * TransformedP1;
+        TransformedP2 = transformationMatrix * TransformedP2;
+        TransformedP3 = transformationMatrix * TransformedP3;
+    }
+
     #endregion
 }

@@ -1,12 +1,15 @@
 ﻿using Imagenic2.Core.Entities;
 using Imagenic2.Core.Enums;
 using Imagenic2.Core.Images;
+using System.Drawing;
 
 namespace Imagenic2.Core.Renderers;
 
-public abstract class Renderer<TImage> where TImage : Image
+public abstract class Renderer<TImage> where TImage : Imagenic2.Core.Images.Image, IFactory<TImage>
 {
     #region Fields and Properties
+
+    protected Buffer2D<Color> colourBuffer;
 
     internal static readonly ClippingPlane[] ScreenClippingPlanes = new ClippingPlane[]
     {
@@ -104,6 +107,7 @@ public abstract class Renderer<TImage> where TImage : Image
     {
         RenderingOptions = renderingOptions;
         renderingOptions.RenderAlteringPropertyChanged += OnRenderingAlteringPropertyChanged;
+        colourBuffer = new Buffer2D<Color>(RenderingOptions.RenderWidth, RenderingOptions.RenderHeight);
     }
 
     #endregion

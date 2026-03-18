@@ -1,14 +1,14 @@
 ﻿using Imagenic2.Core.Entities;
 using Imagenic2.Core.Entities.Lights;
+using Imagenic2.Core.Images;
 using System.Drawing;
 
 namespace Imagenic2.Core.Renderers.Rasterising;
 
-public partial class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagenic2.Core.Images.Image
+public partial class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagenic2.Core.Images.Image, IFactory<TImage>
 {
     #region Fields and Properties
-
-    internal Buffer2D<Color> colourBuffer;
+    
     internal Buffer2D<float> zBuffer;
 
     internal const float backgroundValue = 1.1f;
@@ -19,7 +19,6 @@ public partial class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagen
 
     public Rasteriser(RenderingOptions renderingOptions) : base(renderingOptions)
     {
-        colourBuffer = new Buffer2D<Color>(RenderingOptions.RenderWidth, RenderingOptions.RenderHeight);
         zBuffer = new Buffer2D<float>(RenderingOptions.RenderWidth, RenderingOptions.RenderHeight);
     }
 
@@ -126,12 +125,12 @@ public partial class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagen
 
         NewRenderNeeded = false;
 
-        if (typeof(TImage) == typeof(Imagenic2.Core.Images.Bitmap))
-        {
-            return LatestRender = new Imagenic2.Core.Images.Bitmap(colourBuffer) as TImage;
-        }
+        //if (typeof(TImage) == typeof(Imagenic2.Core.Images.Bitmap))
+        //{
+        //    return LatestRender = new Imagenic2.Core.Images.Bitmap(colourBuffer) as TImage;
+        //}
 
-        return null;
+        return LatestRender = TImage.CreateFromBuffer(colourBuffer);
     }
 
     // Transform vertices
@@ -142,13 +141,7 @@ public partial class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagen
         edge.TransformedP2 = transformationMatrix * edge.TransformedP2;
     }
 
-    private static void TransformTriangleVertices(Triangle triangle, Matrix4x4 transformationMatrix)
-    {
-        // Transform vertices
-        triangle.TransformedP1 = transformationMatrix * triangle.TransformedP1;
-        triangle.TransformedP2 = transformationMatrix * triangle.TransformedP2;
-        triangle.TransformedP3 = transformationMatrix * triangle.TransformedP3;
-    }
+    
 
     #endregion
 }

@@ -1,4 +1,5 @@
-﻿using Imagenic2.Core.Renderers.Rasterising;
+﻿using Imagenic2.Core.Images;
+using Imagenic2.Core.Renderers.Rasterising;
 using System.Drawing;
 
 namespace Imagenic2.Core.Renderers;
@@ -119,7 +120,7 @@ public sealed class Buffer2D<T>
         return array;
     }
 
-    public TImage ToImage<TImage>() where TImage : Imagenic2.Core.Images.Image
+    public TImage ToImage<TImage>() where TImage : Imagenic2.Core.Images.Image, IFactory<TImage>
     {
         Buffer2D<Color> imageValues = null;
         if (typeof(T) == typeof(Color))
@@ -141,6 +142,7 @@ public sealed class Buffer2D<T>
             throw new Exception();
         }
 
+        /*
         if (typeof(TImage) == typeof(Imagenic2.Core.Images.Bitmap))
         {
             return new Imagenic2.Core.Images.Bitmap(imageValues) as TImage;
@@ -149,6 +151,9 @@ public sealed class Buffer2D<T>
         {
             throw new Exception();
         }
+        */
+
+        return TImage.CreateFromBuffer(imageValues);
     }
 
     #endregion

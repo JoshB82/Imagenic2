@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Imagenic2.WinForms", "Image
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Imagenic2.InteractiveDemo", "Imagenic2.InteractiveDemo\Imagenic2.InteractiveDemo.csproj", "{73ABFEDD-D447-4D04-A7B6-0D294DF4E4C9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Imagenic2.RayTracingDemo", "Imagenic2.RayTracingDemo\Imagenic2.RayTracingDemo.csproj", "{8CF26F1A-1E41-4F69-A347-92D31F1B0B45}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{73ABFEDD-D447-4D04-A7B6-0D294DF4E4C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{73ABFEDD-D447-4D04-A7B6-0D294DF4E4C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{73ABFEDD-D447-4D04-A7B6-0D294DF4E4C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CF26F1A-1E41-4F69-A347-92D31F1B0B45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CF26F1A-1E41-4F69-A347-92D31F1B0B45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CF26F1A-1E41-4F69-A347-92D31F1B0B45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CF26F1A-1E41-4F69-A347-92D31F1B0B45}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

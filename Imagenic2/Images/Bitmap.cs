@@ -4,7 +4,7 @@ using System.Drawing.Imaging;
 
 namespace Imagenic2.Core.Images;
 
-public class Bitmap : Image
+public class Bitmap : Image, IFactory<Bitmap>
 {
     #region Fields and Properties
 
@@ -44,6 +44,8 @@ public class Bitmap : Image
     #endregion
 
     #region Methods
+
+    public static Bitmap CreateFromBuffer(Buffer2D<Color> colourBuffer) => new Bitmap(colourBuffer);
 
     public override Bitmap DeepCopy()
     {

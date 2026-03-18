@@ -2,7 +2,7 @@
 
 namespace Imagenic2.Core.Renderers.RayTracing;
 
-public class RayTracer<TImage> : Renderer<TImage> where TImage : Image
+public partial class RayTracer<TImage> : Renderer<TImage> where TImage : Image, IFactory<TImage>
 {
     #region Fields and Properties
 
@@ -24,10 +24,10 @@ public class RayTracer<TImage> : Renderer<TImage> where TImage : Image
         // Check if there is anything to render.
         if (RenderingOptions.PhysicalEntitiesToRender is null || !RenderingOptions.PhysicalEntitiesToRender.Any())
         {
-            return null;
+            MoveToViewSpace(RenderingOptions.RenderCamera);
         }
 
-        return null; // Temporary
+        return TImage.CreateFromBuffer(colourBuffer);
     }
 
     #endregion

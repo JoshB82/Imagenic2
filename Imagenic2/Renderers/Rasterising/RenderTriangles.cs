@@ -29,7 +29,7 @@ public partial class Rasteriser<TImage>
                         triangle.TransformedP2 = new Vector4D(triangle.P2.WorldOrigin, 1);
                         triangle.TransformedP3 = new Vector4D(triangle.P3.WorldOrigin, 1);
                         
-                        TransformTriangleVertices(triangle, modelToView);
+                        //TransformTriangleVertices(triangle, modelToView);
 
                         if (mesh.Structure.MeshDimension == MeshDimension._3D)
                         {
@@ -42,7 +42,7 @@ public partial class Rasteriser<TImage>
 
                         foreach (Triangle clippedTriangle in triangleQueue)
                         {
-                            TransformTriangleVertices(clippedTriangle, renderingEntity.viewToScreen);
+                            //TransformTriangleVertices(clippedTriangle, renderingEntity.viewToScreen);
 
                             clippedTriangle.invW1 = 1 / clippedTriangle.TransformedP1.w;
                             clippedTriangle.invW2 = 1 / clippedTriangle.TransformedP2.w;
@@ -59,7 +59,7 @@ public partial class Rasteriser<TImage>
                         //ClipTriangles(triangleQueue, Renderer<TImage>.ScreenClippingPlanes, ShadowMapClipTriangle);
                         foreach (Triangle clippedTriangle in triangleQueue)
                         {
-                            TransformTriangleVertices(clippedTriangle, screenToWindow);
+                            //TransformTriangleVertices(clippedTriangle, screenToWindow);
                             ShadowMapInterpolateTriangle(clippedTriangle, buffer, onInterpolation, clippedTriangle.invW1, clippedTriangle.invW2, clippedTriangle.invW3);
                         }
 
@@ -95,7 +95,7 @@ public partial class Rasteriser<TImage>
                         //triangle.invW3 = 1;
 
                         // Transform triangle from model space to view space
-                        TransformTriangleVertices(triangle, modelToView);
+                        triangle.TransformTriangleVertices(modelToView);
 
                         if (mesh.Structure.MeshDimension == MeshDimension._3D)
                         {
@@ -114,7 +114,7 @@ public partial class Rasteriser<TImage>
                             clippedTriangle.ViewSpaceP2 = clippedTriangle.TransformedP2;
                             clippedTriangle.ViewSpaceP3 = clippedTriangle.TransformedP3;
 
-                            TransformTriangleVertices(clippedTriangle, renderingEntity.viewToScreen);
+                            clippedTriangle.TransformTriangleVertices(renderingEntity.viewToScreen);
 
                             clippedTriangle.invW1 = 1 / clippedTriangle.TransformedP1.w;
                             clippedTriangle.invW2 = 1 / clippedTriangle.TransformedP2.w;
@@ -135,7 +135,7 @@ public partial class Rasteriser<TImage>
                             }
 
                             // Transform triangle from screen space to window space
-                            TransformTriangleVertices(clippedTriangle, screenToWindow);
+                            clippedTriangle.TransformTriangleVertices(screenToWindow);
 
                             // Extract values
                             float x1 = clippedTriangle.TransformedP1.x;
