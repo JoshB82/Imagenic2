@@ -30,11 +30,34 @@ public struct Ray
 
         Vector3D cross1 = direction.CrossProduct(edge2);
         float dot = edge1 * cross1;
+
+        if (Abs(dot).ApproxLessThan(0))
+        {
+            distance = 0;
+            return false;
+        }
+
         float i = 1 / dot;
-        Vector3D cross2 = (startPosition - (Vector3D)(triangle.TransformedP1)).CrossProduct(edge1);
+        Vector3D s = startPosition - (Vector3D)(triangle.TransformedP1);
+        float u = i * (s * cross1);
+        if (u.ApproxLessThan(0) || u.ApproxMoreThan(1))
+        {
+            distance = 0;
+            return false;
+        }
+
+        Vector3D cross2 = s.CrossProduct(edge1);
+
+        float v = i * (direction * cross2);
+        if (v.ApproxLessThan(0) || (u + v).ApproxMoreThan(1))
+        {
+            distance = 0;
+            return false;
+        }
 
         distance = edge2 * cross2 * i;
-        return distance > 0;
+
+        return distance.ApproxMoreThan(0);
     }
 
     #endregion

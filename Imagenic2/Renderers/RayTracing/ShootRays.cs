@@ -28,32 +28,30 @@ public partial class RayTracer<TImage>
                         triangle.TransformTriangleVertices(modelToView);
 
                         // View clipping?
-
-                        triangle.TransformTriangleVertices(renderingEntity.viewToScreen);
-
-                        // Cast rays
-                        float viewWidth = renderingEntity.ViewWidth;
-                        float viewHeight = renderingEntity.ViewHeight;
-                        int renderWidth = RenderingOptions.RenderWidth;
-                        int renderHeight = RenderingOptions.RenderHeight;
-
-                        for (int y = 0; y < renderHeight; y++)
-                        {
-                            for (int x = 0; x < renderWidth; x++)
-                            {
-                                float u = (x + 0.5f) / renderWidth;
-                                float v = (y + 0.5f) / renderHeight;
-                                Vector3D direction = (new Vector3D(u * viewWidth, v * viewHeight, renderingEntity.ZNear)).Normalise();
-
-                                Ray ray = new Ray(Vector3D.Zero, direction);
-                                Color colour = TraceRay(ray);
-                                colourBuffer[x, y] = colour;
-                            }
-                        }
                     }
                 }
             }
         }
+
+        // Cast rays
+        float viewWidth = renderingEntity.ViewWidth;
+        float viewHeight = renderingEntity.ViewHeight;
+        int renderWidth = RenderingOptions.RenderWidth;
+        int renderHeight = RenderingOptions.RenderHeight;
+
+        Parallel.For(0, renderHeight, y =>
+        {
+            Parallel.For(0, renderWidth, x =>
+            {
+                float u = (x + 0.5f) / renderWidth;
+                float v = (y + 0.5f) / renderHeight;
+                Vector3D direction = (new Vector3D((2 * u - 1) * viewWidth, (2 * v - 1) * viewHeight, renderingEntity.ZNear)).Normalise();
+
+                Ray ray = new Ray(Vector3D.Zero, direction);
+                Color colour = TraceRay(ray);
+                colourBuffer[x, y] = colour;
+            });
+        });
     }
 
     private Color TraceRay(Ray ray)

@@ -21,13 +21,20 @@ public partial class RayTracer<TImage> : Renderer<TImage> where TImage : Image, 
 
     public async override Task<TImage?> RenderAsync(CancellationToken token = default)
     {
+        if (!NewRenderNeeded) return LatestRender;
+        colourBuffer.SetAllToValue(RenderingOptions.BackgroundColour);
+
         // Check if there is anything to render.
         if (RenderingOptions.PhysicalEntitiesToRender is null || !RenderingOptions.PhysicalEntitiesToRender.Any())
         {
-            MoveToViewSpace(RenderingOptions.RenderCamera);
+            return null; // Temporary
         }
 
-        return TImage.CreateFromBuffer(colourBuffer);
+        MoveToViewSpace(RenderingOptions.RenderCamera);
+
+        NewRenderNeeded = false;
+
+        return LatestRender = TImage.CreateFromBuffer(colourBuffer);
     }
 
     #endregion

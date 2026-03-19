@@ -49,6 +49,8 @@
             Controls.Add(pictureBox);
             Name = "Form";
             Text = "Ray Tracing Demo";
+            KeyDown += Form_KeyDown;
+            KeyUp += Form_KeyUp;
             ((System.ComponentModel.ISupportInitialize)pictureBox).EndInit();
             ResumeLayout(false);
         }

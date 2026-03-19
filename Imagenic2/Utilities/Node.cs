@@ -61,6 +61,15 @@ public partial class Node
         }
     }
 
+    public IEnumerable<Node> GetAncestorsAndThis(Func<Node, bool>? predicate = null)
+    {
+        yield return this;
+        foreach (Node parent in GetAncestors(predicate))
+        {
+            yield return parent;
+        }
+    }
+
     public IEnumerable<Node> GetDescendants(Func<Node, bool>? predicate = null)
     {
         foreach (Node child in Children)
@@ -73,18 +82,47 @@ public partial class Node
         }
     }
 
+    public IEnumerable<Node> GetDescendantsAndThis(Func<Node, bool>? predicate = null)
+    {
+        yield return this;
+        foreach (Node child in GetDescendants(predicate))
+        {
+            yield return child;
+        }
+    }
+
     #region Transformations
 
     public Node TranslateX(float distanceX)
     {
-        if (Content is TranslatableEntity translatableEntityNode)
-        {
-            translatableEntityNode.TranslateX(distanceX);
-        }
-        var descendants = GetDescendants(n => n.Content is TranslatableEntity);
+        Vector3D displacement = new Vector3D(distanceX, 0, 0);
+        return Translate(displacement);
+    }
+
+    public Node TranslateY(float distanceY)
+    {
+        Vector3D displacement = new Vector3D(0, distanceY, 0);
+        return Translate(displacement);
+    }
+
+    public Node TranslateZ(float distanceZ)
+    {
+        Vector3D displacement = new Vector3D(0, 0, distanceZ);
+        return Translate(displacement);
+    }
+
+    public Node Translate(float distanceX, float distanceY, float distanceZ)
+    {
+        Vector3D displacement = new Vector3D(distanceX, distanceY, distanceZ);
+        return Translate(displacement);
+    }
+
+    public Node Translate(Vector3D displacement)
+    {
+        var descendants = GetDescendantsAndThis(n => n.Content is TranslatableEntity);
         foreach (Node node in descendants)
         {
-            ((TranslatableEntity?)(node.Content)).TranslateX(distanceX);
+            ((TranslatableEntity)(node.Content)).Translate(displacement);
         }
 
         return this;
