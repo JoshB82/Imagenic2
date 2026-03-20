@@ -3,6 +3,7 @@ using Imagenic2.Core.Enums;
 using Imagenic2.Core.Maths.Vectors;
 using Imagenic2.Core.Renderers;
 using Imagenic2.Core.Renderers.Rasterising;
+using Imagenic2.WinForms;
 using System.Diagnostics;
 using System.Drawing.Imaging;
 
@@ -11,18 +12,26 @@ namespace Imagenic2.InteractiveDemo;
 public partial class Form : System.Windows.Forms.Form
 {
     private readonly Camera renderCamera;
-    private Rasteriser<Imagenic2.Core.Images.Bitmap> renderer;
-    private HashSet<Keys> keysPressed = new();
+    private readonly Rasteriser<Imagenic2.Core.Images.Bitmap> renderer;
+    private readonly HashSet<Keys> keysPressed = new();
     private const float fieldOfView = MathF.PI / 3; // 60 degrees
 
     private bool mouseControl = false;
     private bool keyboardControl = true;
 
+    private readonly RenderControl renderControl;
     private Bitmap renderBuffer;
 
     public Form()
     {
         InitializeComponent();
+        this.KeyPreview = true;
+
+        renderControl = new RenderControl()
+        {
+            Dock = DockStyle.Fill
+        };
+        this.Controls.Add(renderControl);
 
         // Shapes
         Cube cube = new Cube(
@@ -60,7 +69,7 @@ public partial class Form : System.Windows.Forms.Form
         cube.Structure.Triangles[3].FrontStyle = ts;
 
         // Cameras
-        float aspectRatio = pictureBox.Width / (float)(pictureBox.Height);
+        float aspectRatio = renderControl.Width / (float)(renderControl.Height);
         float zNear = 1;
         float zFar = 750;
         float viewHeight = 2 * zNear * MathF.Tan(fieldOfView / 2);
@@ -100,14 +109,15 @@ public partial class Form : System.Windows.Forms.Form
         // Renderer
         RenderingOptions renderingOptions = new RenderingOptions(renderCamera)
         {
-            RenderWidth = pictureBox.Width,
-            RenderHeight = pictureBox.Height
+            RenderWidth = renderControl.Width,
+            RenderHeight = renderControl.Height
         }
         .AddToRender(new List<PhysicalEntity>() { cube, cone, circle, plane })
         .AddToRender(blueTopLight, redRightLight);
 
         renderer = new Rasteriser<Imagenic2.Core.Images.Bitmap>(renderingOptions);
-        renderBuffer = new Bitmap(pictureBox.Width, pictureBox.Height, PixelFormat.Format24bppRgb);
+        renderBuffer = new Bitmap(renderControl.Width, renderControl.Height, PixelFormat.Format24bppRgb);
+        renderControl.renderBuffer = renderBuffer;
 
         Task.Run(Loop);
     }
@@ -141,8 +151,10 @@ public partial class Form : System.Windows.Forms.Form
                 Imagenic2.Core.Images.Bitmap? renderedImage = await renderer.RenderAsync();
                 this.Invoke((MethodInvoker)(() =>
                 {
-                    System.Drawing.Bitmap? image = renderedImage?.ToSystemDrawingBitmap(renderBuffer);
-                    pictureBox.Image = image;
+                    //System.Drawing.Bitmap? image = renderedImage?.ToSystemDrawingBitmap(renderBuffer);
+                    //pictureBox.Image = image;
+                    renderControl.renderBuffer = renderedImage?.ToSystemDrawingBitmap(renderBuffer);
+                    renderControl.Invalidate();
                 }));
 
                 noFrames++;
@@ -258,7 +270,7 @@ public partial class Form : System.Windows.Forms.Form
 
     private void Form_FormClosed(object sender, FormClosedEventArgs e)
     {
-        pictureBox.Image?.Dispose();
+        //renderControl.Image?.Dispose();
     }
 
     bool checkMouseMove = true;
@@ -267,8 +279,8 @@ public partial class Form : System.Windows.Forms.Form
         const float mouseDampener = 0.001f;
         if (mouseControl && checkMouseMove)
         {
-            renderCamera.RotateLeft((e.X - pictureBox.Width / 2) * mouseDampener);
-            renderCamera.RotateDown((e.Y - pictureBox.Height / 2) * mouseDampener);
+            renderCamera.RotateLeft((e.X - renderControl.Width / 2) * mouseDampener);
+            renderCamera.RotateDown((e.Y - renderControl.Height / 2) * mouseDampener);
             CentreCursor();
             checkMouseMove = false;
         }
@@ -278,7 +290,7 @@ public partial class Form : System.Windows.Forms.Form
         }
     }
 
-    private void CentreCursor() => Cursor.Position = PointToScreen(new Point(pictureBox.Width / 2, pictureBox.Height / 2));
+    private void CentreCursor() => Cursor.Position = PointToScreen(new Point(renderControl.Width / 2, renderControl.Height / 2));
 
     private void SwitchToKeyboardControl()
     {

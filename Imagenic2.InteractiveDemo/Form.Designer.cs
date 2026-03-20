@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            pictureBox = new PictureBox();
             menuStrip = new MenuStrip();
             entitiesToolStripMenuItem = new ToolStripMenuItem();
             addToolStripMenuItem = new ToolStripMenuItem();
@@ -38,19 +37,8 @@
             controlToolStripMenuItem = new ToolStripMenuItem();
             keyboardToolStripMenuItem = new ToolStripMenuItem();
             mouseToolStripMenuItem = new ToolStripMenuItem();
-            ((System.ComponentModel.ISupportInitialize)pictureBox).BeginInit();
             menuStrip.SuspendLayout();
             SuspendLayout();
-            // 
-            // pictureBox
-            // 
-            pictureBox.Dock = DockStyle.Fill;
-            pictureBox.Location = new Point(0, 33);
-            pictureBox.Name = "pictureBox";
-            pictureBox.Size = new Size(1356, 717);
-            pictureBox.TabIndex = 0;
-            pictureBox.TabStop = false;
-            pictureBox.MouseMove += pictureBox_MouseMove;
             // 
             // menuStrip
             // 
@@ -106,14 +94,14 @@
             keyboardToolStripMenuItem.Checked = true;
             keyboardToolStripMenuItem.CheckState = CheckState.Checked;
             keyboardToolStripMenuItem.Name = "keyboardToolStripMenuItem";
-            keyboardToolStripMenuItem.Size = new Size(270, 34);
+            keyboardToolStripMenuItem.Size = new Size(190, 34);
             keyboardToolStripMenuItem.Text = "Keyboard";
             keyboardToolStripMenuItem.Click += keyboardToolStripMenuItem_Click;
             // 
             // mouseToolStripMenuItem
             // 
             mouseToolStripMenuItem.Name = "mouseToolStripMenuItem";
-            mouseToolStripMenuItem.Size = new Size(270, 34);
+            mouseToolStripMenuItem.Size = new Size(190, 34);
             mouseToolStripMenuItem.Text = "Mouse";
             mouseToolStripMenuItem.Click += mouseToolStripMenuItem_Click;
             // 
@@ -122,7 +110,6 @@
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1356, 750);
-            Controls.Add(pictureBox);
             Controls.Add(menuStrip);
             MainMenuStrip = menuStrip;
             Name = "Form";
@@ -131,7 +118,6 @@
             KeyDown += Form_KeyDown;
             KeyUp += Form_KeyUp;
             Resize += Form_Resize;
-            ((System.ComponentModel.ISupportInitialize)pictureBox).EndInit();
             menuStrip.ResumeLayout(false);
             menuStrip.PerformLayout();
             ResumeLayout(false);
@@ -139,8 +125,6 @@
         }
 
         #endregion
-
-        private PictureBox pictureBox;
         private MenuStrip menuStrip;
         private ToolStripMenuItem entitiesToolStripMenuItem;
         private ToolStripMenuItem controlToolStripMenuItem;

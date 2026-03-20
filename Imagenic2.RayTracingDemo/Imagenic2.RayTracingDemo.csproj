@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Imagenic.WinForms\Imagenic2.WinForms.csproj" />
     <ProjectReference Include="..\Imagenic2\Imagenic2.Core.csproj" />
   </ItemGroup>
 
