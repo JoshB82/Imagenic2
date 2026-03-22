@@ -25,8 +25,24 @@ public partial class Form : System.Windows.Forms.Form
             worldOrientation: Imagenic2.Core.Maths.Orientation.OrientationZY,
             sideLength: 10
         );
-
         cube.SetAllTrianglesToFaceStyle(new Material());
+
+        Cone cone = new Cone(
+            worldOrigin: new Vector3D(40, 20, 0),
+            worldOrientation: Imagenic2.Core.Maths.Orientation.OrientationZY,
+            height: 20,
+            radius: 10,
+            resolution: 10
+        );
+        cone.SetAllTrianglesToFaceStyle(new Material());
+
+        Plane plane = new Plane(
+            worldOrigin: new Vector3D(-50, 0, -50),
+            worldOrientation: Imagenic2.Core.Maths.Orientation.OrientationZY,
+            length: 100,
+            width: 100
+        );
+        plane.SetAllTrianglesToFaceStyle(new Material() { Reflectivity = 1 });
 
         // Lights
         Spotlight blueSpotlight = new Spotlight(
@@ -71,7 +87,7 @@ public partial class Form : System.Windows.Forms.Form
             RenderWidth = pictureBox.Width,
             RenderHeight = pictureBox.Height
         }
-        .AddToRender(new List<PhysicalEntity>() { cube })
+        .AddToRender(new List<PhysicalEntity>() { cube, plane, cone })
         .AddToRender(blueSpotlight, redSpotlight);
 
         renderer = new RayTracer<Core.Images.Bitmap>(renderingOptions);

@@ -48,38 +48,40 @@ public partial class RayTracer<TImage>
                 Vector3D direction = (new Vector3D((2 * u - 1) * viewWidth, (2 * v - 1) * viewHeight, renderingEntity.ZNear)).Normalise();
 
                 Ray ray = new Ray(Vector3D.Zero, direction);
-                Color colour = TraceRay(ray);
+                Color colour = TraceRay(ray).ToSystemDrawingColor();
                 colourBuffer[x, y] = colour;
             });
         });
     }
 
-    private Color TraceRay(Ray ray, int depth = 5)
+    private Vector3D TraceRay(Ray ray, int depth = 5)
     {
         if (depth == 0)
         {
-            return Color.Black;
+            return Vector3D.Zero;
         }
 
         if (!ClosestHit(ray, out HitInfo hitInfo))
         {
-            return RenderingOptions.BackgroundColour;
+            return RenderingOptions.BackgroundColour.ToVector3D();
         }
 
-        //return ((Material)(hitInfo.triangle.FrontStyle)).Shade(hitInfo, RenderingOptions.Lights);
-
-        Color colour = Color.Black;
+        Vector3D colour = Vector3D.Zero;
+        Material triangleMaterial = (Material)(hitInfo.triangle.FrontStyle);
 
         foreach (Light light in RenderingOptions.Lights)
         {
-            Vector3D lightVector = light.WorldOrigin - hitInfo.position;
-            
-
             if (!IsInShadow(hitInfo.position, light))
             {
-                colour = ((Material)(hitInfo.triangle.FrontStyle)).Shade(hitInfo, light);
-                //colour = light.Colour;
+                colour = Shade(hitInfo, light, colour);
             }
+        }
+
+        if (triangleMaterial.Reflectivity > 0)
+        {
+            Vector3D reflectionDirection = (ray.direction - 2 * (ray.direction * hitInfo.normal) * hitInfo.normal);
+            Vector3D reflectedColour = TraceRay(new Ray(hitInfo.position, reflectionDirection), depth - 1);
+            colour = colour * (1 - triangleMaterial.Reflectivity) + reflectedColour * triangleMaterial.Reflectivity;
         }
 
         return colour;
@@ -95,6 +97,16 @@ public partial class RayTracer<TImage>
         */
     }
 
+    internal static Vector3D Shade(HitInfo hitInfo, Light light, Vector3D colour)
+    {
+        Vector3D lightColour = new Vector3D(light.Colour.R, light.Colour.G, light.Colour.B);
+        Vector3D lightVector = (light.WorldOrigin - hitInfo.position).Normalise();
+        float dot = Max(hitInfo.normal * lightVector, 0);
+        colour += lightColour * dot * light.Intensity;
+
+        return colour;
+    }
+
     private bool IsInShadow(Vector3D point, Light light)
     {
         Vector3D lightVector = light.WorldOrigin - point;
@@ -103,7 +115,8 @@ public partial class RayTracer<TImage>
 
         if (ClosestHit(shadowRay, out HitInfo hitInfo))
         {
-            return hitInfo.distance < distance;
+            //return hitInfo.distance < distance;
+            return hitInfo.distance.ApproxLessThan(distance, 1e-6f);
         }
 
         return false;
@@ -143,7 +156,7 @@ public partial class RayTracer<TImage>
     }
 }
 
-public struct HitInfo
+internal struct HitInfo
 {
     public Triangle triangle;
     public float distance;

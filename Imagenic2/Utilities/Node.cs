@@ -91,44 +91,5 @@ public partial class Node
         }
     }
 
-    #region Transformations
-
-    public Node TranslateX(float distanceX)
-    {
-        Vector3D displacement = new Vector3D(distanceX, 0, 0);
-        return Translate(displacement);
-    }
-
-    public Node TranslateY(float distanceY)
-    {
-        Vector3D displacement = new Vector3D(0, distanceY, 0);
-        return Translate(displacement);
-    }
-
-    public Node TranslateZ(float distanceZ)
-    {
-        Vector3D displacement = new Vector3D(0, 0, distanceZ);
-        return Translate(displacement);
-    }
-
-    public Node Translate(float distanceX, float distanceY, float distanceZ)
-    {
-        Vector3D displacement = new Vector3D(distanceX, distanceY, distanceZ);
-        return Translate(displacement);
-    }
-
-    public Node Translate(Vector3D displacement)
-    {
-        var descendants = GetDescendantsAndThis(n => n.Content is TranslatableEntity);
-        foreach (Node node in descendants)
-        {
-            ((TranslatableEntity)(node.Content)).Translate(displacement);
-        }
-
-        return this;
-    }
-
-    #endregion
-
     #endregion
 }

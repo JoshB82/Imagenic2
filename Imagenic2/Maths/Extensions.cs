@@ -1,4 +1,5 @@
-﻿using static Imagenic2.Core.Maths.NumberHelpers;
+﻿using System.Drawing;
+using static Imagenic2.Core.Maths.NumberHelpers;
 
 namespace Imagenic2.Core.Maths;
 
@@ -19,6 +20,8 @@ public static class Extensions
             return comparable;
         }
     }
+
+    public static Vector3D ToVector3D(this Color colour) => new Vector3D(colour.R, colour.G, colour.B);
 
     public static bool ApproxEquals(this float v1, float v2, float epsilon = float.Epsilon) => Math.Abs(v1 - v2) <= epsilon;
     public static bool ApproxLessThanEquals(this float v1, float v2, float epsilon = float.Epsilon) => v1 < v2 || ApproxEquals(v1, v2, epsilon);

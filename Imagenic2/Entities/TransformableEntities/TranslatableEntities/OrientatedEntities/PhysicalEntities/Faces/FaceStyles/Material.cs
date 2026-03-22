@@ -1,5 +1,4 @@
 ﻿using Imagenic2.Core.Renderers.RayTracing;
-using System.Drawing;
 
 namespace Imagenic2.Core.Entities;
 
@@ -10,6 +9,17 @@ public class Material : FaceStyle
     public float Roughness { get; set; }
     public float Metallic { get; set; }
     public Imagenic2.Core.Images.Image Texture { get; set; }
+
+    private float reflectivity;
+    public float Reflectivity
+    {
+        get => reflectivity;
+        set
+        {
+            ThrowIfNotWithinRange(value, 0, 1);
+            reflectivity = value;
+        }
+    }
 
     #endregion
 
@@ -30,22 +40,6 @@ public class Material : FaceStyle
         newMaterial.Texture = Texture;
         return newMaterial;
     }
-
-    public Color Shade(HitInfo hitInfo, Light light)
-    {
-        Color baseColour = Color.Black;
-        Vector3D colour = new Vector3D(baseColour.R, baseColour.G, baseColour.B);
-        Vector3D lightColour = new Vector3D(light.Colour.R, light.Colour.G, light.Colour.B);
-        Vector3D lightVector = (light.WorldOrigin - hitInfo.position).Normalise();
-        float dot = Max(hitInfo.normal * lightVector, 0);
-        colour += lightColour * dot * light.Intensity;
-
-        return colour.ToSystemDrawingColor();
-    }
-
-    public Func<HitInfo, Color> shade;
-
-    
 
     #endregion
 }
