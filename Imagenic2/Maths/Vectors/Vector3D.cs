@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Drawing;
+using System.Numerics;
 
 namespace Imagenic2.Core.Maths.Vectors;
 
@@ -154,6 +155,15 @@ public struct Vector3D : IApproximatelyEquatable<Vector3D>,
 
     public static implicit operator Vector4D(Vector3D v) => new Vector4D(v);
     public static explicit operator Vector2D(Vector3D v) => new Vector2D(v.x, v.y);
+
+    public readonly Color ToSystemDrawingColor()
+    {
+        byte r = (byte)(Math.Clamp(x, 0, 1) * 255);
+        byte g = (byte)(Math.Clamp(y, 0, 1) * 255);
+        byte b = (byte)(Math.Clamp(z, 0, 1) * 255);
+
+        return Color.FromArgb(r, g, b);
+    }
 
     #endregion
 }

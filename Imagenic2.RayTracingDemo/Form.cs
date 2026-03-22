@@ -26,6 +26,29 @@ public partial class Form : System.Windows.Forms.Form
             sideLength: 10
         );
 
+        cube.SetAllTrianglesToFaceStyle(new Material());
+
+        // Lights
+        Spotlight blueSpotlight = new Spotlight(
+            worldOrigin: new Vector3D(0, 50, 0),
+            worldOrientation: Imagenic2.Core.Maths.Orientation.OrientationNegativeYZ,
+            viewWidth: 50,
+            viewHeight: 50,
+            zNear: 10,
+            zFar: 100
+        );
+        blueSpotlight.Colour = Color.Blue;
+
+        Spotlight redSpotlight = new Spotlight(
+            worldOrigin: new Vector3D(50, 0, 0),
+            worldOrientation: Imagenic2.Core.Maths.Orientation.OrientationNegativeXZ,
+            viewWidth: 50,
+            viewHeight: 50,
+            zNear: 10,
+            zFar: 100
+        );
+        redSpotlight.Colour = Color.Red;
+
         // Cameras
         float aspectRatio = pictureBox.Width / (float)(pictureBox.Height);
         float zNear = 1;
@@ -48,7 +71,8 @@ public partial class Form : System.Windows.Forms.Form
             RenderWidth = pictureBox.Width,
             RenderHeight = pictureBox.Height
         }
-        .AddToRender(new List<PhysicalEntity>() { cube });
+        .AddToRender(new List<PhysicalEntity>() { cube })
+        .AddToRender(blueSpotlight, redSpotlight);
 
         renderer = new RayTracer<Core.Images.Bitmap>(renderingOptions);
 

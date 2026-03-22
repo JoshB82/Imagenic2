@@ -74,5 +74,13 @@ public class Mesh : PhysicalEntity
         return mesh;
     }
 
+    public void SetAllTrianglesToFaceStyle(FaceStyle faceStyle)
+    {
+        foreach (Triangle triangle in Structure.Triangles)
+        {
+            triangle.FrontStyle = faceStyle;
+        }
+    }
+
     #endregion
 }

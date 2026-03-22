@@ -118,5 +118,13 @@ public class Triangle
         TransformedP3 = transformationMatrix * TransformedP3;
     }
 
+    internal Vector3D CalculateNormal()
+    {
+        Vector3D edge1 = (Vector3D)(TransformedP2 - TransformedP1);
+        Vector3D edge2 = (Vector3D)(TransformedP3 - TransformedP1);
+
+        return edge2.CrossProduct(edge1).Normalise();
+    }
+
     #endregion
 }

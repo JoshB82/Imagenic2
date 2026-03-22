@@ -21,6 +21,18 @@ public abstract class Light : RenderingEntity
 
     public Color Colour { get; set; } = Color.Blue;
 
+    private float intensity = 1;
+    public float Intensity
+    {
+        get => intensity;
+        set
+        {
+            if (value == intensity) return;
+            intensity = value;
+            InvokeRenderEvent(RenderUpdate.NewRender);
+        }
+    }
+
     #endregion
 
     #region Constructors

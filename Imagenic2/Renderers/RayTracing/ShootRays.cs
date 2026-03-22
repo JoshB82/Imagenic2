@@ -54,11 +54,67 @@ public partial class RayTracer<TImage>
         });
     }
 
-    private Color TraceRay(Ray ray)
+    private Color TraceRay(Ray ray, int depth = 5)
     {
+        if (depth == 0)
+        {
+            return Color.Black;
+        }
+
+        if (!ClosestHit(ray, out HitInfo hitInfo))
+        {
+            return RenderingOptions.BackgroundColour;
+        }
+
+        //return ((Material)(hitInfo.triangle.FrontStyle)).Shade(hitInfo, RenderingOptions.Lights);
+
+        Color colour = Color.Black;
+
+        foreach (Light light in RenderingOptions.Lights)
+        {
+            Vector3D lightVector = light.WorldOrigin - hitInfo.position;
+            
+
+            if (!IsInShadow(hitInfo.position, light))
+            {
+                colour = ((Material)(hitInfo.triangle.FrontStyle)).Shade(hitInfo, light);
+                //colour = light.Colour;
+            }
+        }
+
+        return colour;
+
+        /*
+        if (hitTriangle is null)
+        {
+            // No triangle hit
+            return RenderingOptions.BackgroundColour;
+        }
+
+        return ((SolidStyle)(hitTriangle.FrontStyle)).Colour;
+        */
+    }
+
+    private bool IsInShadow(Vector3D point, Light light)
+    {
+        Vector3D lightVector = light.WorldOrigin - point;
+        float distance = lightVector.Magnitude();
+        Ray shadowRay = new Ray(point, lightVector);
+
+        if (ClosestHit(shadowRay, out HitInfo hitInfo))
+        {
+            return hitInfo.distance < distance;
+        }
+
+        return false;
+    }
+
+    private bool ClosestHit(Ray ray, out HitInfo hitInfo)
+    {
+        bool hit = false;
+
         float closestDistance = float.MaxValue;
-        Triangle? hitTriangle = null;
-        Vector3D hitPoint = Vector3D.Zero;
+        hitInfo = new HitInfo();
 
         foreach (PhysicalEntity physicalEntity in RenderingOptions.PhysicalEntitiesToRender)
         {
@@ -70,21 +126,27 @@ public partial class RayTracer<TImage>
                     {
                         if (distance < closestDistance)
                         {
+                            hit = true;
                             closestDistance = distance;
-                            hitTriangle = triangle;
-                            hitPoint = ray.direction * distance;
+
+                            hitInfo.distance = closestDistance;
+                            hitInfo.triangle = triangle;
+                            hitInfo.position = ray.direction * distance;
+                            hitInfo.normal = triangle.CalculateNormal();
                         }
                     }
                 }
             }
         }
 
-        if (hitTriangle is null)
-        {
-            // No triangle hit
-            return RenderingOptions.BackgroundColour;
-        }
-
-        return ((SolidStyle)(hitTriangle.FrontStyle)).Colour;
+        return hit;
     }
+}
+
+public struct HitInfo
+{
+    public Triangle triangle;
+    public float distance;
+    public Vector3D position;
+    public Vector3D normal;
 }
