@@ -29,6 +29,8 @@ public partial class RayTracer<TImage>
 
                         // View clipping?
                     }
+
+                    mesh.Structure.BoundingBox.TransformVertices(modelToView);
                 }
             }
         }
@@ -66,35 +68,55 @@ public partial class RayTracer<TImage>
             return RenderingOptions.BackgroundColour.ToVector3D();
         }
 
-        Vector3D colour = Vector3D.Zero;
-        Material triangleMaterial = (Material)(hitInfo.triangle.FrontStyle);
-
-        foreach (Light light in RenderingOptions.Lights)
+        Vector3D colour;
+        switch (hitInfo.triangle.FrontStyle)
         {
-            if (!IsInShadow(hitInfo.position, light))
+            case Material triangleMaterial:
+                colour = Vector3D.Zero;
+                Lighting();
+                Reflection(triangleMaterial);
+                if (triangleMaterial is EmissiveMaterial em)
+                {
+                    Emission(em);
+                }
+                break;
+            case SolidStyle solidStyle:
+                colour = solidStyle.Colour.ToVector3D();
+                Lighting();
+                break;
+            default:
+                colour = Vector3D.Zero;
+                break;
+        }
+
+        void Lighting()
+        {
+            foreach (Light light in RenderingOptions.Lights)
             {
-                colour = Shade(hitInfo, light, colour);
+                if (!IsInShadow(hitInfo.position, light))
+                {
+                    colour = Shade(hitInfo, light, colour);
+                }
             }
         }
 
-        if (triangleMaterial.Reflectivity > 0)
+        void Reflection(Material triangleMaterial)
         {
-            Vector3D reflectionDirection = (ray.direction - 2 * (ray.direction * hitInfo.normal) * hitInfo.normal);
-            Vector3D reflectedColour = TraceRay(new Ray(hitInfo.position, reflectionDirection), depth - 1);
-            colour = colour * (1 - triangleMaterial.Reflectivity) + reflectedColour * triangleMaterial.Reflectivity;
+            if (triangleMaterial.Reflectivity > 0)
+            {
+                Vector3D reflectionDirection = (ray.direction - 2 * (ray.direction * hitInfo.normal) * hitInfo.normal);
+                Vector3D reflectedColour = TraceRay(new Ray(hitInfo.position, reflectionDirection), depth - 1);
+                colour = colour * (1 - triangleMaterial.Reflectivity) + reflectedColour * triangleMaterial.Reflectivity;
+            }
+        }
+
+        void Emission(EmissiveMaterial emissiveMaterial)
+        {
+            Vector3D emission = emissiveMaterial.EmissionColour.ToVector3D() * emissiveMaterial.EmissionIntensity;
+            colour += emission;
         }
 
         return colour;
-
-        /*
-        if (hitTriangle is null)
-        {
-            // No triangle hit
-            return RenderingOptions.BackgroundColour;
-        }
-
-        return ((SolidStyle)(hitTriangle.FrontStyle)).Colour;
-        */
     }
 
     internal static Vector3D Shade(HitInfo hitInfo, Light light, Vector3D colour)
@@ -133,19 +155,22 @@ public partial class RayTracer<TImage>
         {
             if (physicalEntity is Mesh mesh)
             {
-                foreach (Triangle triangle in mesh.Structure.Triangles)
+                if (ray.IntersectBoundingBox(mesh.Structure.BoundingBox, out float boundingBoxDistance))
                 {
-                    if (ray.IntersectTriangle(triangle, out float distance))
+                    foreach (Triangle triangle in mesh.Structure.Triangles)
                     {
-                        if (distance < closestDistance)
+                        if (ray.IntersectTriangle(triangle, out float distance))
                         {
-                            hit = true;
-                            closestDistance = distance;
+                            if (distance < closestDistance)
+                            {
+                                hit = true;
+                                closestDistance = distance;
 
-                            hitInfo.distance = closestDistance;
-                            hitInfo.triangle = triangle;
-                            hitInfo.position = ray.direction * distance;
-                            hitInfo.normal = triangle.CalculateNormal();
+                                hitInfo.distance = closestDistance;
+                                hitInfo.triangle = triangle;
+                                hitInfo.position = ray.direction * distance;
+                                hitInfo.normal = triangle.CalculateNormal();
+                            }
                         }
                     }
                 }

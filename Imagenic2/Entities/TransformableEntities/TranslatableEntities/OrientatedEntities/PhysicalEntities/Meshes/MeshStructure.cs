@@ -1,4 +1,6 @@
 ﻿using Imagenic2.Core.Enums;
+using Imagenic2.Core.Renderers.RayTracing;
+using System.ComponentModel.Design;
 
 namespace Imagenic2.Core.Entities;
 
@@ -13,6 +15,7 @@ public sealed class MeshStructure
     public IList<TextureStyle>? Textures { get; set; }
 
     public MeshDimension MeshDimension { get; set; }
+    internal BoundingBox BoundingBox { get; set; }
 
     // Line
     private static readonly IReadOnlyList<Vertex> lineVertices = new Vertex[2]
@@ -50,7 +53,8 @@ public sealed class MeshStructure
     {
         new Face(planeTriangles[0], planeTriangles[1]) // 0
     };
-    internal static readonly MeshStructure planeStructure = new MeshStructure(MeshDimension._2D, planeVertices, planeEdges, planeTriangles, planeFaces);
+    private static readonly BoundingBox planeBoundingBox = new BoundingBox(planeVertices[0].WorldOrigin, planeVertices[2].WorldOrigin);
+    internal static readonly MeshStructure planeStructure = new MeshStructure(MeshDimension._2D, planeVertices, planeEdges, planeTriangles, planeFaces) { BoundingBox = planeBoundingBox };
 
     // Cube
     private static float radical = MathF.Sqrt(3) / 3;
@@ -104,7 +108,8 @@ public sealed class MeshStructure
         new Face(cuboidTriangles[8], cuboidTriangles[9]), // 4 [Top]
         new Face(cuboidTriangles[10], cuboidTriangles[11]) // 5 [Bottom]
     };
-    internal static readonly MeshStructure cubeStructure = new MeshStructure(MeshDimension._3D, cuboidVertices, cuboidEdges, cuboidTriangles, cuboidFaces);
+    private static readonly BoundingBox cuboidBoundingBox = new BoundingBox(cuboidVertices[0].WorldOrigin, cuboidVertices[2].WorldOrigin);
+    internal static readonly MeshStructure cuboidStructure = new MeshStructure(MeshDimension._3D, cuboidVertices, cuboidEdges, cuboidTriangles, cuboidFaces) { BoundingBox = cuboidBoundingBox };
 
     #endregion
 
@@ -159,6 +164,7 @@ public sealed class MeshStructure
         return copy;
     }
 
+    // Circle
     internal static IReadOnlyList<Vertex> GenerateCircleVertices(int resolution)
     {
         // Vertices are defined in anti-clockwise order.
@@ -208,16 +214,26 @@ public sealed class MeshStructure
         };
     }
 
+    internal static BoundingBox GenerateCircleBoundingBox(IReadOnlyList<Vertex> vertices, int resolution)
+    {
+        Vector3D corner1 = vertices[1].WorldOrigin;
+        Vector3D corner2 = vertices[(int)Floor(resolution / 2)].WorldOrigin;
+
+        return new BoundingBox(corner1, corner2);
+    }
+
     internal static MeshStructure GenerateCircleStructure(int resolution)
     {
         IReadOnlyList<Vertex> vertices = GenerateCircleVertices(resolution);
         IReadOnlyList<Edge> edges = GenerateCircleEdges(vertices, resolution);
         IReadOnlyList<Triangle> triangles = GenerateCircleTriangles(vertices, resolution);
         IReadOnlyList<Face> faces = GenerateCircleFaces(triangles);
+        BoundingBox boundingBox = GenerateCircleBoundingBox(vertices, resolution);
 
-        return new MeshStructure(MeshDimension._2D, vertices, edges, triangles, faces);
+        return new MeshStructure(MeshDimension._2D, vertices, edges, triangles, faces) { BoundingBox = boundingBox };
     }
 
+    // Cone
     internal static IReadOnlyList<Vertex> GenerateConeVertices(MeshStructure circleStructure)
     {
         IList<Vertex> coneVertices = new Vertex[circleStructure.Vertices.Count + 1];
@@ -263,6 +279,15 @@ public sealed class MeshStructure
         };
     }
 
+    internal static BoundingBox GenerateConeBoundingBox(IReadOnlyList<Vertex> vertices, int resolution)
+    {
+        Vector3D corner1 = vertices[1].WorldOrigin;
+        Vector3D corner2 = vertices[(int)Floor(resolution / 2)].WorldOrigin;
+        corner2.y = 1;
+
+        return new BoundingBox(corner1, corner2);
+    }
+
     internal static MeshStructure GenerateConeStructure(int resolution)
     {
         MeshStructure circleStructure = GenerateCircleStructure(resolution);
@@ -271,10 +296,12 @@ public sealed class MeshStructure
         IReadOnlyList<Edge> edges = GenerateConeEdges(circleStructure, vertices, resolution);
         IReadOnlyList<Triangle> triangles = GenerateConeTriangles(circleStructure, vertices, resolution);
         IReadOnlyList<Face> faces = GenerateConeFaces(circleStructure, triangles, resolution);
+        BoundingBox boundingBox = GenerateConeBoundingBox(vertices, resolution);
 
-        return new MeshStructure(MeshDimension._3D, vertices, edges, triangles, faces);
+        return new MeshStructure(MeshDimension._3D, vertices, edges, triangles, faces) { BoundingBox = boundingBox };
     }
 
+    // Ring
     internal static IReadOnlyList<Vertex> GenerateRingVertices(int resolution, float innerRadius, float outerRadius)
     {
         // Vertices are defined in anti-clockwise order.
@@ -329,16 +356,26 @@ public sealed class MeshStructure
         };
     }
 
+    internal static BoundingBox GenerateRingBoundingBox(IReadOnlyList<Vertex> vertices, int resolution)
+    {
+        Vector3D corner1 = vertices[resolution + 1].WorldOrigin;
+        Vector3D corner2 = vertices[resolution + (int)Floor(resolution / 2)].WorldOrigin;
+
+        return new BoundingBox(corner1, corner2);
+    }
+
     internal static MeshStructure GenerateRingStructure(int resolution, float innerRadius, float outerRadius)
     {
         IReadOnlyList<Vertex> vertices = GenerateRingVertices(resolution, innerRadius, outerRadius);
         IReadOnlyList<Edge> edges = GenerateRingEdges(vertices, resolution);
         IReadOnlyList<Triangle> triangles = GenerateRingTriangles(vertices, resolution);
         IReadOnlyList<Face> faces = GenerateRingFaces(triangles);
+        BoundingBox boundingBox = GenerateRingBoundingBox(vertices, resolution);
 
-        return new MeshStructure(MeshDimension._2D, vertices, edges, triangles, faces);
+        return new MeshStructure(MeshDimension._2D, vertices, edges, triangles, faces) { BoundingBox = boundingBox };
     }
 
+    // Cylinder
     internal static IReadOnlyList<Vertex> GenerateCylinderVertices(MeshStructure topCircleStructure, MeshStructure bottomCircleStructure)
     {
         return topCircleStructure.Vertices.Concat(bottomCircleStructure.Vertices).ToList();
@@ -385,6 +422,14 @@ public sealed class MeshStructure
         return faces.AsReadOnly();
     }
 
+    internal static BoundingBox GenerateCylinderBoundingBox(MeshStructure topCircleStructure, MeshStructure bottomCircleStructure, int resolution)
+    {
+        Vector3D corner1 = bottomCircleStructure.Vertices[1].WorldOrigin;
+        Vector3D corner2 = topCircleStructure.Vertices[(int)Floor(resolution / 2)].WorldOrigin;
+
+        return new BoundingBox(corner1, corner2);
+    }
+
     internal static MeshStructure GenerateCylinderStructure(int resolution)
     {
         MeshStructure topCircleStructure = GenerateCircleStructure(resolution);
@@ -394,10 +439,12 @@ public sealed class MeshStructure
         IReadOnlyList<Edge> edges = GenerateCylinderEdges(topCircleStructure, bottomCircleStructure, resolution);
         IReadOnlyList<Triangle> triangles = GenerateCylinderTriangles(topCircleStructure, bottomCircleStructure, resolution);
         IReadOnlyList<Face> faces = GenerateCylinderFaces(triangles, topCircleStructure, bottomCircleStructure, resolution);
+        BoundingBox boundingBox = GenerateCylinderBoundingBox(topCircleStructure, bottomCircleStructure, resolution);
 
-        return new MeshStructure(MeshDimension._3D, vertices, edges, triangles, faces);
+        return new MeshStructure(MeshDimension._3D, vertices, edges, triangles, faces) { BoundingBox = boundingBox };
     }
 
+    // Sphere
     internal static IReadOnlyList<Vertex> GenerateSphereVertices(int latRes, int longRes)
     {
         IList<Vertex> vertices = new Vertex[(latRes + 1) * (longRes + 1) + 1];
@@ -436,14 +483,20 @@ public sealed class MeshStructure
         return null;
     }
 
+    internal static BoundingBox GenerateSphereBoundingBox()
+    {
+        return new BoundingBox();
+    }
+
     internal static MeshStructure GenerateSphereStructure(int latRes, int longRes)
     {
         IReadOnlyList<Vertex> vertices = GenerateSphereVertices(latRes, longRes);
         IReadOnlyList<Edge> edges = GenerateSphereEdges(vertices, latRes, longRes);
         IReadOnlyList<Triangle> triangles = GenerateSphereTriangles(vertices, latRes, longRes);
         IReadOnlyList<Face> faces = GenerateSphereFaces(triangles, latRes, longRes);
+        BoundingBox boundingBox = GenerateSphereBoundingBox();
 
-        return new MeshStructure(MeshDimension._3D, vertices, edges, triangles, faces);
+        return new MeshStructure(MeshDimension._3D, vertices, edges, triangles, faces) { BoundingBox = boundingBox };
     }
 
     #endregion

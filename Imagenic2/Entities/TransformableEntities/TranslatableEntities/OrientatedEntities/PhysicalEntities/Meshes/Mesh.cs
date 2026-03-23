@@ -1,4 +1,5 @@
 ﻿using Imagenic2.Core.Enums;
+using Imagenic2.Core.Renderers.RayTracing;
 
 namespace Imagenic2.Core.Entities;
 

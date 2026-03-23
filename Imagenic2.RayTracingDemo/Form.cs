@@ -44,6 +44,13 @@ public partial class Form : System.Windows.Forms.Form
         );
         plane.SetAllTrianglesToFaceStyle(new Material() { Reflectivity = 1 });
 
+        Square emissiveSquare = new Square(
+            worldOrigin: new Vector3D(-20, 20, 0),
+            worldOrientation: Imagenic2.Core.Maths.Orientation.OrientationZNegativeY,
+            sideLength: 20
+        );
+        emissiveSquare.Structure.Faces[0].FrontStyle = new EmissiveMaterial() { EmissionColour = Color.Green, EmissionIntensity = 0.5f };
+
         // Lights
         Spotlight blueSpotlight = new Spotlight(
             worldOrigin: new Vector3D(0, 50, 0),
@@ -87,7 +94,7 @@ public partial class Form : System.Windows.Forms.Form
             RenderWidth = pictureBox.Width,
             RenderHeight = pictureBox.Height
         }
-        .AddToRender(new List<PhysicalEntity>() { cube, plane, cone })
+        .AddToRender(new List<PhysicalEntity>() { cube, plane, cone, emissiveSquare })
         .AddToRender(blueSpotlight, redSpotlight);
 
         renderer = new RayTracer<Core.Images.Bitmap>(renderingOptions);

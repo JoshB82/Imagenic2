@@ -23,7 +23,7 @@ public struct Ray
 
     #region Methods
 
-    internal bool IntersectTriangle(Triangle triangle, out float distance)
+    internal readonly bool IntersectTriangle(Triangle triangle, out float distance)
     {
         Vector3D edge1 = (Vector3D)(triangle.TransformedP2 - triangle.TransformedP1);
         Vector3D edge2 = (Vector3D)(triangle.TransformedP3 - triangle.TransformedP1);
@@ -58,6 +58,36 @@ public struct Ray
         distance = edge2 * cross2 * i;
 
         return distance.ApproxMoreThan(0);
+    }
+
+    internal readonly bool IntersectBoundingBox(BoundingBox boundingBox, out float distance)
+    {
+        float t1 = (boundingBox.corner1.x - startPosition.x) / direction.x;
+        float t2 = (boundingBox.corner2.x - startPosition.x) / direction.x;
+
+        float tMin = Min(t1, t2);
+        float tMax = Max(t1, t2);
+
+        t1 = (boundingBox.corner1.y - startPosition.y) / direction.y;
+        t2 = (boundingBox.corner2.y - startPosition.y) / direction.y;
+
+        tMin = Max(tMin, Min(t1, t2));
+        tMax = Min(tMax, Max(t1, t2));
+
+        t1 = (boundingBox.corner1.z - startPosition.z) / direction.z;
+        t2 = (boundingBox.corner2.z - startPosition.z) / direction.z;
+
+        tMin = Max(tMin, Min(t1, t2));
+        tMax = Min(tMax, Max(t1, t2));
+
+        if (tMax < 0 || tMin > tMax)
+        {
+            distance = 0;
+            return false;
+        }
+
+        distance = tMin;
+        return true;
     }
 
     #endregion

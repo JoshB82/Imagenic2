@@ -39,7 +39,7 @@ public sealed class Cone : Mesh
         {
             if (value == resolution) return;
             resolution = value;
-            Structure = MeshStructure.GenerateConeStructure(resolution);            
+            Structure = MeshStructure.GenerateConeStructure(resolution);
             InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
