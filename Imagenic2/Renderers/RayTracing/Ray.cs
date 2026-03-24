@@ -20,8 +20,14 @@ public struct Ray
     {
         this.startPosition = startPosition;
         this.direction = direction;
-        this.invDirection = new Vector3D(1 / direction.x, 1 / direction.y, 1 / direction.z);
+        this.invDirection = new Vector3D(
+            DivisionByZeroCheck(direction.x),
+            DivisionByZeroCheck(direction.y),
+            DivisionByZeroCheck(direction.z)
+        );
     }
+
+    private static float DivisionByZeroCheck(float num) => num.ApproxEquals(0, epsilon) ? float.PositiveInfinity : 1 / num;
 
     #endregion
 
@@ -66,23 +72,70 @@ public struct Ray
 
     internal readonly bool IntersectBoundingBox(BoundingBox boundingBox, out float distance)
     {
-        float t1 = (boundingBox.corner1.x - startPosition.x) * invDirection.x;
-        float t2 = (boundingBox.corner2.x - startPosition.x) * invDirection.x;
+        float tMin = float.NegativeInfinity;
+        float tMax = float.PositiveInfinity;
 
-        float tMin = Min(t1, t2);
-        float tMax = Max(t1, t2);
+        float t1, t2;
 
-        t1 = (boundingBox.corner1.y - startPosition.y) * invDirection.y;
-        t2 = (boundingBox.corner2.y - startPosition.y) * invDirection.y;
+        if (direction.x.ApproxEquals(0, epsilon))
+        {
+            if (startPosition.x < boundingBox.corner1.x || startPosition.x > boundingBox.corner2.x)
+            {
+                distance = 0;
+                return false;
+            }
+        }
+        else
+        {
+            t1 = (boundingBox.corner1.x - startPosition.x) * invDirection.x;
+            t2 = (boundingBox.corner2.x - startPosition.x) * invDirection.x;
 
-        tMin = Max(tMin, Min(t1, t2));
-        tMax = Min(tMax, Max(t1, t2));
+            float tNear = Min(t1, t2);
+            float tFar = Max(t1, t2);
 
-        t1 = (boundingBox.corner1.z - startPosition.z) * invDirection.z;
-        t2 = (boundingBox.corner2.z - startPosition.z) * invDirection.z;
+            tMin = Max(tMin, tNear);
+            tMax = Min(tMax, tFar);
+        }
 
-        tMin = Max(tMin, Min(t1, t2));
-        tMax = Min(tMax, Max(t1, t2));
+        if (direction.y.ApproxEquals(0, epsilon))
+        {
+            if (startPosition.y < boundingBox.corner1.y || startPosition.y > boundingBox.corner2.y)
+            {
+                distance = 0;
+                return false;
+            }
+        }
+        else
+        {
+            t1 = (boundingBox.corner1.y - startPosition.y) * invDirection.y;
+            t2 = (boundingBox.corner2.y - startPosition.y) * invDirection.y;
+
+            float tNear = Min(t1, t2);
+            float tFar = Max(t1, t2);
+
+            tMin = Max(tMin, tNear);
+            tMax = Min(tMax, tFar);
+        }
+
+        if (direction.z.ApproxEquals(0, epsilon))
+        {
+            if (startPosition.z < boundingBox.corner1.z || startPosition.z > boundingBox.corner2.z)
+            {
+                distance = 0;
+                return false;
+            }
+        }
+        else
+        {
+            t1 = (boundingBox.corner1.z - startPosition.z) * invDirection.z;
+            t2 = (boundingBox.corner2.z - startPosition.z) * invDirection.z;
+
+            float tNear = Min(t1, t2);
+            float tFar = Max(t1, t2);
+
+            tMin = Max(tMin, tNear);
+            tMax = Min(tMax, tFar);
+        }
 
         if (tMax.ApproxLessThan(0, epsilon) || tMin.ApproxMoreThan(tMax, epsilon))
         {
@@ -90,7 +143,7 @@ public struct Ray
             return false;
         }
 
-        distance = tMin;
+        distance = tMin > 0 ? tMin : tMax;
         return true;
     }
 

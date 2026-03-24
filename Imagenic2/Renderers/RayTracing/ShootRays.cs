@@ -43,22 +43,22 @@ public partial class RayTracer<TImage>
         int renderWidth = RenderingOptions.RenderWidth;
         int renderHeight = RenderingOptions.RenderHeight;
 
-        Parallel.For(0, renderHeight, y =>
+        Parallel.For(0, renderWidth * renderHeight, i =>
         {
-            Parallel.For(0, renderWidth, x =>
-            {
-                float u = (x + GenerateRandomOffset()) / renderWidth;
-                float v = (y + GenerateRandomOffset()) / renderHeight;
-                Vector3D direction = (new Vector3D((2 * u - 1) * viewWidth, (2 * v - 1) * viewHeight, renderingEntity.ZNear)).Normalise();
+            int x = i % renderWidth;
+            int y = i / renderWidth;
 
-                Ray ray = new Ray(Vector3D.Zero, direction);
-                Color colour = TraceRay(ray).ToSystemDrawingColor();
-                colourBuffer[x, y] = colour;
-            });
+            float u = (x + GenerateRandomOffset()) / renderWidth;
+            float v = (y + GenerateRandomOffset()) / renderHeight;
+            Vector3D direction = (new Vector3D((2 * u - 1) * viewWidth, (2 * v - 1) * viewHeight, renderingEntity.ZNear)).Normalise();
+
+            Ray ray = new Ray(Vector3D.Zero, direction);
+            Color colour = TraceRay(ray).ToSystemDrawingColor();
+            colourBuffer[x, y] = colour;
         });
     }
 
-    private float GenerateRandomOffset()
+    private static float GenerateRandomOffset()
     {
         return (float)random.NextDouble();
     }
@@ -100,7 +100,7 @@ public partial class RayTracer<TImage>
         {
             foreach (Light light in RenderingOptions.Lights)
             {
-                if (!IsInShadow(hitInfo.position, light))
+                if (!IsInShadow(hitInfo.position, light, hitInfo.normal))
                 {
                     colour = Shade(hitInfo, light, colour);
                 }
@@ -111,8 +111,10 @@ public partial class RayTracer<TImage>
         {
             if (triangleMaterial.Reflectivity > 0)
             {
+                Vector3D offset = hitInfo.normal * 1e-3f;
+
                 Vector3D reflectionDirection = (ray.direction - 2 * (ray.direction * hitInfo.normal) * hitInfo.normal);
-                Vector3D reflectedColour = TraceRay(new Ray(hitInfo.position, reflectionDirection), depth - 1);
+                Vector3D reflectedColour = TraceRay(new Ray(hitInfo.position + offset, reflectionDirection), depth - 1);
                 colour = colour * (1 - triangleMaterial.Reflectivity) + reflectedColour * triangleMaterial.Reflectivity;
             }
         }
@@ -136,11 +138,13 @@ public partial class RayTracer<TImage>
         return colour;
     }
 
-    private bool IsInShadow(Vector3D point, Light light)
+    private bool IsInShadow(Vector3D point, Light light, Vector3D normal)
     {
+        Vector3D offset = normal * 1e-3f;
+
         Vector3D lightVector = light.WorldOrigin - point;
         float distance = lightVector.Magnitude();
-        Ray shadowRay = new Ray(point, lightVector);
+        Ray shadowRay = new Ray(point + offset, lightVector.Normalise());
 
         if (ClosestHit(shadowRay, out HitInfo hitInfo))
         {
@@ -175,7 +179,7 @@ public partial class RayTracer<TImage>
 
                                 hitInfo.distance = closestDistance;
                                 hitInfo.triangle = triangle;
-                                hitInfo.position = ray.direction * distance;
+                                hitInfo.position = ray.startPosition + ray.direction * distance;
                                 hitInfo.normal = triangle.CalculateNormal();
                             }
                         }
