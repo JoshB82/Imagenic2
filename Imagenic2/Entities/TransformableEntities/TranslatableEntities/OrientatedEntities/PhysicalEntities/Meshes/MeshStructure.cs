@@ -1,6 +1,5 @@
 ﻿using Imagenic2.Core.Enums;
 using Imagenic2.Core.Renderers.RayTracing;
-using System.ComponentModel.Design;
 
 namespace Imagenic2.Core.Entities;
 
@@ -161,6 +160,7 @@ public sealed class MeshStructure
             }).ToArray(),
             this.Textures?.Select(t => new TextureStyle(t.Image)).ToArray()
             );
+        copy.BoundingBox = BoundingBox;
         return copy;
     }
 

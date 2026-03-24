@@ -8,6 +8,9 @@ public struct Ray
 
     public Vector3D startPosition;
     public Vector3D direction;
+    public Vector3D invDirection;
+
+    private const float epsilon = 1e-6f;
 
     #endregion
 
@@ -17,6 +20,7 @@ public struct Ray
     {
         this.startPosition = startPosition;
         this.direction = direction;
+        this.invDirection = new Vector3D(1 / direction.x, 1 / direction.y, 1 / direction.z);
     }
 
     #endregion
@@ -31,7 +35,7 @@ public struct Ray
         Vector3D cross1 = direction.CrossProduct(edge2);
         float dot = edge1 * cross1;
 
-        if (Abs(dot).ApproxLessThan(0))
+        if (Abs(dot).ApproxLessThan(0, epsilon))
         {
             distance = 0;
             return false;
@@ -40,7 +44,7 @@ public struct Ray
         float i = 1 / dot;
         Vector3D s = startPosition - (Vector3D)(triangle.TransformedP1);
         float u = i * (s * cross1);
-        if (u.ApproxLessThan(0) || u.ApproxMoreThan(1))
+        if (u.ApproxLessThan(0, epsilon) || u.ApproxMoreThan(1, epsilon))
         {
             distance = 0;
             return false;
@@ -49,7 +53,7 @@ public struct Ray
         Vector3D cross2 = s.CrossProduct(edge1);
 
         float v = i * (direction * cross2);
-        if (v.ApproxLessThan(0) || (u + v).ApproxMoreThan(1))
+        if (v.ApproxLessThan(0, epsilon) || (u + v).ApproxMoreThan(1, epsilon))
         {
             distance = 0;
             return false;
@@ -57,30 +61,30 @@ public struct Ray
 
         distance = edge2 * cross2 * i;
 
-        return distance.ApproxMoreThan(0);
+        return distance.ApproxMoreThan(0, epsilon);
     }
 
     internal readonly bool IntersectBoundingBox(BoundingBox boundingBox, out float distance)
     {
-        float t1 = (boundingBox.corner1.x - startPosition.x) / direction.x;
-        float t2 = (boundingBox.corner2.x - startPosition.x) / direction.x;
+        float t1 = (boundingBox.corner1.x - startPosition.x) * invDirection.x;
+        float t2 = (boundingBox.corner2.x - startPosition.x) * invDirection.x;
 
         float tMin = Min(t1, t2);
         float tMax = Max(t1, t2);
 
-        t1 = (boundingBox.corner1.y - startPosition.y) / direction.y;
-        t2 = (boundingBox.corner2.y - startPosition.y) / direction.y;
+        t1 = (boundingBox.corner1.y - startPosition.y) * invDirection.y;
+        t2 = (boundingBox.corner2.y - startPosition.y) * invDirection.y;
 
         tMin = Max(tMin, Min(t1, t2));
         tMax = Min(tMax, Max(t1, t2));
 
-        t1 = (boundingBox.corner1.z - startPosition.z) / direction.z;
-        t2 = (boundingBox.corner2.z - startPosition.z) / direction.z;
+        t1 = (boundingBox.corner1.z - startPosition.z) * invDirection.z;
+        t2 = (boundingBox.corner2.z - startPosition.z) * invDirection.z;
 
         tMin = Max(tMin, Min(t1, t2));
         tMax = Min(tMax, Max(t1, t2));
 
-        if (tMax < 0 || tMin > tMax)
+        if (tMax.ApproxLessThan(0, epsilon) || tMin.ApproxMoreThan(tMax, epsilon))
         {
             distance = 0;
             return false;

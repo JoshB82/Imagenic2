@@ -5,6 +5,8 @@ namespace Imagenic2.Core.Renderers.RayTracing;
 
 public partial class RayTracer<TImage>
 {
+    private static readonly Random random = new Random();
+
     private void MoveToViewSpace(RenderingEntity renderingEntity)
     {
         foreach (PhysicalEntity physicalEntity in RenderingOptions.PhysicalEntitiesToRender)
@@ -45,8 +47,8 @@ public partial class RayTracer<TImage>
         {
             Parallel.For(0, renderWidth, x =>
             {
-                float u = (x + 0.5f) / renderWidth;
-                float v = (y + 0.5f) / renderHeight;
+                float u = (x + GenerateRandomOffset()) / renderWidth;
+                float v = (y + GenerateRandomOffset()) / renderHeight;
                 Vector3D direction = (new Vector3D((2 * u - 1) * viewWidth, (2 * v - 1) * viewHeight, renderingEntity.ZNear)).Normalise();
 
                 Ray ray = new Ray(Vector3D.Zero, direction);
@@ -54,6 +56,11 @@ public partial class RayTracer<TImage>
                 colourBuffer[x, y] = colour;
             });
         });
+    }
+
+    private float GenerateRandomOffset()
+    {
+        return (float)random.NextDouble();
     }
 
     private Vector3D TraceRay(Ray ray, int depth = 5)
