@@ -35,8 +35,8 @@ public struct Ray
 
     internal readonly bool IntersectTriangle(Triangle triangle, out float distance)
     {
-        Vector3D edge1 = (Vector3D)(triangle.TransformedP2 - triangle.TransformedP1);
-        Vector3D edge2 = (Vector3D)(triangle.TransformedP3 - triangle.TransformedP1);
+        Vector3D edge1 = triangle.P2.WorldOrigin - triangle.P1.WorldOrigin;
+        Vector3D edge2 = triangle.P3.WorldOrigin - triangle.P1.WorldOrigin;
 
         Vector3D cross1 = direction.CrossProduct(edge2);
         float dot = edge1 * cross1;
@@ -48,7 +48,7 @@ public struct Ray
         }
 
         float i = 1 / dot;
-        Vector3D s = startPosition - (Vector3D)(triangle.TransformedP1);
+        Vector3D s = startPosition - triangle.P1.WorldOrigin;
         float u = i * (s * cross1);
         if (u.ApproxLessThan(0, epsilon) || u.ApproxMoreThan(1, epsilon))
         {

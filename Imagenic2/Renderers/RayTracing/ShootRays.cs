@@ -9,34 +9,6 @@ public partial class RayTracer<TImage>
 
     private void MoveToViewSpace(RenderingEntity renderingEntity)
     {
-        foreach (PhysicalEntity physicalEntity in RenderingOptions.PhysicalEntitiesToRender)
-        {
-            if (physicalEntity is Mesh mesh)
-            {
-                if (mesh.DrawFaces)
-                {
-                    Matrix4x4 modelToView = renderingEntity.WorldToView * mesh.ModelToWorld;
-
-                    foreach (Triangle triangle in mesh.Structure.Triangles)
-                    {
-                        triangle.TransformedP1 = new Vector4D(triangle.P1.WorldOrigin, 1);
-                        triangle.TransformedP2 = new Vector4D(triangle.P2.WorldOrigin, 1);
-                        triangle.TransformedP3 = new Vector4D(triangle.P3.WorldOrigin, 1);
-
-                        triangle.TransformedTextureP1 = triangle.TextureP1;
-                        triangle.TransformedTextureP2 = triangle.TextureP2;
-                        triangle.TransformedTextureP3 = triangle.TextureP3;
-
-                        triangle.TransformTriangleVertices(modelToView);
-
-                        // View clipping?
-                    }
-
-                    mesh.Structure.BoundingBox.TransformVertices(modelToView);
-                }
-            }
-        }
-
         // Cast rays
         float viewWidth = renderingEntity.ViewWidth;
         float viewHeight = renderingEntity.ViewHeight;
@@ -166,21 +138,31 @@ public partial class RayTracer<TImage>
         {
             if (physicalEntity is Mesh mesh)
             {
-                if (ray.IntersectBoundingBox(mesh.Structure.BoundingBox, out float boundingBoxDistance))
+                Matrix4x4 worldToView = RenderingOptions.RenderCamera.WorldToView;
+                Matrix4x4 modelToView = worldToView * mesh.ModelToWorld;
+                Matrix4x4 viewToModel = modelToView.Inverse();
+                Vector3D modelStartPosition = (Vector3D)(viewToModel * new Vector4D(ray.startPosition, 1));
+                Vector3D modelDirection = ((Vector3D)(viewToModel * new Vector4D(ray.direction, 0))).Normalise();
+                Ray modelRay = new Ray(modelStartPosition, modelDirection);
+
+                if (modelRay.IntersectBoundingBox(mesh.Structure.BoundingBox, out float boundingBoxDistance))
                 {
                     foreach (Triangle triangle in mesh.Structure.Triangles)
                     {
-                        if (ray.IntersectTriangle(triangle, out float distance))
+                        if (modelRay.IntersectTriangle(triangle, out float distance))
                         {
-                            if (distance < closestDistance)
+                            Vector3D hitPosition = (Vector3D)(modelToView * new Vector4D(modelRay.startPosition + modelRay.direction * distance, 1));
+                            float viewDistance = (hitPosition - ray.startPosition).Magnitude();
+
+                            if (viewDistance < closestDistance)
                             {
                                 hit = true;
-                                closestDistance = distance;
+                                closestDistance = viewDistance;
 
                                 hitInfo.distance = closestDistance;
                                 hitInfo.triangle = triangle;
-                                hitInfo.position = ray.startPosition + ray.direction * distance;
-                                hitInfo.normal = triangle.CalculateNormal();
+                                hitInfo.position = hitPosition;
+                                hitInfo.normal = ((Vector3D)(modelToView * new Vector4D(triangle.CalculateNormal(), 0))).Normalise();
                             }
                         }
                     }

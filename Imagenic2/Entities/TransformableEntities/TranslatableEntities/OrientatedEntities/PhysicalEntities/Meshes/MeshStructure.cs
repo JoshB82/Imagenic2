@@ -107,7 +107,7 @@ public sealed class MeshStructure
         new Face(cuboidTriangles[8], cuboidTriangles[9]), // 4 [Top]
         new Face(cuboidTriangles[10], cuboidTriangles[11]) // 5 [Bottom]
     };
-    private static readonly BoundingBox cuboidBoundingBox = new BoundingBox(cuboidVertices[0].WorldOrigin, cuboidVertices[2].WorldOrigin);
+    private static readonly BoundingBox cuboidBoundingBox = new BoundingBox(cuboidVertices[0].WorldOrigin, cuboidVertices[6].WorldOrigin);
     internal static readonly MeshStructure cuboidStructure = new MeshStructure(MeshDimension._3D, cuboidVertices, cuboidEdges, cuboidTriangles, cuboidFaces) { BoundingBox = cuboidBoundingBox };
 
     #endregion

@@ -120,8 +120,8 @@ public class Triangle
 
     internal Vector3D CalculateNormal()
     {
-        Vector3D edge1 = (Vector3D)(TransformedP2 - TransformedP1);
-        Vector3D edge2 = (Vector3D)(TransformedP3 - TransformedP1);
+        Vector3D edge1 = P2.WorldOrigin - P1.WorldOrigin;
+        Vector3D edge2 = P3.WorldOrigin - P1.WorldOrigin;
 
         return edge2.CrossProduct(edge1).Normalise();
     }
