@@ -7,7 +7,7 @@ public partial class RayTracer<TImage>
 {
     private static readonly Random random = new Random();
 
-    private void MoveToViewSpace(RenderingEntity renderingEntity)
+    private void CastRaysFromCamera(RenderingEntity renderingEntity)
     {
         // Cast rays
         float viewWidth = renderingEntity.ViewWidth;
@@ -22,9 +22,11 @@ public partial class RayTracer<TImage>
 
             float u = (x + GenerateRandomOffset()) / renderWidth;
             float v = (y + GenerateRandomOffset()) / renderHeight;
-            Vector3D direction = (new Vector3D((2 * u - 1) * viewWidth, (2 * v - 1) * viewHeight, renderingEntity.ZNear)).Normalise();
 
-            Ray ray = new Ray(Vector3D.Zero, direction);
+            Vector3D worldStartPosition = (Vector3D)(RenderingOptions.RenderCamera.ModelToWorld * Vector4D.UnitW);
+            Vector3D worldDirection = ((Vector3D)(RenderingOptions.RenderCamera.ModelToWorld * new Vector4D((2 * u - 1) * viewWidth, (2 * v - 1) * viewHeight, renderingEntity.ZNear, 0))).Normalise();
+
+            Ray ray = new Ray(worldStartPosition, worldDirection);
             Color colour = TraceRay(ray).ToSystemDrawingColor();
             colourBuffer[x, y] = colour;
         });
@@ -130,7 +132,6 @@ public partial class RayTracer<TImage>
     private bool ClosestHit(Ray ray, out HitInfo hitInfo)
     {
         bool hit = false;
-
         float closestDistance = float.MaxValue;
         hitInfo = new HitInfo();
 
@@ -138,11 +139,8 @@ public partial class RayTracer<TImage>
         {
             if (physicalEntity is Mesh mesh)
             {
-                Matrix4x4 worldToView = RenderingOptions.RenderCamera.WorldToView;
-                Matrix4x4 modelToView = worldToView * mesh.ModelToWorld;
-                Matrix4x4 viewToModel = modelToView.Inverse();
-                Vector3D modelStartPosition = (Vector3D)(viewToModel * new Vector4D(ray.startPosition, 1));
-                Vector3D modelDirection = ((Vector3D)(viewToModel * new Vector4D(ray.direction, 0))).Normalise();
+                Vector3D modelStartPosition = (Vector3D)(mesh.WorldToModel * new Vector4D(ray.startPosition, 1));
+                Vector3D modelDirection = ((Vector3D)(mesh.WorldToModel * new Vector4D(ray.direction, 0))).Normalise();
                 Ray modelRay = new Ray(modelStartPosition, modelDirection);
 
                 if (modelRay.IntersectBoundingBox(mesh.Structure.BoundingBox, out float boundingBoxDistance))
@@ -151,18 +149,18 @@ public partial class RayTracer<TImage>
                     {
                         if (modelRay.IntersectTriangle(triangle, out float distance))
                         {
-                            Vector3D hitPosition = (Vector3D)(modelToView * new Vector4D(modelRay.startPosition + modelRay.direction * distance, 1));
-                            float viewDistance = (hitPosition - ray.startPosition).Magnitude();
+                            Vector3D hitPosition = (Vector3D)(mesh.ModelToWorld * new Vector4D(modelRay.startPosition + modelRay.direction * distance, 1));
+                            float worldDistance = (hitPosition - ray.startPosition).Magnitude();
 
-                            if (viewDistance < closestDistance)
+                            if (worldDistance < closestDistance)
                             {
                                 hit = true;
-                                closestDistance = viewDistance;
+                                closestDistance = worldDistance;
 
                                 hitInfo.distance = closestDistance;
                                 hitInfo.triangle = triangle;
                                 hitInfo.position = hitPosition;
-                                hitInfo.normal = ((Vector3D)(modelToView * new Vector4D(triangle.CalculateNormal(), 0))).Normalise();
+                                hitInfo.normal = ((Vector3D)(mesh.ModelToWorld * new Vector4D(triangle.CalculateNormal(), 0))).Normalise();
                             }
                         }
                     }

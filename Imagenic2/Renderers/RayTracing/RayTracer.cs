@@ -30,7 +30,7 @@ public partial class RayTracer<TImage> : Renderer<TImage> where TImage : Image, 
             return null; // Temporary
         }
 
-        MoveToViewSpace(RenderingOptions.RenderCamera);
+        CastRaysFromCamera(RenderingOptions.RenderCamera);
 
         NewRenderNeeded = false;
 
