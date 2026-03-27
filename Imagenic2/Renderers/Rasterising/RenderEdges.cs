@@ -5,7 +5,7 @@ namespace Imagenic2.Core.Renderers.Rasterising;
 
 public partial class Rasteriser<TImage>
 {
-    private void RenderMeshEdges()
+    internal void RenderMeshEdges()
     {
         foreach (PhysicalEntity physicalEntity in RenderingOptions.PhysicalEntitiesToRender)
         {

@@ -1,11 +1,13 @@
 ﻿using Imagenic2.Core.Entities;
-using System.Drawing;
+using Imagenic2.Core.Renderers.Rasterising;
 
 namespace Imagenic2.Core.Renderers.RayTracing;
 
 public partial class RayTracer<TImage>
 {
     private static readonly Random random = new Random();
+
+    private const int numberOfRaysPerPixel = 5;
 
     private void CastRaysFromCamera(RenderingEntity renderingEntity)
     {
@@ -15,21 +17,32 @@ public partial class RayTracer<TImage>
         int renderWidth = RenderingOptions.RenderWidth;
         int renderHeight = RenderingOptions.RenderHeight;
 
+        Vector3D worldStartPosition = (Vector3D)(RenderingOptions.RenderCamera.ModelToWorld * Vector4D.UnitW);
         Parallel.For(0, renderWidth * renderHeight, i =>
         {
             int x = i % renderWidth;
             int y = i / renderWidth;
 
-            float u = (x + GenerateRandomOffset()) / renderWidth;
-            float v = (y + GenerateRandomOffset()) / renderHeight;
+            Vector3D accumulatedColour = Vector3D.Zero;
 
-            Vector3D worldStartPosition = (Vector3D)(RenderingOptions.RenderCamera.ModelToWorld * Vector4D.UnitW);
-            Vector3D worldDirection = ((Vector3D)(RenderingOptions.RenderCamera.ModelToWorld * new Vector4D((2 * u - 1) * viewWidth, (2 * v - 1) * viewHeight, renderingEntity.ZNear, 0))).Normalise();
+            for (int j = 1; j <= numberOfRaysPerPixel; j++)
+            {
+                float u = (x + GenerateRandomOffset()) / renderWidth;
+                float v = (y + GenerateRandomOffset()) / renderHeight;
 
-            Ray ray = new Ray(worldStartPosition, worldDirection);
-            Color colour = TraceRay(ray).ToSystemDrawingColor();
-            colourBuffer[x, y] = colour;
+                Vector3D worldDirection = ((Vector3D)(RenderingOptions.RenderCamera.ModelToWorld * new Vector4D((2 * u - 1) * viewWidth, (2 * v - 1) * viewHeight, renderingEntity.ZNear, 0))).Normalise();
+
+                Ray ray = new Ray(worldStartPosition, worldDirection);
+                accumulatedColour += TraceRay(ray);
+            }
+
+            Vector3D finalColour = accumulatedColour / numberOfRaysPerPixel;
+            colourBuffer[x, y] = finalColour.ToSystemDrawingColor();
         });
+
+        // Draw edges
+        Rasteriser<TImage> r = new Rasteriser<TImage>(RenderingOptions); // Temporary
+        r.RenderMeshEdges();
     }
 
     private static float GenerateRandomOffset()
@@ -83,13 +96,40 @@ public partial class RayTracer<TImage>
 
         void Reflection(Material triangleMaterial)
         {
-            if (triangleMaterial.Reflectivity > 0)
+            if (triangleMaterial.Reflectivity > 0 || triangleMaterial.Transparency > 0)
             {
                 Vector3D offset = hitInfo.normal * 1e-3f;
 
+                float kr = Fresnel(ray.direction, hitInfo.normal, triangleMaterial.RefractiveIndex);
+
                 Vector3D reflectionDirection = (ray.direction - 2 * (ray.direction * hitInfo.normal) * hitInfo.normal);
                 Vector3D reflectedColour = TraceRay(new Ray(hitInfo.position + offset, reflectionDirection), depth - 1);
-                colour = colour * (1 - triangleMaterial.Reflectivity) + reflectedColour * triangleMaterial.Reflectivity;
+
+                Vector3D refractionColour = Vector3D.Zero;
+
+                if (triangleMaterial.Transparency > 0)
+                {
+                    Vector3D normal = hitInfo.normal;
+                    float etai = 1, etat = triangleMaterial.RefractiveIndex;
+
+                    if ((ray.direction * normal).ApproxMoreThan(0))
+                    {
+                        normal = -normal;
+                        (etai, etat) = (etat, etai);
+                    }
+
+                    float eta = etai / etat;
+
+                    if (Refract(ray.direction, normal, eta, out Vector3D refractionDirection))
+                    {
+                        Ray refractedRay = new Ray(hitInfo.position - normal * 1e-3f, refractionDirection);
+                        refractionColour = TraceRay(refractedRay, depth - 1);
+                    }
+                }
+
+                colour = colour * (1 - triangleMaterial.Reflectivity)
+                                + reflectedColour * kr
+                                + refractionColour * (1 - kr) * triangleMaterial.Transparency;
             }
         }
 
@@ -127,6 +167,39 @@ public partial class RayTracer<TImage>
         }
 
         return false;
+    }
+
+    private static bool Refract(Vector3D incident, Vector3D normal, float eta, out Vector3D refracted)
+    {
+        float cosi = Math.Clamp(-(incident * normal), -1, 1);
+        float sint2 = eta * eta * (1 - cosi * cosi);
+
+        if (sint2.ApproxMoreThan(1))
+        {
+            // Total internal reflection
+            refracted = Vector3D.Zero;
+            return false;
+        }
+
+        float cost = MathF.Sqrt(1 - sint2);
+        refracted = eta * incident + (eta * cosi - cost) * normal;
+        return true;
+    }
+
+    private static float Fresnel(Vector3D incident, Vector3D normal, float ior)
+    {
+        float cosi = Math.Clamp(-(incident * normal), -1, 1);
+        float etai = 1, etat = ior;
+
+        if (cosi.ApproxMoreThan(0))
+        {
+            (etai, etat) = (etat, etai);
+        }
+
+        float r0 = (etai - etat) / (etai + etat);
+        r0 = r0 * r0;
+
+        return r0 + (1 - r0) * MathF.Pow(1 - cosi, 5);
     }
 
     private bool ClosestHit(Ray ray, out HitInfo hitInfo)

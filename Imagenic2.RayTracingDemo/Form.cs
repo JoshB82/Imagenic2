@@ -10,10 +10,10 @@ public partial class Form : System.Windows.Forms.Form
 {
     private readonly Camera renderCamera;
     private const float fieldOfView = MathF.PI / 3; // 60 degrees
-    private RayTracer<Imagenic2.Core.Images.Bitmap> renderer;
+    private readonly RayTracer<Imagenic2.Core.Images.Bitmap> renderer;
     private HashSet<Keys> keysPressed = new();
 
-    private Bitmap renderBuffer;
+    private readonly Bitmap renderBuffer;
 
     public Form()
     {

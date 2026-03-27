@@ -21,6 +21,26 @@ public class Material : FaceStyle
         }
     }
 
+    private float transparency;
+    public float Transparency
+    {
+        get => transparency;
+        set
+        {
+            transparency = value;
+        }
+    }
+
+    private float refractiveIndex;
+    public float RefractiveIndex
+    {
+        get => refractiveIndex;
+        set
+        {
+            refractiveIndex = value;
+        }
+    }
+
     #endregion
 
     #region Constructors
