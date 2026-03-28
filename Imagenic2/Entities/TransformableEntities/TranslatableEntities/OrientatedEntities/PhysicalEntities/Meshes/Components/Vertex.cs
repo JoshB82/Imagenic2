@@ -17,6 +17,8 @@ public struct Vertex
         }
     }
 
+    public Vector2D? TextureCoordinates { get; set; }
+
     #endregion
 
     #region Constructors
@@ -26,10 +28,11 @@ public struct Vertex
         WorldOrigin = worldOrigin;
     }
 
-    public Vertex(Vector3D worldOrigin, Vector3D? normal)
+    public Vertex(Vector3D worldOrigin, Vector3D? normal = null, Vector2D? textureCoordinates)
     {
         WorldOrigin = worldOrigin;
         Normal = normal;
+        TextureCoordinates = textureCoordinates;
     }
 
     #endregion

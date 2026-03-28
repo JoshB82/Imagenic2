@@ -122,5 +122,7 @@ public abstract class Renderer<TImage> where TImage : Imagenic2.Core.Images.Imag
 
     public abstract Task<TImage?> RenderAsync(CancellationToken token);
 
+    public abstract IAsyncEnumerable<TImage> RenderAsync(Animation animation, CancellationToken token);
+
     #endregion
 }
