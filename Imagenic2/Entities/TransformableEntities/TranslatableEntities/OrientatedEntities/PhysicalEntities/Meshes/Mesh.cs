@@ -70,15 +70,15 @@ public class Mesh : PhysicalEntity
     public override Mesh DeepCopy()
     {
         var mesh = (Mesh)base.DeepCopy();
-        mesh.Structure = Structure;
+        mesh.Structure = Structure.DeepCopy();
         return mesh;
     }
 
     public void SetAllTrianglesToFaceStyle(FaceStyle faceStyle)
     {
-        foreach (Triangle triangle in Structure.Triangles)
+        for (int i = 0; i < Structure.Triangles.Length; i++)
         {
-            triangle.FrontStyle = faceStyle;
+            Structure.Triangles[i].FrontStyle = faceStyle;
         }
     }
 

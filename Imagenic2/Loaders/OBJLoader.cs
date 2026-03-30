@@ -224,10 +224,10 @@ public sealed class OBJLoader : MeshLoader
         }
 
         return new MeshStructure(dimension,
-                                 vertexDictionary.Select(kvp => kvp.Value).ToList(),
-                                 edgeDictionary.Select(kvp => kvp.Value).ToList(),
-                                 triangleDictionary.Select(kvp => kvp.Value).ToList(),
-                                 faceDictionary.Select(kvp => kvp.Value).ToList()
+                                 vertexDictionary.Select(kvp => kvp.Value).ToArray(),
+                                 edgeDictionary.Select(kvp => kvp.Value).ToArray(),
+                                 triangleDictionary.Select(kvp => kvp.Value).ToArray(),
+                                 faceDictionary.Select(kvp => kvp.Value).ToArray()
         );
     }
 

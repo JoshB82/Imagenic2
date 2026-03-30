@@ -132,12 +132,12 @@ public partial class Rasteriser<TImage>
         float vy3 = triangle.p3.viewSpacePosition.y * invW3;
         float vz3 = triangle.p3.viewSpacePosition.z * invW3;
 
-        float u1 = triangle.p1.transformedTexturePosition.x * invW1;
-        float v1 = triangle.p1.transformedTexturePosition.y * invW1;
-        float u2 = triangle.p2.transformedTexturePosition.x * invW2;
-        float v2 = triangle.p2.transformedTexturePosition.y * invW2;
-        float u3 = triangle.p3.transformedTexturePosition.x * invW3;
-        float v3 = triangle.p3.transformedTexturePosition.y * invW3;
+        float u1 = triangle.p1.transformedTexturePosition.Value.x * invW1;
+        float v1 = triangle.p1.transformedTexturePosition.Value.y * invW1;
+        float u2 = triangle.p2.transformedTexturePosition.Value.x * invW2;
+        float v2 = triangle.p2.transformedTexturePosition.Value.y * invW2;
+        float u3 = triangle.p3.transformedTexturePosition.Value.x * invW3;
+        float v3 = triangle.p3.transformedTexturePosition.Value.y * invW3;
 
         // Calculate bounding rectangle
         int bottomLeftX = (int)(Floor(Min(Min(x1, x2), x3)));

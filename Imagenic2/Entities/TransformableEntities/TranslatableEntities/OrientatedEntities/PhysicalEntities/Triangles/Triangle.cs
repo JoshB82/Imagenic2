@@ -30,26 +30,6 @@ public struct Triangle
     public Vertex p2;
     public Vertex p3;
 
-    //internal Vector4D TransformedP1 { get; set; }
-    //internal Vector4D TransformedP2 { get; set; }
-    //internal Vector4D TransformedP3 { get; set; }
-
-    //internal Vector4D ViewSpaceP1 { get; set; }
-    //internal Vector4D ViewSpaceP2 { get; set; }
-    //internal Vector4D ViewSpaceP3 { get; set; }
-
-    //internal float invW1 { get; set; } = 1;
-    //internal float invW2 { get; set; } = 1;
-    //internal float invW3 { get; set; } = 1;
-
-    //public Vector2D TextureP1 { get; set; }
-    //public Vector2D TextureP2 { get; set; }
-    //public Vector2D TextureP3 { get; set; }
-
-    //public Vector2D TransformedTextureP1 { get; set; }
-    //public Vector2D TransformedTextureP2 { get; set; }
-    //public Vector2D TransformedTextureP3 { get; set; }
-
     #endregion
 
     #region Constructors
@@ -89,7 +69,7 @@ public struct Triangle
 
     #region Methods
 
-    public Triangle ShallowCopy() => (Triangle)MemberwiseClone();
+    public readonly Triangle ShallowCopy() => (Triangle)MemberwiseClone();
     public Triangle DeepCopy()
     {
         var triangle = new Triangle(p1, p2, p3);
@@ -113,22 +93,12 @@ public struct Triangle
     internal void TransformTriangleVertices(Matrix4x4 transformationMatrix)
     {
         // Transform vertices
-        //TransformedP1 = transformationMatrix * TransformedP1;
-        //TransformedP2 = transformationMatrix * TransformedP2;
-        //TransformedP3 = transformationMatrix * TransformedP3;
-
-        Vertex p1 = p1.DeepCopy(), p2 = p2.DeepCopy(), p3 = p3.DeepCopy();
-
         p1.transformedPosition = transformationMatrix * p1.transformedPosition;
         p2.transformedPosition = transformationMatrix * p2.transformedPosition;
         p3.transformedPosition = transformationMatrix * p3.transformedPosition;
-
-        p1 = p1;
-        p2 = p2;
-        p3 = p3;
     }
 
-    internal Vector3D CalculateNormal()
+    internal readonly Vector3D CalculateNormal()
     {
         Vector3D edge1 = p2.WorldOrigin - p1.WorldOrigin;
         Vector3D edge2 = p3.WorldOrigin - p1.WorldOrigin;

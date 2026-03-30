@@ -21,9 +21,9 @@ public partial class Rasteriser<TImage>
 
     private void ShadowMapClipTriangle(Triangle triangle, Vector3D planePoint, Vector3D planeNormal)
     {
-        Vector3D p1 = (Vector3D)(triangle.TransformedP1);
-        Vector3D p2 = (Vector3D)(triangle.TransformedP2);
-        Vector3D p3 = (Vector3D)(triangle.TransformedP3);
+        Vector3D p1 = (Vector3D)(triangle.p1.transformedPosition);
+        Vector3D p2 = (Vector3D)(triangle.p2.transformedPosition);
+        Vector3D p3 = (Vector3D)(triangle.p3.transformedPosition);
 
         bool isP1Inside = Vector3D.PointDistanceFromPlane(p1, planePoint, planeNormal) >= 0;
         bool isP2Inside = Vector3D.PointDistanceFromPlane(p2, planePoint, planeNormal) >= 0;
@@ -38,8 +38,8 @@ public partial class Rasteriser<TImage>
 
         switch (mask)
         {
+            // Triangle is completely outside
             case 0:
-                // Triangle is completely outside
                 break;
                 
             // One point inside
@@ -47,9 +47,9 @@ public partial class Rasteriser<TImage>
                 intersection1 = new Vector4D(Vector3D.LineIntersectPlane(p1, p2, planePoint, planeNormal, out _), 1);
                 intersection2 = new Vector4D(Vector3D.LineIntersectPlane(p1, p3, planePoint, planeNormal, out _), 1);
 
-                triangle1.TransformedP1 = new Vector4D(p1, 1);
-                triangle1.TransformedP2 = intersection1;
-                triangle1.TransformedP3 = intersection2;
+                triangle1.p1.transformedPosition = new Vector4D(p1, 1);
+                triangle1.p2.transformedPosition = intersection1;
+                triangle1.p3.transformedPosition = intersection2;
                     
                 triangleQueue.Enqueue(triangle1);
                 break;
@@ -57,9 +57,9 @@ public partial class Rasteriser<TImage>
                 intersection1 = new Vector4D(Vector3D.LineIntersectPlane(p2, p3, planePoint, planeNormal, out _), 1);
                 intersection2 = new Vector4D(Vector3D.LineIntersectPlane(p2, p1, planePoint, planeNormal, out _), 1);
                 
-                triangle1.TransformedP1 = new Vector4D(p2, 1);
-                triangle1.TransformedP2 = intersection1;
-                triangle1.TransformedP3 = intersection2;
+                triangle1.p1.transformedPosition = new Vector4D(p2, 1);
+                triangle1.p2.transformedPosition = intersection1;
+                triangle1.p3.transformedPosition = intersection2;
 
                 triangleQueue.Enqueue(triangle1);
                 break;
@@ -67,9 +67,9 @@ public partial class Rasteriser<TImage>
                 intersection1 = new Vector4D(Vector3D.LineIntersectPlane(p3, p1, planePoint, planeNormal, out _), 1);
                 intersection2 = new Vector4D(Vector3D.LineIntersectPlane(p3, p2, planePoint, planeNormal, out _), 1);
                     
-                triangle1.TransformedP1 = new Vector4D(p3, 1);
-                triangle1.TransformedP2 = intersection1;
-                triangle1.TransformedP3 = intersection2;
+                triangle1.p1.transformedPosition = new Vector4D(p3, 1);
+                triangle1.p2.transformedPosition = intersection1;
+                triangle1.p3.transformedPosition = intersection2;
 
                 triangleQueue.Enqueue(triangle1);
                 break;
@@ -79,14 +79,14 @@ public partial class Rasteriser<TImage>
                 intersection1 = new Vector4D(Vector3D.LineIntersectPlane(p1, p3, planePoint, planeNormal, out _), 1);
                 intersection2 = new Vector4D(Vector3D.LineIntersectPlane(p2, p3, planePoint, planeNormal, out _), 1);
 
-                triangle1.TransformedP1 = new Vector4D(p1, 1);
-                triangle1.TransformedP2 = new Vector4D(p2, 1);
-                triangle1.TransformedP3 = intersection1;
+                triangle1.p1.transformedPosition = new Vector4D(p1, 1);
+                triangle1.p2.transformedPosition = new Vector4D(p2, 1);
+                triangle1.p3.transformedPosition = intersection1;
 
                 triangle2 = triangle.DeepCopy();
-                triangle2.TransformedP1 = new Vector4D(p2, 1);
-                triangle2.TransformedP2 = intersection2;
-                triangle2.TransformedP3 = intersection1;
+                triangle2.p1.transformedPosition = new Vector4D(p2, 1);
+                triangle2.p2.transformedPosition = intersection2;
+                triangle2.p3.transformedPosition = intersection1;
 
                 triangleQueue.Enqueue(triangle1);
                 triangleQueue.Enqueue(triangle2);
@@ -95,14 +95,14 @@ public partial class Rasteriser<TImage>
                 intersection1 = new Vector4D(Vector3D.LineIntersectPlane(p1, p2, planePoint, planeNormal, out _), 1);
                 intersection2 = new Vector4D(Vector3D.LineIntersectPlane(p3, p2, planePoint, planeNormal, out _), 1);
 
-                triangle1.TransformedP1 = new Vector4D(p1, 1);
-                triangle1.TransformedP2 = intersection1;
-                triangle1.TransformedP3 = new Vector4D(p3, 1);
+                triangle1.p1.transformedPosition = new Vector4D(p1, 1);
+                triangle1.p2.transformedPosition = intersection1;
+                triangle1.p3.transformedPosition = new Vector4D(p3, 1);
 
                 triangle2 = triangle.DeepCopy();
-                triangle2.TransformedP1 = new Vector4D(p3, 1);
-                triangle2.TransformedP2 = intersection1;
-                triangle2.TransformedP3 = intersection2;
+                triangle2.p1.transformedPosition = new Vector4D(p3, 1);
+                triangle2.p2.transformedPosition = intersection1;
+                triangle2.p3.transformedPosition = intersection2;
 
                 triangleQueue.Enqueue(triangle1);
                 triangleQueue.Enqueue(triangle2);
@@ -111,20 +111,21 @@ public partial class Rasteriser<TImage>
                 intersection1 = new Vector4D(Vector3D.LineIntersectPlane(p2, p1, planePoint, planeNormal, out _), 1);
                 intersection2 = new Vector4D(Vector3D.LineIntersectPlane(p3, p1, planePoint, planeNormal, out _), 1);
 
-                triangle1.TransformedP1 = new Vector4D(p2, 1);
-                triangle1.TransformedP2 = new Vector4D(p3, 1);
-                triangle1.TransformedP3 = intersection1;
+                triangle1.p1.transformedPosition = new Vector4D(p2, 1);
+                triangle1.p2.transformedPosition = new Vector4D(p3, 1);
+                triangle1.p3.transformedPosition = intersection1;
 
                 triangle2 = triangle.DeepCopy();
-                triangle2.TransformedP1 = new Vector4D(p3, 1);
-                triangle2.TransformedP2 = intersection2;
-                triangle2.TransformedP3 = intersection1;
+                triangle2.p1.transformedPosition = new Vector4D(p3, 1);
+                triangle2.p2.transformedPosition = intersection2;
+                triangle2.p3.transformedPosition = intersection1;
 
                 triangleQueue.Enqueue(triangle1);
                 triangleQueue.Enqueue(triangle2);
                 break;
+
+            // Triangle is completely inside
             case 7:
-                // Triangle is completely inside
                 triangleQueue.Enqueue(triangle);
                 break;
         }
@@ -145,9 +146,9 @@ public partial class Rasteriser<TImage>
         int pointCount = 3;
         ClipVertex[] polygonPoints1 = new ClipVertex[8];
         ClipVertex[] polygonPoints2 = new ClipVertex[8];
-        polygonPoints1[0] = new ClipVertex() { position = triangle.TransformedP1, texturePosition = triangle.TransformedTextureP1, invW = triangle.invW1, viewPosition = triangle.ViewSpaceP1 };
-        polygonPoints1[1] = new ClipVertex() { position = triangle.TransformedP2, texturePosition = triangle.TransformedTextureP2, invW = triangle.invW2, viewPosition = triangle.ViewSpaceP2 };
-        polygonPoints1[2] = new ClipVertex() { position = triangle.TransformedP3, texturePosition = triangle.TransformedTextureP3, invW = triangle.invW3, viewPosition = triangle.ViewSpaceP3 };
+        polygonPoints1[0] = new ClipVertex() { position = triangle.p1.transformedPosition, texturePosition = triangle.p1.transformedTexturePosition.Value, invW = triangle.p1.invW, viewPosition = triangle.p1.viewSpacePosition };
+        polygonPoints1[1] = new ClipVertex() { position = triangle.p2.transformedPosition, texturePosition = triangle.p2.transformedTexturePosition.Value, invW = triangle.p2.invW, viewPosition = triangle.p2.viewSpacePosition };
+        polygonPoints1[2] = new ClipVertex() { position = triangle.p3.transformedPosition, texturePosition = triangle.p3.transformedTexturePosition.Value, invW = triangle.p3.invW, viewPosition = triangle.p3.viewSpacePosition };
 
         static ClipVertex Interpolate(ClipVertex v1, ClipVertex v2, float t)
         {
@@ -251,20 +252,32 @@ public partial class Rasteriser<TImage>
 
         for (int i = 1; i < pointCount - 1; i++)
         {
+            Vertex v1 = new Vertex()
+            {
+                transformedPosition = polygonPoints1[0].position,
+                transformedTexturePosition = polygonPoints1[0].texturePosition,
+                invW = polygonPoints1[0].invW,
+                viewSpacePosition = polygonPoints1[0].viewPosition
+            };
+            Vertex v2 = new Vertex()
+            {
+                transformedPosition = polygonPoints1[i].position,
+                transformedTexturePosition = polygonPoints1[i].texturePosition,
+                invW = polygonPoints1[i].invW,
+                viewSpacePosition = polygonPoints1[i].viewPosition
+            };
+            Vertex v3 = new Vertex()
+            {
+                transformedPosition = polygonPoints1[i + 1].position,
+                transformedTexturePosition = polygonPoints1[i + 1].texturePosition,
+                invW = polygonPoints1[i + 1].invW,
+                viewSpacePosition = polygonPoints1[i + 1].viewPosition
+            };
             Triangle t = new Triangle()
             {
-                TransformedP1 = polygonPoints1[0].position,
-                TransformedP2 = polygonPoints1[i].position,
-                TransformedP3 = polygonPoints1[i + 1].position,
-                TransformedTextureP1 = polygonPoints1[0].texturePosition,
-                TransformedTextureP2 = polygonPoints1[i].texturePosition,
-                TransformedTextureP3 = polygonPoints1[i + 1].texturePosition,
-                invW1 = polygonPoints1[0].invW,
-                invW2 = polygonPoints1[i].invW,
-                invW3 = polygonPoints1[i + 1].invW,
-                ViewSpaceP1 = polygonPoints1[0].viewPosition,
-                ViewSpaceP2 = polygonPoints1[i].viewPosition,
-                ViewSpaceP3 = polygonPoints1[i + 1].viewPosition,
+                p1 = v1,
+                p2 = v2,
+                p3 = v3,
                 FrontStyle = triangle.FrontStyle,
                 BackStyle = triangle.BackStyle
             };
@@ -277,13 +290,13 @@ public partial class Rasteriser<TImage>
 
     private void ClipTriangle(Triangle triangle, Vector3D planePoint, Vector3D planeNormal)
     {
-        Vector3D p1 = (Vector3D)(triangle.TransformedP1);
-        Vector3D p2 = (Vector3D)(triangle.TransformedP2);
-        Vector3D p3 = (Vector3D)(triangle.TransformedP3);
+        Vector3D p1 = (Vector3D)(triangle.p1.transformedPosition);
+        Vector3D p2 = (Vector3D)(triangle.p2.transformedPosition);
+        Vector3D p3 = (Vector3D)(triangle.p3.transformedPosition);
 
-        Vector2D t1 = triangle.TransformedTextureP1;
-        Vector2D t2 = triangle.TransformedTextureP2;
-        Vector2D t3 = triangle.TransformedTextureP3;
+        Vector2D t1 = triangle.p1.transformedTexturePosition.Value;
+        Vector2D t2 = triangle.p2.transformedTexturePosition.Value;
+        Vector2D t3 = triangle.p3.transformedTexturePosition.Value;
 
         bool isP1Inside = Vector3D.PointDistanceFromPlane(p1, planePoint, planeNormal) >= 0;
         bool isP2Inside = Vector3D.PointDistanceFromPlane(p2, planePoint, planeNormal) >= 0;
@@ -299,8 +312,8 @@ public partial class Rasteriser<TImage>
 
         switch (mask)
         {
+            // Triangle is completely outside
             case 0:
-                // Triangle is completely outside
                 break;
 
             // One point inside
@@ -308,12 +321,12 @@ public partial class Rasteriser<TImage>
                 intersection1 = new Vector4D(Vector3D.LineIntersectPlane(p1, p2, planePoint, planeNormal, out d1), 1);
                 intersection2 = new Vector4D(Vector3D.LineIntersectPlane(p1, p3, planePoint, planeNormal, out d2), 1);
 
-                triangle1.TransformedP1 = new Vector4D(p1, 1);
-                triangle1.TransformedP2 = intersection1;
-                triangle1.TransformedP3 = intersection2;
-                triangle1.TransformedTextureP1 = t1;
-                triangle1.TransformedTextureP2 = Interpolate(t1, t2, d1);
-                triangle1.TransformedTextureP3 = Interpolate(t1, t3, d2);
+                triangle1.p1.transformedPosition = new Vector4D(p1, 1);
+                triangle1.p2.transformedPosition = intersection1;
+                triangle1.p3.transformedPosition = intersection2;
+                triangle1.p1.transformedTexturePosition = t1;
+                triangle1.p2.transformedTexturePosition = Interpolate(t1, t2, d1);
+                triangle1.p3.transformedTexturePosition = Interpolate(t1, t3, d2);
 
                 triangleQueue.Enqueue(triangle1);
                 break;
@@ -321,12 +334,12 @@ public partial class Rasteriser<TImage>
                 intersection1 = new Vector4D(Vector3D.LineIntersectPlane(p2, p3, planePoint, planeNormal, out d1), 1);
                 intersection2 = new Vector4D(Vector3D.LineIntersectPlane(p2, p1, planePoint, planeNormal, out d2), 1);
 
-                triangle1.TransformedP1 = new Vector4D(p2, 1);
-                triangle1.TransformedP2 = intersection1;
-                triangle1.TransformedP3 = intersection2;
-                triangle1.TransformedTextureP1 = t2;
-                triangle1.TransformedTextureP2 = Interpolate(t2, t3, d1);
-                triangle1.TransformedTextureP3 = Interpolate(t2, t1, d2);
+                triangle1.p1.transformedPosition = new Vector4D(p2, 1);
+                triangle1.p2.transformedPosition = intersection1;
+                triangle1.p3.transformedPosition = intersection2;
+                triangle1.p1.transformedTexturePosition = t2;
+                triangle1.p2.transformedTexturePosition = Interpolate(t2, t3, d1);
+                triangle1.p3.transformedTexturePosition = Interpolate(t2, t1, d2);
 
                 triangleQueue.Enqueue(triangle1);
                 break;
@@ -334,12 +347,12 @@ public partial class Rasteriser<TImage>
                 intersection1 = new Vector4D(Vector3D.LineIntersectPlane(p3, p1, planePoint, planeNormal, out d1), 1);
                 intersection2 = new Vector4D(Vector3D.LineIntersectPlane(p3, p2, planePoint, planeNormal, out d2), 1);
 
-                triangle1.TransformedP1 = new Vector4D(p3, 1);
-                triangle1.TransformedP2 = intersection1;
-                triangle1.TransformedP3 = intersection2;
-                triangle1.TransformedTextureP1 = t3;
-                triangle1.TransformedTextureP2 = Interpolate(t3, t1, d1);
-                triangle1.TransformedTextureP3 = Interpolate(t3, t2, d2);
+                triangle1.p1.transformedPosition = new Vector4D(p3, 1);
+                triangle1.p2.transformedPosition = intersection1;
+                triangle1.p3.transformedPosition = intersection2;
+                triangle1.p1.transformedTexturePosition = t3;
+                triangle1.p2.transformedTexturePosition = Interpolate(t3, t1, d1);
+                triangle1.p3.transformedTexturePosition = Interpolate(t3, t2, d2);
 
                 triangleQueue.Enqueue(triangle1);
                 break;
@@ -352,20 +365,20 @@ public partial class Rasteriser<TImage>
                 Vector2D t13 = Interpolate(t1, t3, d1);
                 Vector2D t23 = Interpolate(t2, t3, d2);
 
-                triangle1.TransformedP1 = new Vector4D(p1, 1);
-                triangle1.TransformedP2 = new Vector4D(p2, 1);
-                triangle1.TransformedP3 = intersection1;
-                triangle1.TransformedTextureP1 = t1;
-                triangle1.TransformedTextureP2 = t2;
-                triangle1.TransformedTextureP3 = t13;
+                triangle1.p1.transformedPosition = new Vector4D(p1, 1);
+                triangle1.p2.transformedPosition = new Vector4D(p2, 1);
+                triangle1.p3.transformedPosition = intersection1;
+                triangle1.p1.transformedTexturePosition = t1;
+                triangle1.p2.transformedTexturePosition = t2;
+                triangle1.p3.transformedTexturePosition = t13;
 
                 triangle2 = triangle.DeepCopy();
-                triangle2.TransformedP1 = new Vector4D(p2, 1);
-                triangle2.TransformedP2 = intersection2;
-                triangle2.TransformedP3 = intersection1;
-                triangle2.TransformedTextureP1 = t2;
-                triangle2.TransformedTextureP2 = t23;
-                triangle2.TransformedTextureP3 = t13;
+                triangle2.p1.transformedPosition = new Vector4D(p2, 1);
+                triangle2.p2.transformedPosition = intersection2;
+                triangle2.p3.transformedPosition = intersection1;
+                triangle2.p1.transformedTexturePosition = t2;
+                triangle2.p2.transformedTexturePosition = t23;
+                triangle2.p3.transformedTexturePosition = t13;
 
                 triangleQueue.Enqueue(triangle1);
                 triangleQueue.Enqueue(triangle2);
@@ -377,20 +390,20 @@ public partial class Rasteriser<TImage>
                 Vector2D t12 = Interpolate(t1, t2, d1);
                 Vector2D t32 = Interpolate(t3, t2, d2);
 
-                triangle1.TransformedP1 = new Vector4D(p1, 1);
-                triangle1.TransformedP2 = intersection1;
-                triangle1.TransformedP3 = new Vector4D(p3, 1);
-                triangle1.TransformedTextureP1 = t1;
-                triangle1.TransformedTextureP2 = t12;
-                triangle1.TransformedTextureP3 = t3;
+                triangle1.p1.transformedPosition = new Vector4D(p1, 1);
+                triangle1.p2.transformedPosition = intersection1;
+                triangle1.p3.transformedPosition = new Vector4D(p3, 1);
+                triangle1.p1.transformedTexturePosition = t1;
+                triangle1.p2.transformedTexturePosition = t12;
+                triangle1.p3.transformedTexturePosition = t3;
 
                 triangle2 = triangle.DeepCopy();
-                triangle2.TransformedP1 = new Vector4D(p3, 1);
-                triangle2.TransformedP2 = intersection1;
-                triangle2.TransformedP3 = intersection2;
-                triangle2.TransformedTextureP1 = t3;
-                triangle2.TransformedTextureP2 = t12;
-                triangle2.TransformedTextureP3 = t32;
+                triangle2.p1.transformedPosition = new Vector4D(p3, 1);
+                triangle2.p2.transformedPosition = intersection1;
+                triangle2.p3.transformedPosition = intersection2;
+                triangle2.p1.transformedTexturePosition = t3;
+                triangle2.p2.transformedTexturePosition = t12;
+                triangle2.p3.transformedTexturePosition = t32;
 
                 triangleQueue.Enqueue(triangle1);
                 triangleQueue.Enqueue(triangle2);
@@ -402,26 +415,27 @@ public partial class Rasteriser<TImage>
                 Vector2D t21 = Interpolate(t2, t1, d1);
                 Vector2D t31 = Interpolate(t3, t1, d2);
 
-                triangle1.TransformedP1 = new Vector4D(p2, 1);
-                triangle1.TransformedP2 = new Vector4D(p3, 1);
-                triangle1.TransformedP3 = intersection1;
-                triangle1.TransformedTextureP1 = t2;
-                triangle1.TransformedTextureP2 = t3;
-                triangle1.TransformedTextureP3 = t21;
+                triangle1.p1.transformedPosition = new Vector4D(p2, 1);
+                triangle1.p2.transformedPosition = new Vector4D(p3, 1);
+                triangle1.p3.transformedPosition = intersection1;
+                triangle1.p1.transformedTexturePosition = t2;
+                triangle1.p2.transformedTexturePosition = t3;
+                triangle1.p3.transformedTexturePosition = t21;
 
                 triangle2 = triangle.DeepCopy();
-                triangle2.TransformedP1 = new Vector4D(p3, 1);
-                triangle2.TransformedP2 = intersection2;
-                triangle2.TransformedP3 = intersection1;
-                triangle2.TransformedTextureP1 = t3;
-                triangle2.TransformedTextureP2 = t31;
-                triangle2.TransformedTextureP3 = t21;
+                triangle2.p1.transformedPosition = new Vector4D(p3, 1);
+                triangle2.p2.transformedPosition = intersection2;
+                triangle2.p3.transformedPosition = intersection1;
+                triangle2.p1.transformedTexturePosition = t3;
+                triangle2.p2.transformedTexturePosition = t31;
+                triangle2.p3.transformedTexturePosition = t21;
 
                 triangleQueue.Enqueue(triangle1);
                 triangleQueue.Enqueue(triangle2);
                 break;
+
+            // Triangle is completely inside
             case 7:
-                // Triangle is completely inside
                 triangleQueue.Enqueue(triangle);
                 break;
         }

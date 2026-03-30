@@ -205,7 +205,7 @@ public partial class Rasteriser<TImage>
         {
             foreach (Triangle triangle in tile.triangles)
             {
-                ShadowMapInterpolateTriangle(triangle, buffer, onInterpolation, triangle.invW1, triangle.invW2, triangle.invW3);
+                ShadowMapInterpolateTriangle(triangle, buffer, onInterpolation, triangle.p1.invW, triangle.p2.invW, triangle.p3.invW);
             }
 
             tile.triangles.Clear();
@@ -225,10 +225,10 @@ public partial class Rasteriser<TImage>
                 switch (triangle.FrontStyle)
                 {
                     case SolidStyle:
-                        InterpolateTriangle(triangle, buffer, onInterpolation, triangle.invW1, triangle.invW2, triangle.invW3);
+                        InterpolateTriangle(triangle, buffer, onInterpolation, triangle.p1.invW, triangle.p2.invW, triangle.p3.invW);
                         break;
                     case TextureStyle:
-                        InterpolateTextureTriangle(triangle, buffer, OnTextureInterpolation, triangle.invW1, triangle.invW2, triangle.invW3);
+                        InterpolateTextureTriangle(triangle, buffer, OnTextureInterpolation, triangle.p1.invW, triangle.p2.invW, triangle.p3.invW);
                         break;
                 }
             }

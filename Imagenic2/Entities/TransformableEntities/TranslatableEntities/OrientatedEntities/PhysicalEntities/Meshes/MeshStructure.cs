@@ -38,10 +38,10 @@ public sealed class MeshStructure
     };
     private static readonly Edge[] planeEdges = new Edge[4]
     {
-        new Edge(planeVertices[0], planeVertices[1]), // 0 []
-        new Edge(planeVertices[1], planeVertices[2]), // 1 []
-        new Edge(planeVertices[2], planeVertices[3]), // 2 []
-        new Edge(planeVertices[0], planeVertices[3]) // 3 []
+        new Edge(planeVertices[0], planeVertices[1]), // 0 [Bottom]
+        new Edge(planeVertices[1], planeVertices[2]), // 1 [Right]
+        new Edge(planeVertices[2], planeVertices[3]), // 2 [Top]
+        new Edge(planeVertices[0], planeVertices[3]) // 3 [Left]
     };
     private static readonly Triangle[] planeTriangles = new Triangle[2]
     {
@@ -135,7 +135,6 @@ public sealed class MeshStructure
 
     public MeshStructure DeepCopy()
     {
-        /*
         MeshStructure copy = new MeshStructure(
             this.MeshDimension,
             this.Vertices.ToArray(),
@@ -147,7 +146,7 @@ public sealed class MeshStructure
             }).ToArray(),
             this.Triangles?.Select(t =>
             {
-                Triangle newTriangle = new Triangle(t.P1, t.P2, t.P3, t.TextureP1, t.TextureP2, t.TextureP3);
+                Triangle newTriangle = new Triangle(t.p1, t.p2, t.p3);
                 newTriangle.FrontStyle = t.FrontStyle?.DeepCopy();
                 newTriangle.BackStyle = t.BackStyle?.DeepCopy();
                 return newTriangle;
@@ -163,8 +162,6 @@ public sealed class MeshStructure
         );
         copy.BoundingBox = BoundingBox;
         return copy;
-        */
-        return null;
     }
 
     #region Circle
