@@ -81,56 +81,57 @@ public partial class Rasteriser<TImage>
                 if (mesh.DrawFaces)
                 {
                     Matrix4x4 modelToView = renderingEntity.WorldToView * mesh.ModelToWorld;
+                    Span<Triangle> triangles = mesh.Structure.Triangles.AsSpan();
 
-                    foreach (Triangle triangle in mesh.Structure.Triangles)
+                    for (int i = 0; i < triangles.Length; i++)
                     {
-                        ref Vertex p1 = ref triangle.p1, p2 = ref triangle.p2, p3 = ref triangle.p3;
+                        triangles[i].p1.transformedPosition = new Vector4D(triangles[i].p1.WorldOrigin, 1);
+                        triangles[i].p2.transformedPosition = new Vector4D(triangles[i].p2.WorldOrigin, 1);
+                        triangles[i].p3.transformedPosition = new Vector4D(triangles[i].p3.WorldOrigin, 1);
 
-                        p1.transformedPosition = new Vector4D(p1.WorldOrigin, 1);
-                        p2.transformedPosition = new Vector4D(p2.WorldOrigin, 1);
-                        p3.transformedPosition = new Vector4D(p3.WorldOrigin, 1);
-
-                        p1.transformedTexturePosition = p1.TextureCoordinates;
-                        p2.transformedTexturePosition = p2.TextureCoordinates;
-                        p3.transformedTexturePosition = p3.TextureCoordinates;
+                        triangles[i].p1.transformedTexturePosition = triangles[i].p1.TextureCoordinates;
+                        triangles[i].p2.transformedTexturePosition = triangles[i].p2.TextureCoordinates;
+                        triangles[i].p3.transformedTexturePosition = triangles[i].p3.TextureCoordinates;
 
                         //triangle.invW1 = 1;
                         //triangle.invW2 = 1;
                         //triangle.invW3 = 1;
 
                         // Transform triangle from model space to view space
-                        triangle.TransformTriangleVertices(modelToView);
+                        triangles[i].TransformTriangleVertices(modelToView);
 
                         if (mesh.Structure.MeshDimension == MeshDimension._3D)
                         {
-                            Vector3D normal = Vector3D.NormalFromPlane((Vector3D)(p1.transformedPosition), (Vector3D)(p2.transformedPosition), (Vector3D)(p3.transformedPosition));
-                            if ((normal * (Vector3D)(p1.transformedPosition)).ApproxMoreThanEquals(0)) continue;
+                            Vector3D normal = Vector3D.NormalFromPlane((Vector3D)(triangles[i].p1.transformedPosition),
+                                                                       (Vector3D)(triangles[i].p2.transformedPosition),
+                                                                       (Vector3D)(triangles[i].p3.transformedPosition));
+                            if ((normal * (Vector3D)(triangles[i].p1.transformedPosition)).ApproxMoreThanEquals(0)) continue;
                         }
 
                         // Clip the triangle in view space
-                        triangleQueue.Enqueue(triangle);
+                        triangleQueue.Enqueue(triangles[i]);
                         ClipTriangles(triangleQueue, renderingEntity.ViewClippingPlanes, ClipTriangle);
                         if (triangleQueue.Count == 0) continue;
 
-                        foreach (Triangle clippedTriangle in triangleQueue)
+                        for (int j = 0; j < triangleQueue.Count; j++)
                         {
-                            ref Vertex clippedP1 = ref clippedTriangle.p1, clippedP2 = ref clippedTriangle.p2, clippedP3 = ref clippedTriangle.p3;
+                            Triangle clippedTriangle = triangleQueue.Dequeue();
 
-                            clippedP1.viewSpacePosition = clippedP1.transformedPosition;
-                            clippedP2.viewSpacePosition = clippedP2.transformedPosition;
-                            clippedP3.viewSpacePosition = clippedP3.transformedPosition;
+                            clippedTriangle.p1.viewSpacePosition = clippedTriangle.p1.transformedPosition;
+                            clippedTriangle.p2.viewSpacePosition = clippedTriangle.p2.transformedPosition;
+                            clippedTriangle.p3.viewSpacePosition = clippedTriangle.p3.transformedPosition;
 
                             clippedTriangle.TransformTriangleVertices(renderingEntity.viewToScreen);
 
-                            clippedP1.invW = 1 / clippedP1.transformedPosition.w;
-                            clippedP2.invW = 1 / clippedP2.transformedPosition.w;
-                            clippedP3.invW = 1 / clippedP3.transformedPosition.w;
+                            clippedTriangle.p1.invW = 1 / clippedTriangle.p1.transformedPosition.w;
+                            clippedTriangle.p2.invW = 1 / clippedTriangle.p2.transformedPosition.w;
+                            clippedTriangle.p3.invW = 1 / clippedTriangle.p3.transformedPosition.w;
 
                             if (renderingEntity is PerspectiveCamera or Spotlight)
                             {
-                                clippedP1.transformedPosition *= clippedP1.invW;
-                                clippedP2.transformedPosition *= clippedP2.invW;
-                                clippedP3.transformedPosition *= clippedP3.invW;
+                                clippedTriangle.p1.transformedPosition *= clippedTriangle.p1.invW;
+                                clippedTriangle.p2.transformedPosition *= clippedTriangle.p2.invW;
+                                clippedTriangle.p3.transformedPosition *= clippedTriangle.p3.invW;
 
                                 if (clippedTriangle.FrontStyle is TextureStyle)
                                 {
@@ -180,7 +181,7 @@ public partial class Rasteriser<TImage>
                                     }
                                     else
                                     {
-                                        Span<Triangle> tileClippedTriangles = ClipTriangle2D(clippedTriangle, tile.startY, tile.startX, tile.endX, tile.endY);
+                                        List<Triangle> tileClippedTriangles = ClipTriangle2D(clippedTriangle, tile.startY, tile.startX, tile.endX, tile.endY);
                                         tile.triangles.AddRange(tileClippedTriangles);
                                     }
                                 }

@@ -2,7 +2,7 @@
 
 namespace Imagenic2.Core.Entities;
 
-public ref struct Triangle
+public struct Triangle
 {
     #region Fields and Properties
 
@@ -26,9 +26,9 @@ public ref struct Triangle
         }
     }
 
-    public ref Vertex p1;
-    public ref Vertex p2;
-    public ref Vertex p3;
+    public Vertex p1;
+    public Vertex p2;
+    public Vertex p3;
 
     //internal Vector4D TransformedP1 { get; set; }
     //internal Vector4D TransformedP2 { get; set; }

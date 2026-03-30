@@ -10,25 +10,25 @@ public partial class Rasteriser<TImage>
                                             float invW1, float invW2, float invW3)
     {
         // Extract values
-        float x1 = triangle.TransformedP1.x;
-        float y1 = triangle.TransformedP1.y;
-        float z1 = triangle.TransformedP1.z * invW1;
-        float x2 = triangle.TransformedP2.x;
-        float y2 = triangle.TransformedP2.y;
-        float z2 = triangle.TransformedP2.z * invW2;
-        float x3 = triangle.TransformedP3.x;
-        float y3 = triangle.TransformedP3.y;
-        float z3 = triangle.TransformedP3.z * invW3;
+        float x1 = triangle.p1.transformedPosition.x;
+        float y1 = triangle.p1.transformedPosition.y;
+        float z1 = triangle.p1.transformedPosition.z * invW1;
+        float x2 = triangle.p2.transformedPosition.x;
+        float y2 = triangle.p2.transformedPosition.y;
+        float z2 = triangle.p2.transformedPosition.z * invW2;
+        float x3 = triangle.p3.transformedPosition.x;
+        float y3 = triangle.p3.transformedPosition.y;
+        float z3 = triangle.p3.transformedPosition.z * invW3;
 
-        float vx1 = triangle.ViewSpaceP1.x * invW1;
-        float vy1 = triangle.ViewSpaceP1.y * invW1;
-        float vz1 = triangle.ViewSpaceP1.z * invW1;
-        float vx2 = triangle.ViewSpaceP2.x * invW2;
-        float vy2 = triangle.ViewSpaceP2.y * invW2;
-        float vz2 = triangle.ViewSpaceP2.z * invW2;
-        float vx3 = triangle.ViewSpaceP3.x * invW3;
-        float vy3 = triangle.ViewSpaceP3.y * invW3;
-        float vz3 = triangle.ViewSpaceP3.z * invW3;
+        float vx1 = triangle.p1.viewSpacePosition.x * invW1;
+        float vy1 = triangle.p1.viewSpacePosition.y * invW1;
+        float vz1 = triangle.p1.viewSpacePosition.z * invW1;
+        float vx2 = triangle.p2.viewSpacePosition.x * invW2;
+        float vy2 = triangle.p2.viewSpacePosition.y * invW2;
+        float vz2 = triangle.p2.viewSpacePosition.z * invW2;
+        float vx3 = triangle.p3.viewSpacePosition.x * invW3;
+        float vy3 = triangle.p3.viewSpacePosition.y * invW3;
+        float vz3 = triangle.p3.viewSpacePosition.z * invW3;
 
         // Calculate bounding rectangle
         int bottomLeftX = (int)(Floor(Min(Min(x1, x2), x3)));
@@ -112,32 +112,32 @@ public partial class Rasteriser<TImage>
                                                    float invW1, float invW2, float invW3)
     {
         // Extract values
-        float x1 = triangle.TransformedP1.x;
-        float y1 = triangle.TransformedP1.y;
-        float z1 = triangle.TransformedP1.z * invW1;
-        float x2 = triangle.TransformedP2.x;
-        float y2 = triangle.TransformedP2.y;
-        float z2 = triangle.TransformedP2.z * invW2;
-        float x3 = triangle.TransformedP3.x;
-        float y3 = triangle.TransformedP3.y;
-        float z3 = triangle.TransformedP3.z * invW3;
+        float x1 = triangle.p1.transformedPosition.x;
+        float y1 = triangle.p1.transformedPosition.y;
+        float z1 = triangle.p1.transformedPosition.z * invW1;
+        float x2 = triangle.p2.transformedPosition.x;
+        float y2 = triangle.p2.transformedPosition.y;
+        float z2 = triangle.p2.transformedPosition.z * invW2;
+        float x3 = triangle.p3.transformedPosition.x;
+        float y3 = triangle.p3.transformedPosition.y;
+        float z3 = triangle.p3.transformedPosition.z * invW3;
 
-        float vx1 = triangle.ViewSpaceP1.x * invW1;
-        float vy1 = triangle.ViewSpaceP1.y * invW1;
-        float vz1 = triangle.ViewSpaceP1.z * invW1;
-        float vx2 = triangle.ViewSpaceP2.x * invW2;
-        float vy2 = triangle.ViewSpaceP2.y * invW2;
-        float vz2 = triangle.ViewSpaceP2.z * invW2;
-        float vx3 = triangle.ViewSpaceP3.x * invW3;
-        float vy3 = triangle.ViewSpaceP3.y * invW3;
-        float vz3 = triangle.ViewSpaceP3.z * invW3;
+        float vx1 = triangle.p1.viewSpacePosition.x * invW1;
+        float vy1 = triangle.p1.viewSpacePosition.y * invW1;
+        float vz1 = triangle.p1.viewSpacePosition.z * invW1;
+        float vx2 = triangle.p2.viewSpacePosition.x * invW2;
+        float vy2 = triangle.p2.viewSpacePosition.y * invW2;
+        float vz2 = triangle.p2.viewSpacePosition.z * invW2;
+        float vx3 = triangle.p3.viewSpacePosition.x * invW3;
+        float vy3 = triangle.p3.viewSpacePosition.y * invW3;
+        float vz3 = triangle.p3.viewSpacePosition.z * invW3;
 
-        float u1 = triangle.TransformedTextureP1.x * invW1;
-        float v1 = triangle.TransformedTextureP1.y * invW1;
-        float u2 = triangle.TransformedTextureP2.x * invW2;
-        float v2 = triangle.TransformedTextureP2.y * invW2;
-        float u3 = triangle.TransformedTextureP3.x * invW3;
-        float v3 = triangle.TransformedTextureP3.y * invW3;
+        float u1 = triangle.p1.transformedTexturePosition.x * invW1;
+        float v1 = triangle.p1.transformedTexturePosition.y * invW1;
+        float u2 = triangle.p2.transformedTexturePosition.x * invW2;
+        float v2 = triangle.p2.transformedTexturePosition.y * invW2;
+        float u3 = triangle.p3.transformedTexturePosition.x * invW3;
+        float v3 = triangle.p3.transformedTexturePosition.y * invW3;
 
         // Calculate bounding rectangle
         int bottomLeftX = (int)(Floor(Min(Min(x1, x2), x3)));
@@ -235,15 +235,15 @@ public partial class Rasteriser<TImage>
                                             float invW1, float invW2, float invW3)
     {
         // Extract values
-        float x1 = triangle.TransformedP1.x;
-        float y1 = triangle.TransformedP1.y;
-        float z1 = triangle.TransformedP1.z * invW1;
-        float x2 = triangle.TransformedP2.x;
-        float y2 = triangle.TransformedP2.y;
-        float z2 = triangle.TransformedP2.z * invW2;
-        float x3 = triangle.TransformedP3.x;
-        float y3 = triangle.TransformedP3.y;
-        float z3 = triangle.TransformedP3.z * invW3;
+        float x1 = triangle.p1.transformedPosition.x;
+        float y1 = triangle.p1.transformedPosition.y;
+        float z1 = triangle.p1.transformedPosition.z * invW1;
+        float x2 = triangle.p2.transformedPosition.x;
+        float y2 = triangle.p2.transformedPosition.y;
+        float z2 = triangle.p2.transformedPosition.z * invW2;
+        float x3 = triangle.p3.transformedPosition.x;
+        float y3 = triangle.p3.transformedPosition.y;
+        float z3 = triangle.p3.transformedPosition.z * invW3;
 
         // Calculate bounding rectangle
         int bottomLeftX = (int)(Floor(Min(Min(x1, x2), x3)));
