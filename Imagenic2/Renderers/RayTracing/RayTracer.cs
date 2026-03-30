@@ -1,4 +1,5 @@
-﻿using Imagenic2.Core.Images;
+﻿using Imagenic2.Core.Entities;
+using Imagenic2.Core.Images;
 
 namespace Imagenic2.Core.Renderers.RayTracing;
 
@@ -35,6 +36,11 @@ public partial class RayTracer<TImage> : Renderer<TImage> where TImage : Image, 
         NewRenderNeeded = false;
 
         return LatestRender = TImage.CreateFromBuffer(colourBuffer);
+    }
+
+    public override IAsyncEnumerable<TImage> RenderAsync(Animation animation, CancellationToken token = default)
+    {
+        return null; // Temporary
     }
 
     #endregion

@@ -7,6 +7,7 @@ public partial class Rasteriser<TImage>
 {
     private Queue<Triangle> triangleQueue = new Queue<Triangle>();
 
+    /*
     private void ShadowMapRenderTriangles(RenderingEntity renderingEntity,
                                  Buffer2D<float> buffer,
                                  Matrix4x4 screenToWindow,
@@ -69,6 +70,7 @@ public partial class Rasteriser<TImage>
             }
         }
     }
+    */
 
     private void GenerateTileTriangles(Buffer2D<Tile> tiles, RenderingEntity renderingEntity, Matrix4x4 screenToWindow, int renderWidth, int renderHeight)
     {
@@ -82,13 +84,15 @@ public partial class Rasteriser<TImage>
 
                     foreach (Triangle triangle in mesh.Structure.Triangles)
                     {
-                        triangle.TransformedP1 = new Vector4D(triangle.P1.WorldOrigin, 1);
-                        triangle.TransformedP2 = new Vector4D(triangle.P2.WorldOrigin, 1);
-                        triangle.TransformedP3 = new Vector4D(triangle.P3.WorldOrigin, 1);
+                        ref Vertex p1 = ref triangle.p1, p2 = ref triangle.p2, p3 = ref triangle.p3;
 
-                        triangle.TransformedTextureP1 = triangle.TextureP1;
-                        triangle.TransformedTextureP2 = triangle.TextureP2;
-                        triangle.TransformedTextureP3 = triangle.TextureP3;
+                        p1.transformedPosition = new Vector4D(p1.WorldOrigin, 1);
+                        p2.transformedPosition = new Vector4D(p2.WorldOrigin, 1);
+                        p3.transformedPosition = new Vector4D(p3.WorldOrigin, 1);
+
+                        p1.transformedTexturePosition = p1.TextureCoordinates;
+                        p2.transformedTexturePosition = p2.TextureCoordinates;
+                        p3.transformedTexturePosition = p3.TextureCoordinates;
 
                         //triangle.invW1 = 1;
                         //triangle.invW2 = 1;
@@ -99,8 +103,8 @@ public partial class Rasteriser<TImage>
 
                         if (mesh.Structure.MeshDimension == MeshDimension._3D)
                         {
-                            Vector3D normal = Vector3D.NormalFromPlane((Vector3D)(triangle.TransformedP1), (Vector3D)(triangle.TransformedP2), (Vector3D)(triangle.TransformedP3));
-                            if ((normal * (Vector3D)(triangle.TransformedP1)).ApproxMoreThanEquals(0)) continue;
+                            Vector3D normal = Vector3D.NormalFromPlane((Vector3D)(p1.transformedPosition), (Vector3D)(p2.transformedPosition), (Vector3D)(p3.transformedPosition));
+                            if ((normal * (Vector3D)(p1.transformedPosition)).ApproxMoreThanEquals(0)) continue;
                         }
 
                         // Clip the triangle in view space
@@ -110,21 +114,23 @@ public partial class Rasteriser<TImage>
 
                         foreach (Triangle clippedTriangle in triangleQueue)
                         {
-                            clippedTriangle.ViewSpaceP1 = clippedTriangle.TransformedP1;
-                            clippedTriangle.ViewSpaceP2 = clippedTriangle.TransformedP2;
-                            clippedTriangle.ViewSpaceP3 = clippedTriangle.TransformedP3;
+                            ref Vertex clippedP1 = ref clippedTriangle.p1, clippedP2 = ref clippedTriangle.p2, clippedP3 = ref clippedTriangle.p3;
+
+                            clippedP1.viewSpacePosition = clippedP1.transformedPosition;
+                            clippedP2.viewSpacePosition = clippedP2.transformedPosition;
+                            clippedP3.viewSpacePosition = clippedP3.transformedPosition;
 
                             clippedTriangle.TransformTriangleVertices(renderingEntity.viewToScreen);
 
-                            clippedTriangle.invW1 = 1 / clippedTriangle.TransformedP1.w;
-                            clippedTriangle.invW2 = 1 / clippedTriangle.TransformedP2.w;
-                            clippedTriangle.invW3 = 1 / clippedTriangle.TransformedP3.w;
+                            clippedP1.invW = 1 / clippedP1.transformedPosition.w;
+                            clippedP2.invW = 1 / clippedP2.transformedPosition.w;
+                            clippedP3.invW = 1 / clippedP3.transformedPosition.w;
 
                             if (renderingEntity is PerspectiveCamera or Spotlight)
                             {
-                                clippedTriangle.TransformedP1 /= clippedTriangle.TransformedP1.w;
-                                clippedTriangle.TransformedP2 /= clippedTriangle.TransformedP2.w;
-                                clippedTriangle.TransformedP3 /= clippedTriangle.TransformedP3.w;
+                                clippedP1.transformedPosition *= clippedP1.invW;
+                                clippedP2.transformedPosition *= clippedP2.invW;
+                                clippedP3.transformedPosition *= clippedP3.invW;
 
                                 if (clippedTriangle.FrontStyle is TextureStyle)
                                 {
@@ -138,15 +144,15 @@ public partial class Rasteriser<TImage>
                             clippedTriangle.TransformTriangleVertices(screenToWindow);
 
                             // Extract values
-                            float x1 = clippedTriangle.TransformedP1.x;
-                            float y1 = clippedTriangle.TransformedP1.y;
-                            float z1 = clippedTriangle.TransformedP1.z;
-                            float x2 = clippedTriangle.TransformedP2.x;
-                            float y2 = clippedTriangle.TransformedP2.y;
-                            float z2 = clippedTriangle.TransformedP2.z;
-                            float x3 = clippedTriangle.TransformedP3.x;
-                            float y3 = clippedTriangle.TransformedP3.y;
-                            float z3 = clippedTriangle.TransformedP3.z;
+                            float x1 = clippedTriangle.p1.transformedPosition.x;
+                            float y1 = clippedTriangle.p1.transformedPosition.y;
+                            float z1 = clippedTriangle.p1.transformedPosition.z;
+                            float x2 = clippedTriangle.p2.transformedPosition.x;
+                            float y2 = clippedTriangle.p2.transformedPosition.y;
+                            float z2 = clippedTriangle.p2.transformedPosition.z;
+                            float x3 = clippedTriangle.p3.transformedPosition.x;
+                            float y3 = clippedTriangle.p3.transformedPosition.y;
+                            float z3 = clippedTriangle.p3.transformedPosition.z;
 
                             // Calculate triangle's bounding box
                             float minX = Min(x1, Min(x2, x3));
@@ -174,7 +180,7 @@ public partial class Rasteriser<TImage>
                                     }
                                     else
                                     {
-                                        List<Triangle> tileClippedTriangles = ClipTriangle2D(clippedTriangle, tile.startY, tile.startX, tile.endX, tile.endY);
+                                        Span<Triangle> tileClippedTriangles = ClipTriangle2D(clippedTriangle, tile.startY, tile.startX, tile.endX, tile.endY);
                                         tile.triangles.AddRange(tileClippedTriangles);
                                     }
                                 }

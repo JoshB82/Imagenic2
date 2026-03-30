@@ -7,7 +7,6 @@ public sealed class Line : Mesh
     #region Fields and Properties
     
     private Vector3D startPoint, endPoint;
-    
     public Vector3D StartPoint
     {
         get => startPoint;
@@ -26,7 +25,9 @@ public sealed class Line : Mesh
             Scaling = endPoint - startPoint;
         }
     }
-    
+
+    public float Length => (endPoint - startPoint).Magnitude();
+
     #endregion
     
     #region Constructors

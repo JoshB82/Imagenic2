@@ -135,6 +135,7 @@ public sealed class MeshStructure
 
     public MeshStructure DeepCopy()
     {
+        /*
         MeshStructure copy = new MeshStructure(
             this.MeshDimension,
             this.Vertices.ToArray(),
@@ -159,9 +160,11 @@ public sealed class MeshStructure
                 return newFace;
             }).ToArray(),
             this.Textures?.Select(t => new TextureStyle(t.Image)).ToArray()
-            );
+        );
         copy.BoundingBox = BoundingBox;
         return copy;
+        */
+        return null;
     }
 
     #region Circle

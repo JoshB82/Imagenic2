@@ -19,6 +19,11 @@ public struct Vertex
 
     public Vector2D? TextureCoordinates { get; set; }
 
+    internal Vector4D transformedPosition;
+    internal Vector4D viewSpacePosition;
+    internal float invW;
+    internal Vector2D? transformedTexturePosition;
+
     #endregion
 
     #region Constructors
@@ -28,7 +33,7 @@ public struct Vertex
         WorldOrigin = worldOrigin;
     }
 
-    public Vertex(Vector3D worldOrigin, Vector3D? normal = null, Vector2D? textureCoordinates)
+    public Vertex(Vector3D worldOrigin, Vector3D? normal = null, Vector2D? textureCoordinates = null)
     {
         WorldOrigin = worldOrigin;
         Normal = normal;
@@ -39,7 +44,23 @@ public struct Vertex
 
     #region Methods
 
-    public override string ToString() => $"WorldOrigin: {WorldOrigin}, Normal: {Normal}";
+    public readonly Vertex ShallowCopy() => (Vertex)MemberwiseClone();
+    public Vertex DeepCopy()
+    {
+        Vertex newVertex = new Vertex()
+        {
+            WorldOrigin = this.WorldOrigin,
+            Normal = this.normal,
+            TextureCoordinates = this.TextureCoordinates,
+            transformedPosition = this.transformedPosition,
+            viewSpacePosition = this.viewSpacePosition,
+            invW = this.invW,
+            transformedTexturePosition = this.transformedTexturePosition
+        };
+        return newVertex;
+    }
+
+    public override string ToString() => $"WorldOrigin: {WorldOrigin}, Normal: {Normal}, Texture Co-ordinates: {TextureCoordinates}";
 
     #endregion
 }

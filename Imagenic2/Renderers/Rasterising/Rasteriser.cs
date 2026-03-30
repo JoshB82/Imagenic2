@@ -133,6 +133,11 @@ public partial class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagen
         return LatestRender = TImage.CreateFromBuffer(colourBuffer);
     }
 
+    public override IAsyncEnumerable<TImage> RenderAsync(Animation animation, CancellationToken token = default)
+    {
+        return null; // Temporary
+    }
+    
     // Transform vertices
     private static void TransformEdgeVertices(Edge edge, Matrix4x4 transformationMatrix)
     {
