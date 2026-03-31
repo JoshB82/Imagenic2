@@ -4,15 +4,15 @@ internal class Transformation<TTransformableEntity> where TTransformableEntity :
 {
     #region Fields and Properties
 
-    public Func<TTransformableEntity, TTransformableEntity> transformation;
+    public TTransformableEntity TransformableEntity { get; set; }
+    //public Func<float, TProperty, TProperty> PropertyTransformation { get; set; }
 
-    public List<KeyFrame> KeyFrames = new List<KeyFrame>();
 
     #endregion
 
     #region Constructors
 
-    public Transformation()
+    public Transformation(TTransformableEntity transformableEntity, params IEnumerable<Func<TTransformableEntity>> selectors)
     {
         
     }
@@ -24,22 +24,22 @@ internal class Transformation<TTransformableEntity> where TTransformableEntity :
     #endregion
 }
 
+
 public class KeyFrameAnimation<TValue>
 {
     #region Fields and Properties
 
     public List<KeyFrame<TValue>> KeyFrames { get; set; }
-    public InterpolationStyle interpolationBetweenFrames = InterpolationStyle.Linear;
-    private Func<TValue, TValue, float> interpolator;
+    private Func<TValue, TValue, float, TValue> interpolator;
 
     #endregion
 
     #region Constructors
 
-    public KeyFrameAnimation(List<KeyFrame<TValue>> keyFrames)
+    public KeyFrameAnimation(List<KeyFrame<TValue>> keyFrames, Func<TValue, TValue, float, TValue> interpolator)
     {
         KeyFrames = keyFrames;
-        interpolator = NumberHelpers.Interpolate;
+        this.interpolator = interpolator;
     }
 
     #endregion
@@ -50,8 +50,17 @@ public class KeyFrameAnimation<TValue>
     {
         for (int i = 0; i < KeyFrames.Count; i++)
         {
-            
+            KeyFrame<TValue> a = KeyFrames[i];
+            KeyFrame<TValue> b = KeyFrames[i];
+
+            if (time >= a.time && time <= b.time)
+            {
+                float t = (time - a.time) / (b.time - a.time);
+                return interpolator(a.value, b.value, t);
+            }
         }
+
+        return KeyFrames[^1].value;
     }
 
     #endregion
