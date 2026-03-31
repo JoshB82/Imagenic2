@@ -1,4 +1,5 @@
 ﻿using Imagenic2.Core.Entities;
+using Imagenic2.Core.Enums;
 using Imagenic2.Core.Renderers.Rasterising;
 
 namespace Imagenic2.Core.Renderers.RayTracing;
@@ -62,8 +63,21 @@ public partial class RayTracer<TImage>
             return RenderingOptions.BackgroundColour.ToVector3D();
         }
 
+        // Determine which side of the triangle the ray hit
+        FaceStyle style;
+        if (hitInfo.normal * ray.direction < 0)
+        {
+            // Hit front side
+            style = hitInfo.triangle.FrontStyle;
+        }
+        else
+        {
+            // Hit back side (or edge)
+            style = hitInfo.triangle.BackStyle;
+        }
+
         Vector3D colour;
-        switch (hitInfo.triangle.FrontStyle)
+        switch (style)
         {
             case Material triangleMaterial:
                 colour = Vector3D.Zero;
@@ -212,6 +226,7 @@ public partial class RayTracer<TImage>
         {
             if (physicalEntity is Mesh mesh)
             {
+                // Convert ray from world space to model space
                 Vector3D modelStartPosition = (Vector3D)(mesh.WorldToModel * new Vector4D(ray.startPosition, 1));
                 Vector3D modelDirection = ((Vector3D)(mesh.WorldToModel * new Vector4D(ray.direction, 0))).Normalise();
                 Ray modelRay = new Ray(modelStartPosition, modelDirection);
@@ -243,12 +258,4 @@ public partial class RayTracer<TImage>
 
         return hit;
     }
-}
-
-internal struct HitInfo
-{
-    public Triangle triangle;
-    public float distance;
-    public Vector3D position;
-    public Vector3D normal;
 }
