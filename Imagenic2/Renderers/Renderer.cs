@@ -1,4 +1,5 @@
 ﻿using Imagenic2.Core.Entities;
+using Imagenic2.Core.Entities.TransformableEntities.Animation;
 using Imagenic2.Core.Enums;
 using Imagenic2.Core.Images;
 using System.Drawing;

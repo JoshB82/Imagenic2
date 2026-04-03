@@ -1,4 +1,4 @@
-﻿using Imagenic2.Core.Entities;
+﻿using Imagenic2.Core.Entities.TransformableEntities.Animation;
 using Imagenic2.Core.Images;
 
 namespace Imagenic2.Core.Renderers.RayTracing;
@@ -38,9 +38,20 @@ public partial class RayTracer<TImage> : Renderer<TImage> where TImage : Image, 
         return LatestRender = TImage.CreateFromBuffer(colourBuffer);
     }
 
-    public override IAsyncEnumerable<TImage> RenderAsync(Animation animation, CancellationToken token = default)
+    public override async IAsyncEnumerable<TImage> RenderAsync(Animation animation, CancellationToken token = default)
     {
-        return null; // Temporary
+        int duration = animation.Duration;
+        int FPS = animation.FPS;
+        int numberOfFrames = duration * FPS;
+        float invFPS = 1f / FPS;
+
+        for (int i = 1; i <= numberOfFrames; i++)
+        {
+            float time = invFPS * i;
+            animation.Apply(time);
+            TImage render = await RenderAsync(token);
+            yield return render;
+        }
     }
 
     #endregion
