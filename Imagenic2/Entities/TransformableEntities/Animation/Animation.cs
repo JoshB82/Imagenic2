@@ -1,19 +1,19 @@
-﻿namespace Imagenic2.Core.Entities.TransformableEntities.Animation;
+﻿namespace Imagenic2.Core.Entities.Animation;
 
 public class Animation
 {
     #region Fields and Properties
 
-    private readonly List<IAnimation> transformations;
+    private readonly List<Transformation> transformations;
 
-    public int Duration { get; set; }
+    public int DurationSeconds { get; set; }
     public int FPS { get; set; }
 
     #endregion
 
     #region Constructors
 
-    public Animation(params IEnumerable<IAnimation> transformations)
+    public Animation(params IEnumerable<Transformation> transformations)
     {
         this.transformations = transformations.ToList();
     }
@@ -24,9 +24,9 @@ public class Animation
 
     public void Apply(float time)
     {
-        foreach (Transformation<TransformableEntity> t in transformations)
+        foreach (Transformation transformation in transformations)
         {
-            t.Apply(time);
+            transformation.Apply(time);
         }
     }
 

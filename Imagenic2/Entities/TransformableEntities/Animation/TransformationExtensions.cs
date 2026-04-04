@@ -1,10 +1,15 @@
-﻿namespace Imagenic2.Core.Entities.TransformableEntities.Animation;
+﻿namespace Imagenic2.Core.Entities.Animation;
 
 public static class TransformationExtensions
 {
     public static TransformationContext<TTransformableEntity> Start<TTransformableEntity>(this TTransformableEntity transformableEntity, float time) where TTransformableEntity : TransformableEntity
     {
         return new TransformationContext<TTransformableEntity>(transformableEntity, time);
+    }
+
+    public static TransformationContextIEnumerable<TTransformableEntity> Start<TTransformableEntity>(this IEnumerable<TTransformableEntity> transformableEntities, float time) where TTransformableEntity : TransformableEntity
+    {
+        return new TransformationContextIEnumerable<TTransformableEntity>(transformableEntities, time);
     }
 
     #region Scale
@@ -35,16 +40,20 @@ public static class TransformationExtensions
 
     public static TransformationContext<TPhysicalEntity> Scale<TPhysicalEntity>(this TransformationContext<TPhysicalEntity> physicalTCtx, Vector3D scaleFactor, float time) where TPhysicalEntity : PhysicalEntity
     {
+        Vector3D lastScaling;
         if (physicalTCtx.ScalingKeyFrameAnimation is null)
         {
             physicalTCtx.ScalingKeyFrameAnimation = new KeyFrameAnimation<Vector3D>(new List<KeyFrame<Vector3D>>(), v => physicalTCtx.TransformableEntity.Scaling = v, NumberHelpers.Interpolate);
             KeyFrame<Vector3D> startingKeyFrame = new KeyFrame<Vector3D>(physicalTCtx.StartTime, physicalTCtx.TransformableEntity.Scaling);
             physicalTCtx.ScalingKeyFrameAnimation.KeyFrames.Add(startingKeyFrame);
-            physicalTCtx.scaling = physicalTCtx.TransformableEntity.Scaling;
+            lastScaling = physicalTCtx.TransformableEntity.Scaling;
+        }
+        else
+        {
+            lastScaling = physicalTCtx.ScalingKeyFrameAnimation.KeyFrames[^1].value;
         }
 
-        physicalTCtx.scaling = new Vector3D(physicalTCtx.scaling.x * scaleFactor.x, physicalTCtx.scaling.y * scaleFactor.y, physicalTCtx.scaling.z * scaleFactor.z);
-        KeyFrame<Vector3D> keyFrame = new KeyFrame<Vector3D>(time, physicalTCtx.scaling);
+        KeyFrame<Vector3D> keyFrame = new KeyFrame<Vector3D>(time, new Vector3D(lastScaling.x * scaleFactor.x, lastScaling.y * scaleFactor.y, lastScaling.z * scaleFactor.z));
         physicalTCtx.ScalingKeyFrameAnimation.KeyFrames.Add(keyFrame);
 
         return physicalTCtx;
@@ -80,17 +89,59 @@ public static class TransformationExtensions
 
     public static TransformationContext<TTranslatableEntity> Translate<TTranslatableEntity>(this TransformationContext<TTranslatableEntity> translatableTCtx, Vector3D displacement, float time) where TTranslatableEntity : TranslatableEntity
     {
+        Vector3D lastPosition;
         if (translatableTCtx.TranslationKeyFrameAnimation is null)
         {
             translatableTCtx.TranslationKeyFrameAnimation = new KeyFrameAnimation<Vector3D>(new List<KeyFrame<Vector3D>>(), v => translatableTCtx.TransformableEntity.WorldOrigin = v, NumberHelpers.Interpolate);
             KeyFrame<Vector3D> startingKeyFrame = new KeyFrame<Vector3D>(translatableTCtx.StartTime, translatableTCtx.TransformableEntity.WorldOrigin);
             translatableTCtx.TranslationKeyFrameAnimation.KeyFrames.Add(startingKeyFrame);
-            translatableTCtx.position = translatableTCtx.TransformableEntity.WorldOrigin;
+            lastPosition = translatableTCtx.TransformableEntity.WorldOrigin;
+        }
+        else
+        {
+            lastPosition = translatableTCtx.TranslationKeyFrameAnimation.KeyFrames[^1].value;
         }
 
-        translatableTCtx.position += displacement;
-        KeyFrame<Vector3D> keyFrame = new KeyFrame<Vector3D>(time, translatableTCtx.position);
+        KeyFrame<Vector3D> keyFrame = new KeyFrame<Vector3D>(time, lastPosition + displacement);
         translatableTCtx.TranslationKeyFrameAnimation.KeyFrames.Add(keyFrame);
+
+        return translatableTCtx;
+    }
+
+    #endregion
+
+    #region IEnumerable Translate
+
+    public static TransformationContextIEnumerable<TTranslatableEntity> Translate<TTranslatableEntity>(this TransformationContextIEnumerable<TTranslatableEntity> translatableTCtx, Vector3D displacement, float time) where TTranslatableEntity : TranslatableEntity
+    {
+        List<Vector3D> lastPositions = new List<Vector3D>();
+        int count = translatableTCtx.TransformableEntities.Count();
+        List<TTranslatableEntity> transformableEntities = translatableTCtx.TransformableEntities.ToList();
+
+        if (translatableTCtx.TranslationKeyFrameAnimations.Count == 0)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                KeyFrameAnimation<Vector3D> kfa = new KeyFrameAnimation<Vector3D>(new List<KeyFrame<Vector3D>>(), v => transformableEntities[i].WorldOrigin = v, NumberHelpers.Interpolate);
+                KeyFrame<Vector3D> startingKeyFrame = new KeyFrame<Vector3D>(translatableTCtx.StartTime, transformableEntities[i].WorldOrigin);
+                kfa.KeyFrames.Add(startingKeyFrame);
+                translatableTCtx.TranslationKeyFrameAnimations.Add(kfa);
+                lastPositions.Add(transformableEntities[i].WorldOrigin);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < count; i++)
+            {
+                lastPositions.Add(translatableTCtx.TranslationKeyFrameAnimations[i].KeyFrames[^1].value);
+            }
+        }
+
+        for (int i = 0; i < count; i++)
+        {
+            KeyFrame<Vector3D> keyFrame = new KeyFrame<Vector3D>(time, lastPositions[i] + displacement);
+            translatableTCtx.TranslationKeyFrameAnimations[i].KeyFrames.Add(keyFrame);
+        }
 
         return translatableTCtx;
     }

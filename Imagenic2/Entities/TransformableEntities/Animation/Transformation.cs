@@ -1,19 +1,17 @@
-﻿namespace Imagenic2.Core.Entities.TransformableEntities.Animation;
+﻿namespace Imagenic2.Core.Entities.Animation;
 
-public class Transformation<TTransformableEntity> : IAnimation where TTransformableEntity : TransformableEntity
+public class Transformation
 {
     #region Fields and Properties
 
-    public TTransformableEntity TransformableEntity { get; set; }
     public List<IAnimation> KeyFrameAnimations { get; set; }
 
     #endregion
 
     #region Constructors
 
-    public Transformation(TTransformableEntity transformableEntity, List<IAnimation> keyFrameAnimations)
+    public Transformation(List<IAnimation> keyFrameAnimations)
     {
-        TransformableEntity = transformableEntity;
         KeyFrameAnimations = keyFrameAnimations;
     }
 

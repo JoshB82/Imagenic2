@@ -1,12 +1,13 @@
 ﻿using Imagenic2.Core.Entities;
-using Imagenic2.Core.Entities.TransformableEntities.Animation;
+using Imagenic2.Core.Entities.Animation;
 using Imagenic2.Core.Enums;
 using Imagenic2.Core.Images;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 
 namespace Imagenic2.Core.Renderers;
 
-public abstract class Renderer<TImage> where TImage : Imagenic2.Core.Images.Image, IFactory<TImage>
+public abstract class Renderer<TImage> where TImage : Images.Image, IFactory<TImage>
 {
     #region Fields and Properties
 
@@ -123,7 +124,22 @@ public abstract class Renderer<TImage> where TImage : Imagenic2.Core.Images.Imag
 
     public abstract Task<TImage?> RenderAsync(CancellationToken token);
 
-    public abstract IAsyncEnumerable<TImage> RenderAsync(Animation animation, CancellationToken token);
+    public async IAsyncEnumerable<TImage?> RenderAsync(Animation animation, [EnumeratorCancellation] CancellationToken token = default)
+    {
+        int duration = animation.DurationSeconds;
+        int fps = animation.FPS;
+        int numberOfFrames = duration * fps;
+        float invFPS = 1f / fps;
+
+        for (int i = 0; i <= numberOfFrames; i++)
+        {
+            token.ThrowIfCancellationRequested();
+            float time = invFPS * i;
+            animation.Apply(time);
+            TImage? render = await RenderAsync(token);
+            yield return render;
+        }
+    }
 
     #endregion
 }

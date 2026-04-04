@@ -1,8 +1,7 @@
 ﻿using Imagenic2.Core.Entities;
+using Imagenic2.Core.Entities.Animation;
 using Imagenic2.Core.Entities.Lights;
-using Imagenic2.Core.Entities.TransformableEntities.Animation;
 using Imagenic2.Core.Images;
-using System.Drawing;
 
 namespace Imagenic2.Core.Renderers.Rasterising;
 
@@ -134,10 +133,10 @@ public partial class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagen
         return LatestRender = TImage.CreateFromBuffer(colourBuffer);
     }
 
-    public override IAsyncEnumerable<TImage> RenderAsync(Animation animation, CancellationToken token = default)
-    {
-        return null; // Temporary
-    }
+    //public override IAsyncEnumerable<TImage> RenderAsync(Animation animation, CancellationToken token = default)
+    //{
+        //return null; // Temporary
+    //}
     
     // Transform vertices
     private static void TransformEdgeVertices(Edge edge, Matrix4x4 transformationMatrix)
