@@ -1,4 +1,5 @@
-﻿using Imagenic2.Core.Enums;
+﻿using Imagenic2.Core.Entities.Animation;
+using Imagenic2.Core.Enums;
 using Imagenic2.Core.Maths.Transformations;
 
 namespace Imagenic2.Core.Entities;
@@ -14,6 +15,7 @@ public abstract class TranslatableEntity : TransformableEntity
         get => worldOrigin;
         set
         {
+            ThrowIfNotFinite(value);
             if (value.ApproxEquals(worldOrigin)) return;
             worldOrigin = value;
 
@@ -21,6 +23,7 @@ public abstract class TranslatableEntity : TransformableEntity
             InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
+    internal KeyFrameAnimation<Vector3D> TranslationKeyFrameAnimation { get; set; }
 
     #endregion
 

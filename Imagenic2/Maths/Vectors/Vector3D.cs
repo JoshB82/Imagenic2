@@ -49,6 +49,8 @@ public struct Vector3D : IApproximatelyEquatable<Vector3D>,
 
     #region Methods
 
+    public static bool IsFinite(Vector3D v) => float.IsFinite(v.x) && float.IsFinite(v.y) && float.IsFinite(v.z);
+
     public static Vector3D LineIntersectPlane(Vector3D lineStart, Vector3D lineFinish, Vector3D planePoint, Vector3D planeNormal, out float d)
     {
         Vector3D line = lineFinish - lineStart;

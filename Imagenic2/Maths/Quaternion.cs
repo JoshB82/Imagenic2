@@ -45,6 +45,8 @@ public struct Quaternion : IEquatable<Quaternion>
 
     #region Methods
 
+    public static bool IsFinite(Quaternion q) => float.IsFinite(q.w) && float.IsFinite(q.x) && float.IsFinite(q.y) && float.IsFinite(q.z);
+
     public readonly float Magnitude() => Sqrt(SquaredMagnitude());
     public readonly float SquaredMagnitude() => w * w + x * x + y * y + z * z;
 

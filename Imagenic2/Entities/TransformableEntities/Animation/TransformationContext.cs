@@ -5,10 +5,7 @@ public abstract class TransformationContextBase
     #region Fields and Properties
 
     public float StartTime { get; set; }
-    public Transformation Transformation { get; set; }
-
-    internal KeyFrameAnimation<Vector3D> ScalingKeyFrameAnimation = null;
-    internal KeyFrameAnimation<Vector3D> TranslationKeyFrameAnimation = null;
+    internal Transformation Transformation { get; set; }
 
     #endregion
 
@@ -24,19 +21,21 @@ public abstract class TransformationContextBase
 
     #region Methods
 
-    public Animation End()
+    protected Transformation AssembleTransformation(TransformableEntity transformableEntity)
     {
-        if (ScalingKeyFrameAnimation is not null)
+        if (transformableEntity is PhysicalEntity physicalEntity && physicalEntity.ScalingKeyFrameAnimation is not null)
         {
-            Transformation.KeyFrameAnimations.Add(ScalingKeyFrameAnimation);
+            Transformation.KeyFrameAnimations.Add(physicalEntity.ScalingKeyFrameAnimation);
         }
-        if (TranslationKeyFrameAnimation is not null)
+        if (transformableEntity is TranslatableEntity translatableEntity && translatableEntity.TranslationKeyFrameAnimation is not null)
         {
-            Transformation.KeyFrameAnimations.Add(TranslationKeyFrameAnimation);
+            Transformation.KeyFrameAnimations.Add(translatableEntity.TranslationKeyFrameAnimation);
         }
 
-        return new Animation(Transformation);
+        return Transformation;
     }
+
+    public abstract Animation End();
 
     #endregion
 }
@@ -60,6 +59,13 @@ public class TransformationContext<TTransformableEntity> : TransformationContext
 
     #region Methods
 
+    public override Animation End()
+    {
+        AssembleTransformation(TransformableEntity);
+
+        return new Animation(Transformation);
+    }
+
     #endregion
 }
 
@@ -68,8 +74,6 @@ public class TransformationContextIEnumerable<TTransformableEntity> : Transforma
     #region Fields and Properties
 
     public IEnumerable<TTransformableEntity> TransformableEntities { get; set; }
-    public List<KeyFrameAnimation<Vector3D>> ScalingKeyFrameAnimations = new List<KeyFrameAnimation<Vector3D>>();
-    public List<KeyFrameAnimation<Vector3D>> TranslationKeyFrameAnimations = new List<KeyFrameAnimation<Vector3D>>();
 
     #endregion
 
@@ -84,15 +88,11 @@ public class TransformationContextIEnumerable<TTransformableEntity> : Transforma
 
     #region Methods
 
-    public Animation End()
+    public override Animation End()
     {
-        foreach (KeyFrameAnimation<Vector3D> kfa in ScalingKeyFrameAnimations)
+        foreach (TTransformableEntity transformableEntity in TransformableEntities)
         {
-            Transformation.KeyFrameAnimations.Add(kfa);
-        }
-        foreach (KeyFrameAnimation<Vector3D> kfa in TranslationKeyFrameAnimations)
-        {
-            Transformation.KeyFrameAnimations.Add(kfa);
+            AssembleTransformation(transformableEntity);
         }
 
         return new Animation(Transformation);

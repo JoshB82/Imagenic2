@@ -84,13 +84,13 @@ public partial class Node
 
     public Node ScaleY(float scaleFactor)
     {
-        Vector3D scaling = new Vector3D(scaleFactor, 1, 1);
+        Vector3D scaling = new Vector3D(1, scaleFactor, 1);
         return Scale(scaling);
     }
 
     public Node ScaleZ(float scaleFactor)
     {
-        Vector3D scaling = new Vector3D(scaleFactor, 1, 1);
+        Vector3D scaling = new Vector3D(1, 1, scaleFactor);
         return Scale(scaling);
     }
 

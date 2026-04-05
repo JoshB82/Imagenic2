@@ -4,6 +4,8 @@ namespace Imagenic2.Core.Utilities;
 
 internal static class ExceptionHelper
 {
+    internal const float epsilonSetting = 1e-5f;
+
     internal static void ThrowIfNull(object? param,
         [CallerArgumentExpression(nameof(param))] string? paramName = null)
     {
@@ -40,19 +42,19 @@ internal static class ExceptionHelper
         if (param4 is null) throw new ArgumentNullException(param4Name);
     }
 
-    internal static void ThrowIfApproxZero(Quaternion param, float epsilon,
+    internal static void ThrowIfApproxZero(Quaternion param, float epsilon = epsilonSetting,
         [CallerArgumentExpression(nameof(param))] string? paramName = null)
     {
         if (param.ApproxEquals(Quaternion.Zero, epsilon)) throw new CannotBeZeroException($"{paramName} cannot equal zero.");
     }
 
-    internal static void ThrowIfApproxZero(Vector3D param, float epsilon,
+    internal static void ThrowIfApproxZero(Vector3D param, float epsilon = epsilonSetting,
         [CallerArgumentExpression(nameof(param))] string? paramName = null)
     {
         if (param.ApproxEquals(Vector3D.Zero, epsilon)) throw new CannotBeZeroException($"{paramName} cannot equal zero.");
     }
 
-    internal static void ThrowIfNotOrthogonal(Vector3D param1, Vector3D param2, float epsilon,
+    internal static void ThrowIfNotOrthogonal(Vector3D param1, Vector3D param2, float epsilon = epsilonSetting,
         [CallerArgumentExpression(nameof(param1))] string? param1Name = null,
         [CallerArgumentExpression(nameof(param2))] string? param2Name = null)
     {
@@ -69,6 +71,24 @@ internal static class ExceptionHelper
         [CallerArgumentExpression(nameof(param))] string? paramName = null)
     {
         if (param <= 0) throw new ArgumentOutOfRangeException(paramName);
+    }
+
+    internal static void ThrowIfNotFinite(float param,
+        [CallerArgumentExpression(nameof(param))] string? paramName = null)
+    {
+        if (!float.IsFinite(param)) throw new MustBeFiniteException($"{paramName} must be finite.");
+    }
+
+    internal static void ThrowIfNotFinite(Vector3D param,
+        [CallerArgumentExpression(nameof(param))] string? paramName = null)
+    {
+        if (!Vector3D.IsFinite(param)) throw new MustBeFiniteException($"{paramName} must be finite.");
+    }
+
+    internal static void ThrowIfNotFinite(Quaternion param,
+        [CallerArgumentExpression(nameof(param))] string? paramName = null)
+    {
+        if (!Quaternion.IsFinite(param)) throw new MustBeFiniteException($"{paramName} must be finite.");
     }
 }
 
@@ -94,6 +114,19 @@ public class MustBeOrthogonalException : Exception
     public MustBeOrthogonalException(string message) : base(message) { }
 
     public MustBeOrthogonalException(string message, Exception innerException) : base(message, innerException) { }
+
+    #endregion
+}
+
+public class MustBeFiniteException : Exception
+{
+    #region Constructors
+
+    public MustBeFiniteException() { }
+
+    public MustBeFiniteException(string message) : base(message) { }
+
+    public MustBeFiniteException(string message, Exception innerException) : base(message, innerException) { }
 
     #endregion
 }

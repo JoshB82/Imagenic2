@@ -38,6 +38,8 @@ public struct Vector2D : IApproximatelyEquatable<Vector2D>,
 
     #region Methods
 
+    public static bool IsFinite(Vector2D v) => float.IsFinite(v.x) && float.IsFinite(v.y);
+
     public readonly bool IsZero(float epsilon = float.Epsilon) => ApproxEquals(Zero, epsilon);
 
     public readonly float Angle(Vector2D v, float epsilon = float.Epsilon)

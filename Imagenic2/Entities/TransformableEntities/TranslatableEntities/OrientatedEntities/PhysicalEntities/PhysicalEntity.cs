@@ -1,4 +1,5 @@
-﻿using Imagenic2.Core.Enums;
+﻿using Imagenic2.Core.Entities.Animation;
+using Imagenic2.Core.Enums;
 using Imagenic2.Core.Maths.Transformations;
 
 namespace Imagenic2.Core.Entities;
@@ -52,6 +53,7 @@ public abstract class PhysicalEntity : OrientatedEntity
         get => scaling;
         set
         {
+            ThrowIfNotFinite(value);
             if (value.ApproxEquals(scaling)) return;
             scaling = value;
 
@@ -59,6 +61,8 @@ public abstract class PhysicalEntity : OrientatedEntity
             InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
+
+    internal KeyFrameAnimation<Vector3D> ScalingKeyFrameAnimation { get; set; }
 
     #endregion
 

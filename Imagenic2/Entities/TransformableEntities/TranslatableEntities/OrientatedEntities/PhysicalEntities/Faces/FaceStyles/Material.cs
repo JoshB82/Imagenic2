@@ -6,7 +6,16 @@ public class Material : FaceStyle
 {
     #region Fields and Properties
 
-    public float Roughness { get; set; }
+    private float roughness;
+    public float Roughness
+    {
+        get => roughness;
+        set
+        {
+            ThrowIfNotFinite(value);
+            roughness = value;
+        }
+    }
     public float Metallic { get; set; }
     public Imagenic2.Core.Images.Image Texture { get; set; }
 
@@ -16,6 +25,7 @@ public class Material : FaceStyle
         get => reflectivity;
         set
         {
+            ThrowIfNotFinite(value);
             ThrowIfNotWithinRange(value, 0, 1);
             reflectivity = value;
         }
@@ -27,6 +37,7 @@ public class Material : FaceStyle
         get => transparency;
         set
         {
+            ThrowIfNotFinite(value);
             transparency = value;
         }
     }
@@ -37,6 +48,7 @@ public class Material : FaceStyle
         get => refractiveIndex;
         set
         {
+            ThrowIfNotFinite(value);
             refractiveIndex = value;
         }
     }

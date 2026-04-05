@@ -81,6 +81,8 @@ public struct Orientation : IApproximatelyEquatable<Orientation>
 
     public void SetDirectionForwardUp(Vector3D directionForward, Vector3D directionUp)
     {
+        ThrowIfNotFinite(directionForward);
+        ThrowIfNotFinite(directionUp);
         ThrowIfApproxZero(directionForward, epsilon);
         ThrowIfApproxZero(directionUp, epsilon);
         ThrowIfNotOrthogonal(directionForward, directionUp, epsilon);
@@ -92,6 +94,8 @@ public struct Orientation : IApproximatelyEquatable<Orientation>
 
     public void SetDirectionUpRight(Vector3D directionUp, Vector3D directionRight)
     {
+        ThrowIfNotFinite(directionUp);
+        ThrowIfNotFinite(directionRight);
         ThrowIfApproxZero(directionUp, epsilon);
         ThrowIfApproxZero(directionRight, epsilon);
         ThrowIfNotOrthogonal(directionUp, directionRight, epsilon);
@@ -103,6 +107,8 @@ public struct Orientation : IApproximatelyEquatable<Orientation>
 
     public void SetDirectionRightForward(Vector3D directionRight, Vector3D directionForward)
     {
+        ThrowIfNotFinite(directionRight);
+        ThrowIfNotFinite(directionForward);
         ThrowIfApproxZero(directionRight, epsilon);
         ThrowIfApproxZero(directionForward, epsilon);
         ThrowIfNotOrthogonal(directionRight, directionForward, epsilon);

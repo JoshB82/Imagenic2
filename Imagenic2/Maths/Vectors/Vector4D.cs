@@ -60,6 +60,8 @@ public struct Vector4D : IApproximatelyEquatable<Vector4D>,
 
     #region Methods
 
+    public static bool IsFinite(Vector4D v) => float.IsFinite(v.x) && float.IsFinite(v.y) && float.IsFinite(v.z) && float.IsFinite(v.w);
+
     public readonly bool IsZero(float epsilon = float.Epsilon) => ApproxEquals(Zero, epsilon);
 
     public readonly float Angle(Vector4D v, float epsilon = float.Epsilon)

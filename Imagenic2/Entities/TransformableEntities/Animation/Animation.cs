@@ -9,6 +9,17 @@ public class Animation
     public int DurationSeconds { get; set; }
     public int FPS { get; set; }
 
+    private int repeat;
+    public int Repeat
+    {
+        get => repeat;
+        set
+        {
+            ThrowIfNonpositive(value);
+            repeat = value;
+        }
+    }
+
     #endregion
 
     #region Constructors
