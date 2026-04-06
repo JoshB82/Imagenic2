@@ -62,7 +62,7 @@ public abstract class PhysicalEntity : OrientatedEntity
         }
     }
 
-    internal KeyFrameAnimation<Vector3D> ScalingKeyFrameAnimation { get; set; }
+    internal KeyFrameAnimation<Vector3D>? ScalingKeyFrameAnimation { get; set; }
 
     #endregion
 
@@ -81,12 +81,13 @@ public abstract class PhysicalEntity : OrientatedEntity
     public override PhysicalEntity DeepCopy()
     {
         var physicalEntity = (PhysicalEntity)base.DeepCopy();
+        physicalEntity.ScalingKeyFrameAnimation = ScalingKeyFrameAnimation?.DeepCopy();
         return physicalEntity;
     }
 
     private void UpdateScalingMatrix()
     {
-        scalingMatrix = Transform.Scale(scaling);
+        scalingMatrix = MathsHelper.Scale(scaling);
         UpdateModelToWorldMatrix();
     }
 

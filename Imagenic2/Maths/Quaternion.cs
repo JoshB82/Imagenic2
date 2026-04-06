@@ -1,6 +1,16 @@
-﻿namespace Imagenic2.Core.Maths;
+﻿using System.Numerics;
 
-public struct Quaternion : IEquatable<Quaternion>
+namespace Imagenic2.Core.Maths;
+
+public struct Quaternion : IApproximatelyEquatable<Quaternion>,
+                           IAdditionOperators<Quaternion, Quaternion, Quaternion>,
+                           ISubtractionOperators<Quaternion, Quaternion, Quaternion>,
+                           IMultiplyOperators<Quaternion, Quaternion, Quaternion>,
+                           IMultiplyOperators<Quaternion, float, Quaternion>,
+                           IUnaryPlusOperators<Quaternion, Quaternion>,
+                           IUnaryNegationOperators<Quaternion, Quaternion>,
+                           IAdditiveIdentity<Quaternion, Quaternion>,
+                           IMultiplicativeIdentity<Quaternion, Quaternion>
 {
     #region Fields and Properties
 
@@ -10,9 +20,21 @@ public struct Quaternion : IEquatable<Quaternion>
     /// </summary>
     public static readonly Quaternion Zero = new();
     /// <summary>
+    /// A <see cref="Quaternion"/> equal to (0, 0, 0, 0).
+    /// </summary>
+    public static Quaternion AdditiveIdentity => Zero;
+    /// <summary>
     /// A <see cref="Quaternion"/> equal to (1, 0, 0, 0).
     /// </summary>
     public static readonly Quaternion Identity = new(1, 0, 0, 0);
+    /// <summary>
+    /// A <see cref="Quaternion"/> equal to (1, 1, 1, 1).
+    /// </summary>
+    public static readonly Quaternion One = new Quaternion(1, 1, 1, 1);
+    /// <summary>
+    /// A <see cref="Quaternion"/> equal to (1, 1, 1, 1).
+    /// </summary>
+    public static Quaternion MultiplicativeIdentity => One;
 
     public float w;
     public float x;
@@ -89,6 +111,9 @@ public struct Quaternion : IEquatable<Quaternion>
     public readonly bool Equals(Quaternion q) => this == q;
     public override readonly bool Equals(object obj) => this == (Quaternion)obj;
     public override readonly int GetHashCode() => (w, x, y, z).GetHashCode();
+
+    public static Quaternion operator +(Quaternion q) => q;
+    public static Quaternion operator -(Quaternion q) => new Quaternion(-q.w, -q.x, -q.y, -q.z);
 
     public static Quaternion operator +(Quaternion q1, Quaternion q2) => new(q1.w + q2.w, q1.x + q2.x, q1.y + q2.y, q1.z + q2.z);
 

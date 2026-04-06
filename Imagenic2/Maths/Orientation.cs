@@ -89,7 +89,7 @@ public struct Orientation : IApproximatelyEquatable<Orientation>
 
         DirectionForward = directionForward.Normalise();
         DirectionUp = directionUp.Normalise();
-        DirectionRight = Transform.CalculateDirectionRight(directionForward, directionUp).Normalise();
+        DirectionRight = MathsHelper.CalculateDirectionRight(directionForward, directionUp).Normalise();
     }
 
     public void SetDirectionUpRight(Vector3D directionUp, Vector3D directionRight)
@@ -100,7 +100,7 @@ public struct Orientation : IApproximatelyEquatable<Orientation>
         ThrowIfApproxZero(directionRight, epsilon);
         ThrowIfNotOrthogonal(directionUp, directionRight, epsilon);
 
-        DirectionForward = Transform.CalculateDirectionForward(directionUp, directionRight).Normalise();
+        DirectionForward = MathsHelper.CalculateDirectionForward(directionUp, directionRight).Normalise();
         DirectionUp = directionUp.Normalise();
         DirectionRight = directionRight.Normalise();
     }
@@ -114,7 +114,7 @@ public struct Orientation : IApproximatelyEquatable<Orientation>
         ThrowIfNotOrthogonal(directionRight, directionForward, epsilon);
 
         DirectionForward = directionForward.Normalise();
-        DirectionUp = Transform.CalculateDirectionUp(directionRight, directionForward).Normalise();
+        DirectionUp = MathsHelper.CalculateDirectionUp(directionRight, directionForward).Normalise();
         DirectionRight = directionRight.Normalise();
     }
 
@@ -168,7 +168,15 @@ public struct Orientation : IApproximatelyEquatable<Orientation>
 
     public void Rotate(Vector3D axis, float angle)
     {
-        Matrix4x4 rotationMatrix = Transform.Rotate(axis, angle);
+        Matrix4x4 rotationMatrix = MathsHelper.Rotate(axis, angle);
+        DirectionForward = (Vector3D)(rotationMatrix * new Vector4D(DirectionForward, 1));
+        DirectionUp = (Vector3D)(rotationMatrix * new Vector4D(DirectionUp, 1));
+        DirectionRight = (Vector3D)(rotationMatrix * new Vector4D(DirectionRight, 1));
+    }
+
+    public void Rotate(Quaternion q)
+    {
+        Matrix4x4 rotationMatrix = MathsHelper.QuaternionToMatrix(q);
         DirectionForward = (Vector3D)(rotationMatrix * new Vector4D(DirectionForward, 1));
         DirectionUp = (Vector3D)(rotationMatrix * new Vector4D(DirectionUp, 1));
         DirectionRight = (Vector3D)(rotationMatrix * new Vector4D(DirectionRight, 1));

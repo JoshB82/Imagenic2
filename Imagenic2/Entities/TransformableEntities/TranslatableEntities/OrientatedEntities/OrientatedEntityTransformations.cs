@@ -110,6 +110,22 @@ public static class OrientatedEntityTransformations
     /// </summary>
     /// <typeparam name="TOrientatedEntity"></typeparam>
     /// <param name="orientatedEntity"></param>
+    /// <param name="q"></param>
+    /// <returns></returns>
+    public static TOrientatedEntity Rotate<TOrientatedEntity>(this TOrientatedEntity orientatedEntity, Quaternion q) where TOrientatedEntity : OrientatedEntity
+    {
+        ThrowIfNull(orientatedEntity);
+        Orientation newOrientation = orientatedEntity.WorldOrientation;
+        newOrientation.Rotate(q);
+        orientatedEntity.WorldOrientation = newOrientation;
+        return orientatedEntity;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TOrientatedEntity"></typeparam>
+    /// <param name="orientatedEntity"></param>
     /// <param name="axis"></param>
     /// <param name="angle"></param>
     /// <returns></returns>

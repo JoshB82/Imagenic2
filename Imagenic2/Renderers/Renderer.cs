@@ -130,14 +130,18 @@ public abstract class Renderer<TImage> where TImage : Images.Image, IFactory<TIm
         int fps = animation.FPS;
         int numberOfFrames = duration * fps;
         float invFPS = 1f / fps;
+        int numberOfPlays = animation.Repeat + 1;
 
-        for (int i = 0; i <= numberOfFrames; i++)
+        for (int j = 0; j < numberOfPlays; j++)
         {
-            token.ThrowIfCancellationRequested();
-            float time = invFPS * i;
-            animation.Apply(time);
-            TImage? render = await RenderAsync(token);
-            yield return render;
+            for (int i = 0; i <= numberOfFrames; i++)
+            {
+                token.ThrowIfCancellationRequested();
+                float time = invFPS * i;
+                animation.Apply(time);
+                TImage? render = await RenderAsync(token);
+                yield return render;
+            }
         }
     }
 

@@ -30,7 +30,7 @@ public sealed class ShadowMap
     public Matrix4x4 ScreenToWindow { get; private set; }
     public void UpdateScreenToWindow()
     {
-        ScreenToWindow = Transform.Scale(0.5f * (width - 1), 0.5f * (height - 1), 1) * RenderingOptions.windowTranslate;
+        ScreenToWindow = MathsHelper.Scale(0.5f * (width - 1), 0.5f * (height - 1), 1) * RenderingOptions.windowTranslate;
     }
 
     internal Buffer2D<float> Data { get; set; }

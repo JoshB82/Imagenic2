@@ -1,6 +1,6 @@
 ﻿namespace Imagenic2.Core.Maths.Transformations;
 
-public static partial class Transform
+public static partial class MathsHelper
 {
     /// <summary>
     /// Creates a <see cref="Matrix4x4"/> for translation in the x-direction.

@@ -1,6 +1,6 @@
 ﻿namespace Imagenic2.Core.Maths.Transformations;
 
-public static partial class Transform
+public static partial class MathsHelper
 {
     /// <summary>
     /// Creates a <see cref="Matrix4x4"/> for rotation about the x-axis.
@@ -140,9 +140,25 @@ public static partial class Transform
         return QuaternionRotate(rotationAxis, angle);
     }
 
+    public static Quaternion QuaternionRotateBetweenOrientations(Orientation o1, Orientation o2, Vector3D? axis = null)
+    {
+        return QuaternionRotateBetweenVectors(o1.DirectionForward, o2.DirectionForward, axis)
+             * QuaternionRotateBetweenVectors(o1.DirectionUp, o2.DirectionUp, axis)
+             * QuaternionRotateBetweenVectors(o1.DirectionRight, o2.DirectionRight, axis);
+    }
+
     public static Vector3D RotateVectorUsingQuaternion(Vector3D v, Quaternion q)
     {
         Quaternion qRotate = q * new Quaternion(0, v) * new Quaternion(q.w, -q.x, -q.y, -q.z);
         return new Vector3D(qRotate.x, qRotate.y, qRotate.z);
+    }
+
+    public static Orientation RotateOrientationUsingQuaternion(Orientation o, Quaternion q)
+    {
+        Orientation newOrientation = o;
+        Vector3D directionForward = RotateVectorUsingQuaternion(o.DirectionForward, q);
+        Vector3D directionUp = RotateVectorUsingQuaternion(o.DirectionUp, q);
+        newOrientation.SetDirectionForwardUp(directionForward, directionUp);
+        return newOrientation;
     }
 }

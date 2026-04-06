@@ -13,6 +13,9 @@ public struct KeyFrame<TValue>
 
     public KeyFrame(float time, TValue value)
     {
+        ThrowIfNonpositive(time);
+        ThrowIfNull(value);
+
         this.time = time;
         this.value = value;
     }

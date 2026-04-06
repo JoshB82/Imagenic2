@@ -23,7 +23,7 @@ public abstract class TranslatableEntity : TransformableEntity
             InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
-    internal KeyFrameAnimation<Vector3D> TranslationKeyFrameAnimation { get; set; }
+    internal KeyFrameAnimation<Vector3D>? TranslationKeyFrameAnimation { get; set; }
 
     #endregion
 
@@ -42,12 +42,13 @@ public abstract class TranslatableEntity : TransformableEntity
     public override TranslatableEntity DeepCopy()
     {
         var translatableEntity = (TranslatableEntity)base.DeepCopy();
+        translatableEntity.TranslationKeyFrameAnimation = TranslationKeyFrameAnimation?.DeepCopy();
         return translatableEntity;
     }
 
     private void UpdateTranslationMatrix()
     {
-        translationMatrix = Transform.Translate(worldOrigin);
+        translationMatrix = MathsHelper.Translate(worldOrigin);
         UpdateModelToWorldMatrix();
     }
 

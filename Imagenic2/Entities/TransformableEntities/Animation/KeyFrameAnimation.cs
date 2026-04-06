@@ -1,12 +1,12 @@
 ﻿namespace Imagenic2.Core.Entities.Animation;
 
-public class KeyFrameAnimation<TValue> : IAnimation
+public sealed class KeyFrameAnimation<TValue> : IAnimation
 {
     #region Fields and Properties
 
     public List<KeyFrame<TValue>> KeyFrames { get; set; }
-    public Func<TValue, TValue, float, TValue> interpolator;
-    public Action<TValue> setProperty;
+    public Action<TValue> SetProperty { get; set; }
+    public Func<TValue, TValue, float, TValue> Interpolator { get; set; }
 
     #endregion
 
@@ -14,14 +14,22 @@ public class KeyFrameAnimation<TValue> : IAnimation
 
     public KeyFrameAnimation(List<KeyFrame<TValue>> keyFrames, Action<TValue> setProperty, Func<TValue, TValue, float, TValue> interpolator)
     {
+        ThrowIfNull(keyFrames, setProperty, interpolator);
+
         KeyFrames = keyFrames;
-        this.setProperty = setProperty;
-        this.interpolator = interpolator;
+        SetProperty = setProperty;
+        Interpolator = interpolator;
     }
 
     #endregion
 
     #region Methods
+
+    public KeyFrameAnimation<TValue> ShallowCopy() => (KeyFrameAnimation<TValue>)MemberwiseClone();
+    public KeyFrameAnimation<TValue> DeepCopy()
+    {
+        return new KeyFrameAnimation<TValue>(KeyFrames.ToList(), SetProperty, Interpolator);
+    }
 
     public TValue Evaluate(float time)
     {
@@ -33,7 +41,7 @@ public class KeyFrameAnimation<TValue> : IAnimation
             if (time >= a.time && time <= b.time)
             {
                 float t = (time - a.time) / (b.time - a.time);
-                return interpolator(a.value, b.value, t);
+                return Interpolator(a.value, b.value, t);
             }
         }
 
@@ -42,7 +50,7 @@ public class KeyFrameAnimation<TValue> : IAnimation
 
     public void Apply(float time)
     {
-        setProperty(Evaluate(time));
+        SetProperty(Evaluate(time));
     }
 
     #endregion

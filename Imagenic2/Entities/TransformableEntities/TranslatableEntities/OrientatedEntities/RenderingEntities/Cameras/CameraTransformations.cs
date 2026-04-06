@@ -62,10 +62,10 @@ public abstract partial class Camera
 
     public void RotateUp(float angle)
     {
-        Vector3D axis = Transform.RotateVectorUsingQuaternion(Orientation.ModelDirectionRight, rotationQuaternion);
-        Quaternion rotation = Transform.QuaternionRotate(axis, -angle);
-        Vector3D directionForward = Transform.RotateVectorUsingQuaternion(Orientation.ModelDirectionForward, rotation * rotationQuaternion);
-        Vector3D directionUp = Transform.RotateVectorUsingQuaternion(Orientation.ModelDirectionUp, rotation * rotationQuaternion);
+        Vector3D axis = MathsHelper.RotateVectorUsingQuaternion(Orientation.ModelDirectionRight, rotationQuaternion);
+        Quaternion rotation = MathsHelper.QuaternionRotate(axis, -angle);
+        Vector3D directionForward = MathsHelper.RotateVectorUsingQuaternion(Orientation.ModelDirectionForward, rotation * rotationQuaternion);
+        Vector3D directionUp = MathsHelper.RotateVectorUsingQuaternion(Orientation.ModelDirectionUp, rotation * rotationQuaternion);
         rotationQuaternion = rotation*rotationQuaternion;
         WorldOrientation = Orientation.CreateOrientationForwardUp(directionForward, directionUp);
 
@@ -73,10 +73,10 @@ public abstract partial class Camera
     }
     public void RotateDown(float angle)
     {
-        Vector3D axis = Transform.RotateVectorUsingQuaternion(Orientation.ModelDirectionRight, rotationQuaternion);
-        Quaternion rotation = Transform.QuaternionRotate(axis, angle);
-        Vector3D directionForward = Transform.RotateVectorUsingQuaternion(Orientation.ModelDirectionForward, rotation * rotationQuaternion);
-        Vector3D directionUp = Transform.RotateVectorUsingQuaternion(Orientation.ModelDirectionUp, rotation * rotationQuaternion);
+        Vector3D axis = MathsHelper.RotateVectorUsingQuaternion(Orientation.ModelDirectionRight, rotationQuaternion);
+        Quaternion rotation = MathsHelper.QuaternionRotate(axis, angle);
+        Vector3D directionForward = MathsHelper.RotateVectorUsingQuaternion(Orientation.ModelDirectionForward, rotation * rotationQuaternion);
+        Vector3D directionUp = MathsHelper.RotateVectorUsingQuaternion(Orientation.ModelDirectionUp, rotation * rotationQuaternion);
         rotationQuaternion = rotation * rotationQuaternion;
         WorldOrientation = Orientation.CreateOrientationForwardUp(directionForward, directionUp);
         
@@ -84,10 +84,10 @@ public abstract partial class Camera
     }
     public void RotateLeft(float angle)
     {
-        Vector3D axis = Transform.RotateVectorUsingQuaternion(Orientation.ModelDirectionUp, rotationQuaternion);
-        Quaternion rotation = Transform.QuaternionRotate(axis, -angle);
-        Vector3D directionForward = Transform.RotateVectorUsingQuaternion(Orientation.ModelDirectionForward, rotation * rotationQuaternion);
-        Vector3D directionUp = Transform.RotateVectorUsingQuaternion(Orientation.ModelDirectionUp, rotation * rotationQuaternion);
+        Vector3D axis = MathsHelper.RotateVectorUsingQuaternion(Orientation.ModelDirectionUp, rotationQuaternion);
+        Quaternion rotation = MathsHelper.QuaternionRotate(axis, -angle);
+        Vector3D directionForward = MathsHelper.RotateVectorUsingQuaternion(Orientation.ModelDirectionForward, rotation * rotationQuaternion);
+        Vector3D directionUp = MathsHelper.RotateVectorUsingQuaternion(Orientation.ModelDirectionUp, rotation * rotationQuaternion);
         rotationQuaternion = rotation * rotationQuaternion;
         WorldOrientation = Orientation.CreateOrientationForwardUp(directionForward, directionUp);
         
@@ -95,10 +95,10 @@ public abstract partial class Camera
     }
     public void RotateRight(float angle)
     {
-        Vector3D axis = Transform.RotateVectorUsingQuaternion(Orientation.ModelDirectionUp, rotationQuaternion);
-        Quaternion rotation = Transform.QuaternionRotate(axis, angle);
-        Vector3D directionForward = Transform.RotateVectorUsingQuaternion(Orientation.ModelDirectionForward, rotation * rotationQuaternion);
-        Vector3D directionUp = Transform.RotateVectorUsingQuaternion(Orientation.ModelDirectionUp, rotation * rotationQuaternion);
+        Vector3D axis = MathsHelper.RotateVectorUsingQuaternion(Orientation.ModelDirectionUp, rotationQuaternion);
+        Quaternion rotation = MathsHelper.QuaternionRotate(axis, angle);
+        Vector3D directionForward = MathsHelper.RotateVectorUsingQuaternion(Orientation.ModelDirectionForward, rotation * rotationQuaternion);
+        Vector3D directionUp = MathsHelper.RotateVectorUsingQuaternion(Orientation.ModelDirectionUp, rotation * rotationQuaternion);
         rotationQuaternion = rotation * rotationQuaternion;
         WorldOrientation = Orientation.CreateOrientationForwardUp(directionForward, directionUp);
         
@@ -106,10 +106,10 @@ public abstract partial class Camera
     }
     public void RollLeft(float angle)
     {
-        Vector3D axis = Transform.RotateVectorUsingQuaternion(Orientation.ModelDirectionForward, rotationQuaternion);
-        Quaternion rotation = Transform.QuaternionRotate(axis, angle);
-        Vector3D directionForward = Transform.RotateVectorUsingQuaternion(Orientation.ModelDirectionForward, rotation * rotationQuaternion);
-        Vector3D directionUp = Transform.RotateVectorUsingQuaternion(Orientation.ModelDirectionUp, rotation * rotationQuaternion);
+        Vector3D axis = MathsHelper.RotateVectorUsingQuaternion(Orientation.ModelDirectionForward, rotationQuaternion);
+        Quaternion rotation = MathsHelper.QuaternionRotate(axis, angle);
+        Vector3D directionForward = MathsHelper.RotateVectorUsingQuaternion(Orientation.ModelDirectionForward, rotation * rotationQuaternion);
+        Vector3D directionUp = MathsHelper.RotateVectorUsingQuaternion(Orientation.ModelDirectionUp, rotation * rotationQuaternion);
         rotationQuaternion = rotation * rotationQuaternion;
         WorldOrientation = Orientation.CreateOrientationForwardUp(directionForward, directionUp);
         
@@ -117,10 +117,10 @@ public abstract partial class Camera
     }
     public void RollRight(float angle)
     {
-        Vector3D axis = Transform.RotateVectorUsingQuaternion(Orientation.ModelDirectionForward, rotationQuaternion);
-        Quaternion rotation = Transform.QuaternionRotate(axis, -angle);
-        Vector3D directionForward = Transform.RotateVectorUsingQuaternion(Orientation.ModelDirectionForward, rotation * rotationQuaternion);
-        Vector3D directionUp = Transform.RotateVectorUsingQuaternion(Orientation.ModelDirectionUp, rotation * rotationQuaternion);
+        Vector3D axis = MathsHelper.RotateVectorUsingQuaternion(Orientation.ModelDirectionForward, rotationQuaternion);
+        Quaternion rotation = MathsHelper.QuaternionRotate(axis, -angle);
+        Vector3D directionForward = MathsHelper.RotateVectorUsingQuaternion(Orientation.ModelDirectionForward, rotation * rotationQuaternion);
+        Vector3D directionUp = MathsHelper.RotateVectorUsingQuaternion(Orientation.ModelDirectionUp, rotation * rotationQuaternion);
         rotationQuaternion = rotation * rotationQuaternion;
         WorldOrientation = Orientation.CreateOrientationForwardUp(directionForward, directionUp);
 

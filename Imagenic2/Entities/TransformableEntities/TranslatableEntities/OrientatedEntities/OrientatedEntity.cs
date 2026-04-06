@@ -1,4 +1,5 @@
-﻿using Imagenic2.Core.Enums;
+﻿using Imagenic2.Core.Entities.Animation;
+using Imagenic2.Core.Enums;
 using Imagenic2.Core.Maths.Transformations;
 
 namespace Imagenic2.Core.Entities;
@@ -24,6 +25,7 @@ public abstract class OrientatedEntity : TranslatableEntity
             InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
+    internal KeyFrameAnimation<Quaternion>? OrientationKeyFrameAnimation { get; set; }
 
     #endregion
 
@@ -39,15 +41,16 @@ public abstract class OrientatedEntity : TranslatableEntity
     #region Methods
 
     public override OrientatedEntity ShallowCopy() => (OrientatedEntity)MemberwiseClone();
-    public override TranslatableEntity DeepCopy()
+    public override OrientatedEntity DeepCopy()
     {
-        var orientatedEntity = base.DeepCopy();
+        var orientatedEntity = (OrientatedEntity)base.DeepCopy();
+        orientatedEntity.OrientationKeyFrameAnimation = OrientationKeyFrameAnimation?.DeepCopy();
         return orientatedEntity;
     }
 
     private void UpdateRotationMatrix()
     {
-        rotationMatrix = Transform.QuaternionToMatrix(rotationQuaternion);
+        rotationMatrix = MathsHelper.QuaternionToMatrix(rotationQuaternion);
 
         UpdateModelToWorldMatrix();
     }

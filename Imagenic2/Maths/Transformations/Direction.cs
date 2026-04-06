@@ -1,6 +1,6 @@
 ﻿namespace Imagenic2.Core.Maths.Transformations;
 
-public static partial class Transform
+public static partial class MathsHelper
 {
     /// <summary>
     /// Calculates the forward direction given the up direction and the right direction.
