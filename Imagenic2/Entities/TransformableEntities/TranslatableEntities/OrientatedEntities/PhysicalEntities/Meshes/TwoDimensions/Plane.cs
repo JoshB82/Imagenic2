@@ -2,6 +2,9 @@
 
 namespace Imagenic2.Core.Entities;
 
+/// <summary>
+/// Encapsulates the mesh of a plane.
+/// </summary>
 public sealed class Plane : Mesh
 {
     #region Fields and Properties
@@ -16,6 +19,7 @@ public sealed class Plane : Mesh
         get => length;
         set
         {
+            ThrowIfNotFinite(value);
             if (value.ApproxEquals(length)) return;
             length = value;
             Scaling = new Vector3D(length, 1, width);
@@ -30,6 +34,7 @@ public sealed class Plane : Mesh
         get => width;
         set
         {
+            ThrowIfNotFinite(value);
             if (value.ApproxEquals(width)) return;
             width = value;
             Scaling = new Vector3D(length, 1, width);

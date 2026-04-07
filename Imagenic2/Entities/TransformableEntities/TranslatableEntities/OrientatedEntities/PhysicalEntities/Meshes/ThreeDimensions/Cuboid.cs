@@ -2,6 +2,9 @@
 
 namespace Imagenic2.Core.Entities;
 
+/// <summary>
+/// Encapsulates the mesh of a cuboid.
+/// </summary>
 public class Cuboid : Mesh
 {
     #region Fields and Properties
@@ -16,6 +19,7 @@ public class Cuboid : Mesh
         get => length;
         set
         {
+            ThrowIfNotFinite(value);
             if (value.ApproxEquals(length)) return;
             length = value;
             Scaling = new Vector3D(length, width, height);
@@ -30,6 +34,7 @@ public class Cuboid : Mesh
         get => width;
         set
         {
+            ThrowIfNotFinite(value);
             if (value.ApproxEquals(width)) return;
             width = value;
             Scaling = new Vector3D(length, width, height);
@@ -44,6 +49,7 @@ public class Cuboid : Mesh
         get => height;
         set
         {
+            ThrowIfNotFinite(value);
             if (value.ApproxEquals(height)) return;
             height = value;
             Scaling = new Vector3D(length, width, height);

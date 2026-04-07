@@ -2,6 +2,9 @@
 
 namespace Imagenic2.Core.Entities;
 
+/// <summary>
+/// Encapsulates the mesh of a square.
+/// </summary>
 public sealed class Square : Mesh
 {
     #region Fields and Properties
@@ -15,6 +18,7 @@ public sealed class Square : Mesh
         get => sideLength;
         set
         {
+            ThrowIfNotFinite(value);
             if (value.ApproxEquals(sideLength)) return;
             sideLength = value;
             Scaling = new Vector3D(sideLength, sideLength, 1);

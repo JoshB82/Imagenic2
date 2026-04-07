@@ -293,12 +293,12 @@ public sealed class TransformationContextNode : TransformationContextBase
     #endregion
 }
 
-/*
 public class TransformationContextIAsyncEnumerable<TTransformableEntity> : TransformationContextBase where TTransformableEntity : TransformableEntity
 {
     #region Fields and Properties
 
     public IAsyncEnumerable<TTransformableEntity> TransformableEntities { get; set; }
+    internal List<InstantaneousAnimation<TTransformableEntity>> TransformationAnimations { get; set; }
 
     #endregion
 
@@ -315,6 +315,11 @@ public class TransformationContextIAsyncEnumerable<TTransformableEntity> : Trans
 
     public override Animation End()
     {
+        throw new Exception();
+    }
+
+    public async Task<Animation> EndAsync()
+    {
         await foreach (TTransformableEntity transformableEntity in TransformableEntities)
         {
             AssembleTransformation(transformableEntity);
@@ -324,4 +329,4 @@ public class TransformationContextIAsyncEnumerable<TTransformableEntity> : Trans
     }
 
     #endregion
-}*/
+}

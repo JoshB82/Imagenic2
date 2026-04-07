@@ -2,6 +2,9 @@
 
 namespace Imagenic2.Core.Entities;
 
+/// <summary>
+/// Encapsulates the mesh of a circle.
+/// </summary>
 public sealed class Circle : Mesh
 {
     #region Fields and Properties
@@ -15,6 +18,7 @@ public sealed class Circle : Mesh
         get => radius;
         set
         {
+            ThrowIfNotFinite(value);
             if (value.ApproxEquals(radius)) return;
             radius = value;
             Scaling = new Vector3D(radius, 1, radius);
@@ -28,10 +32,11 @@ public sealed class Circle : Mesh
         get => resolution;
         set
         {
+            ThrowIfNotFinite(value);
+            ThrowIfNonpositive(value);
             if (value == resolution) return;
             resolution = value;
             Structure = MeshStructure.GenerateCircleStructure(resolution);
-            InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
 
@@ -42,7 +47,7 @@ public sealed class Circle : Mesh
     public Circle(Vector3D worldOrigin, Orientation worldOrientation, float radius, int resolution) : base(worldOrigin, worldOrientation, MeshStructure.GenerateCircleStructure(resolution))
     {
         Radius = radius;
-        Resolution = resolution;
+        this.resolution = resolution;
     }
 
     #endregion
@@ -54,6 +59,12 @@ public sealed class Circle : Mesh
     {
         var circle = (Circle)base.DeepCopy();
         return circle;
+    }
+
+    public static implicit operator Ellipse(Circle circle)
+    {
+        Ellipse ellipse = new Ellipse(circle.WorldOrigin, circle.WorldOrientation, circle.Radius, circle.Radius, circle.Resolution);
+        return ellipse;
     }
 
     #endregion

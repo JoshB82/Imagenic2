@@ -2,6 +2,9 @@
 
 namespace Imagenic2.Core.Entities;
 
+/// <summary>
+/// Encapsulates the mesh of an ellipse.
+/// </summary>
 public sealed class Ellipse : Mesh
 {
     #region Fields and Properties
@@ -13,9 +16,10 @@ public sealed class Ellipse : Mesh
         get => radiusX;
         set
         {
+            ThrowIfNotFinite(value);
             if (value.ApproxEquals(radiusX)) return;
             radiusX = value;
-            Scaling = new Vector3D(radiusX, radiusZ, 1);
+            Scaling = new Vector3D(radiusX, 1, radiusZ);
             InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
@@ -24,22 +28,25 @@ public sealed class Ellipse : Mesh
         get => radiusZ;
         set
         {
+            ThrowIfNotFinite(value);
             if (value.ApproxEquals(radiusZ)) return;
             radiusZ = value;
-            Scaling = new Vector3D(radiusX, radiusZ, 1);
+            Scaling = new Vector3D(radiusX, 1, radiusZ);
             InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
+
     private int resolution;
     public int Resolution
     {
         get => resolution;
         set
         {
+            ThrowIfNotFinite(value);
+            ThrowIfNonpositive(value);
             if (value == resolution) return;
             resolution = value;
             Structure = MeshStructure.GenerateCircleStructure(resolution);
-            InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
     }
     
@@ -47,7 +54,7 @@ public sealed class Ellipse : Mesh
     
     #region Constructors
     
-    public Ellipse(Vector3D worldOrigin, Orientation worldOrientation, float radiusX, float radiusY, int resolution) : base(worldOrigin, worldOrientation, MeshStructure.GenerateCircleStructure(resolution))
+    public Ellipse(Vector3D worldOrigin, Orientation worldOrientation, float radiusX, float radiusZ, int resolution) : base(worldOrigin, worldOrientation, MeshStructure.GenerateCircleStructure(resolution))
     {
         RadiusX = radiusX;
         RadiusZ = radiusZ;

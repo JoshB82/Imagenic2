@@ -2,6 +2,9 @@
 
 namespace Imagenic2.Core.Entities;
 
+/// <summary>
+/// Encapsulates the mesh of a line.
+/// </summary>
 public sealed class Line : Mesh
 {
     #region Fields and Properties

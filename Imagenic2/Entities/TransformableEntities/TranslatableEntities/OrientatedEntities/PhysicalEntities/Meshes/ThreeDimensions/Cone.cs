@@ -2,6 +2,9 @@
 
 namespace Imagenic2.Core.Entities;
 
+/// <summary>
+/// Encapsulates the mesh of a cone.
+/// </summary>
 public sealed class Cone : Mesh
 {
     #region Fields and Properties
@@ -13,6 +16,7 @@ public sealed class Cone : Mesh
         get => radius;
         set
         {
+            ThrowIfNotFinite(value);
             if (value.ApproxEquals(radius)) return;
             radius = value;
             Scaling = new Vector3D(radius, height, radius);
@@ -24,6 +28,7 @@ public sealed class Cone : Mesh
         get => height;
         set
         {
+            ThrowIfNotFinite(value);
             if (value.ApproxEquals(height)) return;
             height = value;
             Scaling = new Vector3D(radius, height, radius);
@@ -52,7 +57,7 @@ public sealed class Cone : Mesh
     {
         Radius = radius;
         Height = height;
-        Resolution = resolution;
+        this.resolution = resolution;
     }
     
     #endregion

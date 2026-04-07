@@ -2,7 +2,10 @@
 
 namespace Imagenic2.Core.Entities;
 
-public class Cube : Mesh
+/// <summary>
+/// Encapsulates the mesh of a cube.
+/// </summary>
+public sealed class Cube : Mesh
 {
     #region Fields and Properties
     
@@ -13,6 +16,7 @@ public class Cube : Mesh
         get => sideLength;
         set
         {
+            ThrowIfNotFinite(value);
             if (value.ApproxEquals(sideLength)) return;
             sideLength = value;
             Scaling = new Vector3D(sideLength, sideLength, sideLength);

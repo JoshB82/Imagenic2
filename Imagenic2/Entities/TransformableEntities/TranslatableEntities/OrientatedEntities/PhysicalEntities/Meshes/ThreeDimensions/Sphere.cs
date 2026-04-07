@@ -2,6 +2,9 @@
 
 namespace Imagenic2.Core.Entities;
 
+/// <summary>
+/// Encapsulates the mesh of a sphere.
+/// </summary>
 public sealed class Sphere : Mesh
 {
     #region Fields and Properties
@@ -12,6 +15,7 @@ public sealed class Sphere : Mesh
         get => radius;
         set
         {
+            ThrowIfNotFinite(value);
             if (value.ApproxEquals(radius)) return;
             radius = value;
             InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
