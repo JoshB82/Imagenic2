@@ -1,5 +1,4 @@
-﻿using Imagenic2.Core.Entities.Animation;
-using Imagenic2.Core.Enums;
+﻿using Imagenic2.Core.Enums;
 using Imagenic2.Core.Maths.Transformations;
 
 namespace Imagenic2.Core.Entities;
@@ -62,8 +61,6 @@ public abstract class PhysicalEntity : OrientatedEntity
         }
     }
 
-    internal KeyFrameAnimation<Vector3D>? ScalingKeyFrameAnimation { get; set; }
-
     #endregion
 
     #region Constructors
@@ -81,7 +78,6 @@ public abstract class PhysicalEntity : OrientatedEntity
     public override PhysicalEntity DeepCopy()
     {
         var physicalEntity = (PhysicalEntity)base.DeepCopy();
-        physicalEntity.ScalingKeyFrameAnimation = ScalingKeyFrameAnimation?.DeepCopy();
         return physicalEntity;
     }
 

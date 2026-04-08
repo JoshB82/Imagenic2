@@ -24,22 +24,6 @@ public abstract class TransformationContextBase
 
     #region Methods
 
-    protected void AssembleTransformation(TransformableEntity transformableEntity)
-    {
-        if (transformableEntity is OrientatedEntity orientatedEntity && orientatedEntity.OrientationKeyFrameAnimation is not null)
-        {
-            Transformation.KeyFrameAnimations.Add(orientatedEntity.OrientationKeyFrameAnimation);
-        }
-        if (transformableEntity is PhysicalEntity physicalEntity && physicalEntity.ScalingKeyFrameAnimation is not null)
-        {
-            Transformation.KeyFrameAnimations.Add(physicalEntity.ScalingKeyFrameAnimation);
-        }
-        if (transformableEntity is TranslatableEntity translatableEntity && translatableEntity.TranslationKeyFrameAnimation is not null)
-        {
-            Transformation.KeyFrameAnimations.Add(translatableEntity.TranslationKeyFrameAnimation);
-        }
-    }
-
     public abstract Animation End();
 
     #endregion
@@ -50,7 +34,11 @@ public sealed class TransformationContext<TTransformableEntity> : Transformation
     #region Fields and Properties
 
     public TTransformableEntity TransformableEntity { get; set; }
+    
+    internal KeyFrameAnimation<Quaternion>? OrientationKeyFrameAnimation { get; set; }
+    internal KeyFrameAnimation<Vector3D>? ScalingKeyFrameAnimation { get; set; }
     internal InstantaneousAnimation<TTransformableEntity>? TransformationAnimation { get; set; }
+    internal KeyFrameAnimation<Vector3D>? TranslationKeyFrameAnimation { get; set; }
 
     #endregion
 
@@ -65,10 +53,29 @@ public sealed class TransformationContext<TTransformableEntity> : Transformation
 
     #region Methods
 
+    internal void AssembleTransformation()
+    {
+        if (OrientationKeyFrameAnimation is not null)
+        {
+            Transformation.KeyFrameAnimations.Add(OrientationKeyFrameAnimation);
+        }
+        if (ScalingKeyFrameAnimation is not null)
+        {
+            Transformation.KeyFrameAnimations.Add(ScalingKeyFrameAnimation);
+        }
+        if (TransformationAnimation is not null)
+        {
+            Transformation.KeyFrameAnimations.Add(TransformationAnimation);
+        }
+        if (TranslationKeyFrameAnimation is not null)
+        {
+            Transformation.KeyFrameAnimations.Add(TranslationKeyFrameAnimation);
+        }
+    }
+
     public override Animation End()
     {
-        AssembleTransformation(TransformableEntity);
-        if (TransformationAnimation is not null) Transformation.KeyFrameAnimations.Add(TransformationAnimation);
+        AssembleTransformation();
 
         return new Animation(Transformation);
     }
@@ -104,8 +111,7 @@ public sealed class TransformationContextIEnumerable<TTransformableEntity> : Tra
     {
         foreach (TransformationContext<TTransformableEntity> transformationContext in TransformationContexts)
         {
-            AssembleTransformation(transformationContext.TransformableEntity);
-            if (transformationContext.TransformationAnimation is not null) Transformation.KeyFrameAnimations.Add(transformationContext.TransformationAnimation);
+            transformationContext.AssembleTransformation();
         }        
 
         return new Animation(Transformation);
@@ -119,7 +125,7 @@ public sealed class TransformationContextNode : TransformationContextBase
     #region Fields and Properties
 
     public Node TransformableEntityNode { get; set; }
-    internal List<InstantaneousAnimation<TransformableEntity>>? TransformationAnimations { get; set; }
+    internal List<TransformationContext<TransformableEntity>> TransformationContexts { get; set; }
 
     #endregion
 
@@ -136,18 +142,9 @@ public sealed class TransformationContextNode : TransformationContextBase
 
     public override Animation End()
     {
-        var descendants = TransformableEntityNode.GetDescendantsAndThisOfType<TransformableEntity>();
-        foreach (Node node in descendants)
+        foreach (TransformationContext<TransformableEntity> transformationContext in TransformationContexts)
         {
-            AssembleTransformation((TransformableEntity)(node.Content));
-        }
-
-        if (TransformationAnimations is not null)
-        {
-            foreach (InstantaneousAnimation<TransformableEntity> ia in TransformationAnimations)
-            {
-                Transformation.KeyFrameAnimations.Add(ia);
-            }
+            transformationContext.AssembleTransformation();
         }
 
         return new Animation(Transformation);
@@ -162,17 +159,27 @@ public sealed class TransformationContextNode : TransformationContextBase
         {
             OrientatedEntity orientatedEntity = (OrientatedEntity)node.Content;
 
-            if (orientatedEntity.OrientationKeyFrameAnimation is null)
+            TransformationContext<TransformableEntity>? transformationContext = TransformationContexts.FirstOrDefault(c => c.TransformableEntity == orientatedEntity);
+            if (transformationContext is null)
             {
-                orientatedEntity.OrientationKeyFrameAnimation = new KeyFrameAnimation<Quaternion>(new List<KeyFrame<Quaternion>>(), v => orientatedEntity.WorldOrientation.Rotate(v), MathsHelper.Lerp);
-                Quaternion startingQuaternion = MathsHelper.QuaternionRotateBetweenOrientations(Orientation.ModelOrientation, orientatedEntity.WorldOrientation);
-                KeyFrame<Quaternion> startingKeyFrame = new KeyFrame<Quaternion>(StartTime, startingQuaternion);
-                orientatedEntity.OrientationKeyFrameAnimation.KeyFrames.Add(startingKeyFrame);
+                transformationContext = new TransformationContext<TransformableEntity>(orientatedEntity, StartTime);
+                TransformationContexts.Add(transformationContext);
             }
 
+            KeyFrameAnimation<Quaternion>? orientationKeyFrameAnimation = transformationContext.OrientationKeyFrameAnimation;
+
+            if (orientationKeyFrameAnimation is null)
+            {
+                orientationKeyFrameAnimation = new KeyFrameAnimation<Quaternion>(new List<KeyFrame<Quaternion>>(), v => orientatedEntity.WorldOrientation.Rotate(v), MathsHelper.Lerp);
+                Quaternion startingQuaternion = MathsHelper.QuaternionRotateBetweenOrientations(Orientation.ModelOrientation, orientatedEntity.WorldOrientation);
+                KeyFrame<Quaternion> startingKeyFrame = new KeyFrame<Quaternion>(StartTime, startingQuaternion);
+                orientationKeyFrameAnimation.KeyFrames.Add(startingKeyFrame);
+            }
+
+            transformationContext.OrientationKeyFrameAnimation = orientationKeyFrameAnimation;
             Quaternion newQuaternion = MathsHelper.QuaternionRotateBetweenOrientations(Orientation.ModelOrientation, orientation);
             KeyFrame<Quaternion> newKeyFrame = new KeyFrame<Quaternion>(time, newQuaternion);
-            orientatedEntity.OrientationKeyFrameAnimation.KeyFrames.Add(newKeyFrame);
+            orientationKeyFrameAnimation.KeyFrames.Add(newKeyFrame);
         }
 
         return this;
@@ -189,18 +196,28 @@ public sealed class TransformationContextNode : TransformationContextBase
         {
             OrientatedEntity orientatedEntity = (OrientatedEntity)node.Content;
 
-            if (orientatedEntity.OrientationKeyFrameAnimation is null)
+            TransformationContext<TransformableEntity>? transformationContext = TransformationContexts.FirstOrDefault(c => c.TransformableEntity == orientatedEntity);
+            if (transformationContext is null)
             {
-                orientatedEntity.OrientationKeyFrameAnimation = new KeyFrameAnimation<Quaternion>(new List<KeyFrame<Quaternion>>(), v => orientatedEntity.WorldOrientation.Rotate(v), MathsHelper.Lerp);
-                Quaternion startingQuaternion = MathsHelper.QuaternionRotateBetweenOrientations(Orientation.ModelOrientation, orientatedEntity.WorldOrientation);
-                KeyFrame<Quaternion> startingKeyFrame = new KeyFrame<Quaternion>(StartTime, startingQuaternion);
-                orientatedEntity.OrientationKeyFrameAnimation.KeyFrames.Add(startingKeyFrame);
+                transformationContext = new TransformationContext<TransformableEntity>(orientatedEntity, StartTime);
+                TransformationContexts.Add(transformationContext);
             }
 
-            Quaternion latestQuaternion = orientatedEntity.OrientationKeyFrameAnimation.KeyFrames[^1].value;
+            KeyFrameAnimation<Quaternion>? orientationKeyFrameAnimation = transformationContext.OrientationKeyFrameAnimation;
+
+            if (orientationKeyFrameAnimation is null)
+            {
+                orientationKeyFrameAnimation = new KeyFrameAnimation<Quaternion>(new List<KeyFrame<Quaternion>>(), v => orientatedEntity.WorldOrientation.Rotate(v), MathsHelper.Lerp);
+                Quaternion startingQuaternion = MathsHelper.QuaternionRotateBetweenOrientations(Orientation.ModelOrientation, orientatedEntity.WorldOrientation);
+                KeyFrame<Quaternion> startingKeyFrame = new KeyFrame<Quaternion>(StartTime, startingQuaternion);
+                orientationKeyFrameAnimation.KeyFrames.Add(startingKeyFrame);
+            }
+
+            transformationContext.OrientationKeyFrameAnimation = orientationKeyFrameAnimation;
+            Quaternion latestQuaternion = orientationKeyFrameAnimation.KeyFrames[^1].value;
             Quaternion newQuaternion = q * latestQuaternion;
             KeyFrame<Quaternion> newKeyFrame = new KeyFrame<Quaternion>(time, newQuaternion);
-            orientatedEntity.OrientationKeyFrameAnimation.KeyFrames.Add(newKeyFrame);
+            orientationKeyFrameAnimation.KeyFrames.Add(newKeyFrame);
         }
 
         return this;
@@ -246,16 +263,26 @@ public sealed class TransformationContextNode : TransformationContextBase
         {
             PhysicalEntity physicalEntity = (PhysicalEntity)node.Content;
 
-            if (physicalEntity.ScalingKeyFrameAnimation is null)
+            TransformationContext<TransformableEntity>? transformationContext = TransformationContexts.FirstOrDefault(c => c.TransformableEntity == physicalEntity);
+            if (transformationContext is null)
             {
-                physicalEntity.ScalingKeyFrameAnimation = new KeyFrameAnimation<Vector3D>(new List<KeyFrame<Vector3D>>(), v => physicalEntity.Scaling = v, MathsHelper.Lerp);
-                KeyFrame<Vector3D> startingKeyFrame = new KeyFrame<Vector3D>(StartTime, physicalEntity.Scaling);
-                physicalEntity.ScalingKeyFrameAnimation.KeyFrames.Add(startingKeyFrame);
+                transformationContext = new TransformationContext<TransformableEntity>(physicalEntity, StartTime);
+                TransformationContexts.Add(transformationContext);
             }
 
-            Vector3D latestScaling = physicalEntity.ScalingKeyFrameAnimation.KeyFrames[^1].value;
+            KeyFrameAnimation<Vector3D>? scalingKeyFrameAnimation = transformationContext.ScalingKeyFrameAnimation;
+
+            if (scalingKeyFrameAnimation is null)
+            {
+                scalingKeyFrameAnimation = new KeyFrameAnimation<Vector3D>(new List<KeyFrame<Vector3D>>(), v => physicalEntity.Scaling = v, MathsHelper.Lerp);
+                KeyFrame<Vector3D> startingKeyFrame = new KeyFrame<Vector3D>(StartTime, physicalEntity.Scaling);
+                scalingKeyFrameAnimation.KeyFrames.Add(startingKeyFrame);
+            }
+
+            transformationContext.ScalingKeyFrameAnimation = scalingKeyFrameAnimation;
+            Vector3D latestScaling = scalingKeyFrameAnimation.KeyFrames[^1].value;
             KeyFrame<Vector3D> newKeyFrame = new KeyFrame<Vector3D>(time, new Vector3D(latestScaling.x * scaleFactor.x, latestScaling.y * scaleFactor.y, latestScaling.z * scaleFactor.z));
-            physicalEntity.ScalingKeyFrameAnimation.KeyFrames.Add(newKeyFrame);
+            scalingKeyFrameAnimation.KeyFrames.Add(newKeyFrame);
         }
 
         return this;
@@ -267,16 +294,25 @@ public sealed class TransformationContextNode : TransformationContextBase
 
     public TransformationContextNode Transform(Action<TransformableEntity> transformation, float time)
     {
-        TransformationAnimations ??= new List<InstantaneousAnimation<TransformableEntity>>();
         var descendants = TransformableEntityNode.GetDescendantsAndThisOfType<TransformableEntity>();
         foreach (Node node in descendants)
         {
             TransformableEntity transformableEntity = (TransformableEntity)node.Content;
 
-            InstantaneousAnimation<TransformableEntity> ia = new InstantaneousAnimation<TransformableEntity>(transformableEntity, new List<KeyFrame<Action<TransformableEntity>>>());
+            TransformationContext<TransformableEntity>? transformationContext = TransformationContexts.FirstOrDefault(c => c.TransformableEntity == transformableEntity);
+            if (transformationContext is null)
+            {
+                transformationContext = new TransformationContext<TransformableEntity>(transformableEntity, StartTime);
+                TransformationContexts.Add(transformationContext);
+            }
+
+            InstantaneousAnimation<TransformableEntity>? transformationAnimation = transformationContext.TransformationAnimation;
+
+            transformationAnimation ??= new InstantaneousAnimation<TransformableEntity>(transformableEntity, new List<KeyFrame<Action<TransformableEntity>>>());
+
+            transformationContext.TransformationAnimation = transformationAnimation;
             KeyFrame<Action<TransformableEntity>> newKeyFrame = new KeyFrame<Action<TransformableEntity>>(time, transformation);
-            ia.KeyFrames.Add(newKeyFrame);
-            TransformationAnimations.Add(ia);
+            transformationAnimation.KeyFrames.Add(newKeyFrame);
         }
 
         return this;
@@ -317,16 +353,26 @@ public sealed class TransformationContextNode : TransformationContextBase
         {
             TranslatableEntity translatableEntity = (TranslatableEntity)node.Content;
 
-            if (translatableEntity.TranslationKeyFrameAnimation is null)
+            TransformationContext<TransformableEntity>? transformationContext = TransformationContexts.FirstOrDefault(c => c.TransformableEntity == translatableEntity);
+            if (transformationContext is null)
             {
-                translatableEntity.TranslationKeyFrameAnimation = new KeyFrameAnimation<Vector3D>(new List<KeyFrame<Vector3D>>(), v => translatableEntity.WorldOrigin = v, MathsHelper.Lerp);
-                KeyFrame<Vector3D> startingKeyFrame = new KeyFrame<Vector3D>(StartTime, translatableEntity.WorldOrigin);
-                translatableEntity.TranslationKeyFrameAnimation.KeyFrames.Add(startingKeyFrame);
+                transformationContext = new TransformationContext<TransformableEntity>(translatableEntity, StartTime);
+                TransformationContexts.Add(transformationContext);
             }
 
-            Vector3D latestWorldOrigin = translatableEntity.TranslationKeyFrameAnimation.KeyFrames[^1].value;
+            KeyFrameAnimation<Vector3D>? translationKeyFrameAnimation = transformationContext.TranslationKeyFrameAnimation;
+
+            if (translationKeyFrameAnimation is null)
+            {
+                translationKeyFrameAnimation = new KeyFrameAnimation<Vector3D>(new List<KeyFrame<Vector3D>>(), v => translatableEntity.WorldOrigin = v, MathsHelper.Lerp);
+                KeyFrame<Vector3D> startingKeyFrame = new KeyFrame<Vector3D>(StartTime, translatableEntity.WorldOrigin);
+                translationKeyFrameAnimation.KeyFrames.Add(startingKeyFrame);
+            }
+
+            transformationContext.TranslationKeyFrameAnimation = translationKeyFrameAnimation;
+            Vector3D latestWorldOrigin = translationKeyFrameAnimation.KeyFrames[^1].value;
             KeyFrame<Vector3D> newKeyFrame = new KeyFrame<Vector3D>(time, latestWorldOrigin + displacement);
-            translatableEntity.TranslationKeyFrameAnimation.KeyFrames.Add(newKeyFrame);
+            translationKeyFrameAnimation.KeyFrames.Add(newKeyFrame);
         }
 
         return this;
@@ -337,12 +383,12 @@ public sealed class TransformationContextNode : TransformationContextBase
     #endregion
 }
 
-public class TransformationContextIAsyncEnumerable<TTransformableEntity> : TransformationContextBase where TTransformableEntity : TransformableEntity
+public sealed class TransformationContextIAsyncEnumerable<TTransformableEntity> : TransformationContextBase where TTransformableEntity : TransformableEntity
 {
     #region Fields and Properties
 
     public IAsyncEnumerable<TTransformableEntity> TransformableEntities { get; set; }
-    internal List<InstantaneousAnimation<TTransformableEntity>>? TransformationAnimations { get; set; }
+    internal List<TransformationContext<TTransformableEntity>> TransformationContexts { get; set; }
 
     #endregion
 
@@ -350,7 +396,12 @@ public class TransformationContextIAsyncEnumerable<TTransformableEntity> : Trans
 
     public TransformationContextIAsyncEnumerable(IAsyncEnumerable<TTransformableEntity> transformableEntities, float startTime) : base(startTime)
     {
-        TransformableEntities = transformableEntities;
+        TransformationContexts = new List<TransformationContext<TTransformableEntity>>();
+        await foreach (TTransformableEntity transformableEntity in transformableEntities)
+        {
+            TransformationContext<TTransformableEntity> tCtx = new TransformationContext<TTransformableEntity>(transformableEntity, startTime);
+            TransformationContexts.Add(tCtx);
+        }
     }
 
     #endregion
@@ -359,22 +410,9 @@ public class TransformationContextIAsyncEnumerable<TTransformableEntity> : Trans
 
     public override Animation End()
     {
-        throw new Exception();
-    }
-
-    public async Task<Animation> EndAsync()
-    {
-        await foreach (TTransformableEntity transformableEntity in TransformableEntities)
+        foreach (TransformationContext<TTransformableEntity> transformationContext in TransformationContexts)
         {
-            AssembleTransformation(transformableEntity);
-        }
-
-        if (TransformationAnimations is not null)
-        {
-            foreach (InstantaneousAnimation<TTransformableEntity> ia in TransformationAnimations)
-            {
-                Transformation.KeyFrameAnimations.Add(ia);
-            }
+            transformationContext.AssembleTransformation();
         }
 
         return new Animation(Transformation);
