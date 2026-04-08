@@ -2,7 +2,7 @@
 
 namespace Imagenic2.Core.Entities;
 
-public class Edge
+public struct Edge
 {
     #region Fields and Properties
 

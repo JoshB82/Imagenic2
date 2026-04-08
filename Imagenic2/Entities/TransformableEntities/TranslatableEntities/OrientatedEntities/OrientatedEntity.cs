@@ -31,7 +31,7 @@ public abstract class OrientatedEntity : TranslatableEntity
 
     #region Constructors
 
-    protected OrientatedEntity(Vector3D worldOrigin, Orientation worldOrientation) : base(worldOrigin)
+    private protected OrientatedEntity(Vector3D worldOrigin, Orientation worldOrientation) : base(worldOrigin)
     {
         WorldOrientation = worldOrientation;
     }

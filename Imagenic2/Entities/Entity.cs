@@ -15,7 +15,7 @@ public abstract class Entity
 
     #region Constructors
 
-    protected Entity()
+    private protected Entity()
     {
         Id = id++;
     }

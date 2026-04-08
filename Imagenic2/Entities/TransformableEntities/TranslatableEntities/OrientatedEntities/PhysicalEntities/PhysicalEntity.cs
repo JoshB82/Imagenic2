@@ -26,6 +26,7 @@ public abstract class PhysicalEntity : OrientatedEntity
         get => opacity;
         set
         {
+            ThrowIfNotFinite(value);
             if (value.ApproxEquals(opacity)) return;
             ThrowIfNotWithinRange(value, 0, 1);
             opacity = value;
@@ -47,7 +48,6 @@ public abstract class PhysicalEntity : OrientatedEntity
 
     private Matrix4x4 scalingMatrix = Matrix4x4.Identity;
     private Vector3D scaling = Vector3D.One;
-
     public Vector3D Scaling
     {
         get => scaling;
@@ -68,7 +68,7 @@ public abstract class PhysicalEntity : OrientatedEntity
 
     #region Constructors
 
-    protected PhysicalEntity(Vector3D worldOrigin, Orientation worldOrientation) : base(worldOrigin, worldOrientation)
+    private protected PhysicalEntity(Vector3D worldOrigin, Orientation worldOrientation) : base(worldOrigin, worldOrientation)
     {
         
     }

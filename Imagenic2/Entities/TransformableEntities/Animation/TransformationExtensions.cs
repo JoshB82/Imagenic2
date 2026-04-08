@@ -295,13 +295,12 @@ public static class TransformationExtensions
     {
         ThrowIfNull(transformableTCtx);
 
-        List<TTransformableEntity> transformableEntities = transformableTCtx.TransformableEntities.ToList();
-        transformableTCtx.TransformationAnimations ??= new List<InstantaneousAnimation<TTransformableEntity>>(transformableEntities.Count);
-        for (int i = 0; i < transformableEntities.Count; i++)
+        transformableTCtx.TransformationAnimations ??= new List<InstantaneousAnimation<TTransformableEntity>>();
+        foreach (TTransformableEntity transformableEntity in transformableTCtx.TransformableEntities)
         {
-            transformableTCtx.TransformationAnimations[i] ??= new InstantaneousAnimation<TTransformableEntity>(transformableEntities[i], new List<KeyFrame<Action<TTransformableEntity>>>());
+            transformableTCtx.TransformationAnimations.Add(new InstantaneousAnimation<TTransformableEntity>(transformableEntity, new List<KeyFrame<Action<TTransformableEntity>>>()));
             KeyFrame<Action<TTransformableEntity>> newKeyFrame = new KeyFrame<Action<TTransformableEntity>>(time, transformation);
-            transformableTCtx.TransformationAnimations[i].KeyFrames.Add(newKeyFrame);
+            transformableTCtx.TransformationAnimations[^1].KeyFrames.Add(newKeyFrame);
         }
 
         return transformableTCtx;
@@ -360,19 +359,18 @@ public static class TransformationExtensions
 
     #region IAsyncEnumerable Transform
 
-    public static TransformationContextIAsyncEnumerable<TTransformableEntity> Transform<TTransformableEntity>(this TransformationContextIAsyncEnumerable<TTransformableEntity> transformableTCtx, Action<TTransformableEntity> transformation, float time) where TTransformableEntity : TransformableEntity
+    public static async Task<TransformationContextIAsyncEnumerable<TTransformableEntity>> Transform<TTransformableEntity>(this TransformationContextIAsyncEnumerable<TTransformableEntity> transformableTCtx, Action<TTransformableEntity> transformation, float time) where TTransformableEntity : TransformableEntity
     {
         ThrowIfNull(transformableTCtx);
 
-        List<TTransformableEntity> transformableEntities = transformableTCtx.TransformableEntities.ToList();
-        transformableTCtx.TransformationAnimations ??= new List<InstantaneousAnimation<TTransformableEntity>>(transformableEntities.Count);
-        for (int i = 0; i < transformableEntities.Count; i++)
+        transformableTCtx.TransformationAnimations ??= new List<InstantaneousAnimation<TTransformableEntity>>();
+        await foreach (TTransformableEntity transformableEntity in transformableTCtx.TransformableEntities)
         {
-            transformableTCtx.TransformationAnimations[i] ??= new InstantaneousAnimation<TTransformableEntity>(transformableEntities[i], new List<KeyFrame<Action<TTransformableEntity>>>());
+            transformableTCtx.TransformationAnimations.Add(new InstantaneousAnimation<TTransformableEntity>(transformableEntity, new List<KeyFrame<Action<TTransformableEntity>>>()));
             KeyFrame<Action<TTransformableEntity>> newKeyFrame = new KeyFrame<Action<TTransformableEntity>>(time, transformation);
-            transformableTCtx.TransformationAnimations[i].KeyFrames.Add(newKeyFrame);
+            transformableTCtx.TransformationAnimations[^1].KeyFrames.Add(newKeyFrame);
         }
-
+        
         return transformableTCtx;
     }
 

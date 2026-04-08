@@ -1,5 +1,4 @@
 ﻿using Imagenic2.Core.Entities;
-using Imagenic2.Core.Entities.Animation;
 using Imagenic2.Core.Entities.Lights;
 using Imagenic2.Core.Images;
 
@@ -31,17 +30,18 @@ public partial class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagen
         if (!NewRenderNeeded) return LatestRender;
         colourBuffer.SetAllToValue(RenderingOptions.BackgroundColour);
 
+        // Check if there is anything to render
+        if (RenderingOptions.PhysicalEntitiesToRender.Count == 0)
+        {
+            return LatestRender = TImage.CreateFromBuffer(colourBuffer);
+        }
+
         if (RenderingOptions.RenderCamera is null)
         {
             throw new InvalidOperationException("Render camera must be set in order to render an image.");
         }
 
-        // Check if there is anything to render.
-        if (RenderingOptions.PhysicalEntitiesToRender is null || !RenderingOptions.PhysicalEntitiesToRender.Any())
-        {
-            return null;
-        }
-
+        // Create shadow maps if needed
         if (NewShadowMapNeeded)
         {
             foreach (Light light in RenderingOptions.Lights)
@@ -133,11 +133,6 @@ public partial class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagen
         return LatestRender = TImage.CreateFromBuffer(colourBuffer);
     }
 
-    //public override IAsyncEnumerable<TImage> RenderAsync(Animation animation, CancellationToken token = default)
-    //{
-        //return null; // Temporary
-    //}
-    
     // Transform vertices
     private static void TransformEdgeVertices(Edge edge, Matrix4x4 transformationMatrix)
     {
@@ -145,8 +140,6 @@ public partial class Rasteriser<TImage> : Renderer<TImage> where TImage : Imagen
         edge.TransformedP1 = transformationMatrix * edge.TransformedP1;
         edge.TransformedP2 = transformationMatrix * edge.TransformedP2;
     }
-
-    
 
     #endregion
 }

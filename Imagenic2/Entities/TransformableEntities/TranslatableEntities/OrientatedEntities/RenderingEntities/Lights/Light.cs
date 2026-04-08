@@ -14,6 +14,7 @@ public abstract class Light : RenderingEntity
         get => shadowMaps;
         set
         {
+            ThrowIfNull(value);
             shadowMaps = value;
             InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
         }
@@ -27,6 +28,7 @@ public abstract class Light : RenderingEntity
         get => intensity;
         set
         {
+            ThrowIfNotFinite(value);
             if (value == intensity) return;
             intensity = value;
             InvokeRenderEvent(RenderUpdate.NewRender);
@@ -37,7 +39,7 @@ public abstract class Light : RenderingEntity
 
     #region Constructors
 
-    protected Light(Vector3D worldOrigin,
+    private protected Light(Vector3D worldOrigin,
                     Orientation worldOrientation,
                     float viewWidth,
                     float viewHeight,

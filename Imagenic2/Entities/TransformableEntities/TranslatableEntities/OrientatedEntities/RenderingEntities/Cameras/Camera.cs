@@ -8,8 +8,8 @@ public abstract partial class Camera : RenderingEntity
     //protected Buffer2D<Color> colourBuffer;
     
     // Matrices
-    protected Matrix4x4 viewToWorld;
-    protected Matrix4x4 screenToView;
+    private protected Matrix4x4 ViewToWorld { get; set; }
+    private protected Matrix4x4 screenToView;
     internal Matrix4x4 screenToWorld;
 
     // View volume
@@ -66,12 +66,12 @@ public abstract partial class Camera : RenderingEntity
 
     #region Constructors
 
-    public Camera(Vector3D worldOrigin,
-                  Orientation worldOrientation,
-                  float viewWidth,
-                  float viewHeight,
-                  float zNear,
-                  float zFar)
+    private protected Camera(Vector3D worldOrigin,
+                             Orientation worldOrientation,
+                             float viewWidth,
+                             float viewHeight,
+                             float zNear,
+                             float zFar)
         : base(worldOrigin, worldOrientation, viewWidth, viewHeight, zNear, zFar)
     {
         //string[] iconObjData = Properties.Resources.Camera.Split(Environment.NewLine);
@@ -94,7 +94,7 @@ public abstract partial class Camera : RenderingEntity
     protected override void UpdateModelToWorldMatrix()
     {
         base.UpdateModelToWorldMatrix();
-        viewToWorld = ModelToWorld;
+        ViewToWorld = ModelToWorld;
     }
 
     /*

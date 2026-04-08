@@ -24,10 +24,10 @@ public partial class RayTracer<TImage> : Renderer<TImage> where TImage : Image, 
         if (!NewRenderNeeded) return LatestRender;
         colourBuffer.SetAllToValue(RenderingOptions.BackgroundColour);
 
-        // Check if there is anything to render.
-        if (RenderingOptions.PhysicalEntitiesToRender is null || !RenderingOptions.PhysicalEntitiesToRender.Any())
+        // Check if there is anything to render
+        if (RenderingOptions.PhysicalEntitiesToRender.Count == 0)
         {
-            return null; // Temporary
+            return LatestRender = TImage.CreateFromBuffer(colourBuffer);
         }
 
         CastRaysFromCamera(RenderingOptions.RenderCamera);
@@ -36,11 +36,6 @@ public partial class RayTracer<TImage> : Renderer<TImage> where TImage : Image, 
 
         return LatestRender = TImage.CreateFromBuffer(colourBuffer);
     }
-
-    //public override async IAsyncEnumerable<TImage> RenderAsync(Animation animation, CancellationToken token = default)
-    //{
-        
-    //}
 
     #endregion
 }

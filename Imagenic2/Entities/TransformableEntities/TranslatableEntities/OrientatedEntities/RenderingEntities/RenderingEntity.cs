@@ -7,7 +7,7 @@ public abstract class RenderingEntity : OrientatedEntity
     #region Fields and Properties
 
     // Clipping planes
-    internal ClippingPlane[] ViewClippingPlanes { get; set; }
+    internal ClippingPlane[]? ViewClippingPlanes { get; set; }
 
     // Matrices
     public Matrix4x4 WorldToView { get; private set; }
@@ -23,6 +23,7 @@ public abstract class RenderingEntity : OrientatedEntity
         get => viewWidth;
         set
         {
+            ThrowIfNotFinite(value);
             if (value.ApproxEquals(viewWidth)) return;
             viewWidth = value;
             InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
@@ -36,6 +37,7 @@ public abstract class RenderingEntity : OrientatedEntity
         get => viewHeight;
         set
         {
+            ThrowIfNotFinite(value);
             if (value.ApproxEquals(viewHeight)) return;
             viewHeight = value;
             InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
@@ -49,6 +51,7 @@ public abstract class RenderingEntity : OrientatedEntity
         get => zNear;
         set
         {
+            ThrowIfNotFinite(value);
             if (value.ApproxEquals(zNear)) return;
             zNear = value;
             InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
@@ -62,6 +65,7 @@ public abstract class RenderingEntity : OrientatedEntity
         get => zFar;
         set
         {
+            ThrowIfNotFinite(value);
             if (value.ApproxEquals(zFar)) return;
             zFar = value;
             InvokeRenderEvent(RenderUpdate.NewRender | RenderUpdate.NewShadowMap);
@@ -84,12 +88,12 @@ public abstract class RenderingEntity : OrientatedEntity
 
     #region Constructors
 
-    protected RenderingEntity(Vector3D worldOrigin,
-                              Orientation worldOrientation,
-                              float viewWidth,
-                              float viewHeight,
-                              float zNear,
-                              float zFar)
+    private protected RenderingEntity(Vector3D worldOrigin,
+                                      Orientation worldOrientation,
+                                      float viewWidth,
+                                      float viewHeight,
+                                      float zNear,
+                                      float zFar)
         : base(worldOrigin, worldOrientation)
     {
         this.viewWidth = viewWidth;
@@ -111,7 +115,7 @@ public abstract class RenderingEntity : OrientatedEntity
     public override RenderingEntity DeepCopy()
     {
         var renderingEntity = (RenderingEntity)base.DeepCopy();
-        renderingEntity.ViewClippingPlanes = (ClippingPlane[])ViewClippingPlanes.Clone();
+        renderingEntity.ViewClippingPlanes = (ClippingPlane[]?)ViewClippingPlanes?.Clone();
         return renderingEntity;
     }
 

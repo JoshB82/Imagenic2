@@ -72,7 +72,7 @@ public sealed class RenderingOptions
         ScreenToWindow = MathsHelper.Scale(0.5f * (renderWidth - 1), 0.5f * (renderHeight - 1), 1) * windowTranslate;
     }
     
-    public List<PhysicalEntity>? PhysicalEntitiesToRender { get; private set; } = new List<PhysicalEntity>();
+    public List<PhysicalEntity> PhysicalEntitiesToRender { get; private set; } = new List<PhysicalEntity>();
 
     public List<Light> Lights { get; private set; } = new List<Light>();
 

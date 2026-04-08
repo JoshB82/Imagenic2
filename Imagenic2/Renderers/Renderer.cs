@@ -32,6 +32,7 @@ public abstract class Renderer<TImage> where TImage : Images.Image, IFactory<TIm
         get => renderingOptions;
         set
         {
+            ThrowIfNull(value);
             if (value == renderingOptions) return;
             renderingOptions = value;
             renderingOptions.RenderAlteringPropertyChanged += OnRenderingAlteringPropertyChanged;
@@ -39,7 +40,7 @@ public abstract class Renderer<TImage> where TImage : Images.Image, IFactory<TIm
         }
     }
 
-    public TImage LatestRender { get; protected set; }
+    public TImage? LatestRender { get; protected set; }
 
     private bool renderEdges;
     public bool RenderEdges
@@ -105,7 +106,7 @@ public abstract class Renderer<TImage> where TImage : Images.Image, IFactory<TIm
 
     #region Constructors
 
-    public Renderer(RenderingOptions renderingOptions)
+    private protected Renderer(RenderingOptions renderingOptions)
     {
         RenderingOptions = renderingOptions;
         renderingOptions.RenderAlteringPropertyChanged += OnRenderingAlteringPropertyChanged;

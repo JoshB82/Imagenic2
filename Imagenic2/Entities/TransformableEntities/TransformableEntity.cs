@@ -15,13 +15,13 @@ public abstract class TransformableEntity : Entity
         }
     }
 
-    public Matrix4x4 WorldToModel { get; private set; }
+    internal Matrix4x4 WorldToModel { get; private set; }
 
     #endregion
 
     #region Constructors
 
-    protected TransformableEntity()
+    private protected TransformableEntity()
     {
 
     }
