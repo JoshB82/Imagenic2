@@ -26,6 +26,10 @@ public abstract class TransformationContextBase
 
     protected void AssembleTransformation(TransformableEntity transformableEntity)
     {
+        if (transformableEntity is OrientatedEntity orientatedEntity && orientatedEntity.OrientationKeyFrameAnimation is not null)
+        {
+            Transformation.KeyFrameAnimations.Add(orientatedEntity.OrientationKeyFrameAnimation);
+        }
         if (transformableEntity is PhysicalEntity physicalEntity && physicalEntity.ScalingKeyFrameAnimation is not null)
         {
             Transformation.KeyFrameAnimations.Add(physicalEntity.ScalingKeyFrameAnimation);
@@ -64,6 +68,7 @@ public sealed class TransformationContext<TTransformableEntity> : Transformation
     public override Animation End()
     {
         AssembleTransformation(TransformableEntity);
+        if (TransformationAnimation is not null) Transformation.KeyFrameAnimations.Add(TransformationAnimation);
 
         return new Animation(Transformation);
     }
@@ -75,8 +80,7 @@ public sealed class TransformationContextIEnumerable<TTransformableEntity> : Tra
 {
     #region Fields and Properties
 
-    public IEnumerable<TTransformableEntity> TransformableEntities { get; set; }
-    internal List<InstantaneousAnimation<TTransformableEntity>>? TransformationAnimations { get; set; }
+    internal List<TransformationContext<TTransformableEntity>> TransformationContexts { get; set; }
 
     #endregion
 
@@ -84,7 +88,12 @@ public sealed class TransformationContextIEnumerable<TTransformableEntity> : Tra
 
     public TransformationContextIEnumerable(IEnumerable<TTransformableEntity> transformableEntities, float startTime) : base(startTime)
     {
-        TransformableEntities = transformableEntities;
+        TransformationContexts = new List<TransformationContext<TTransformableEntity>>();
+        foreach (TTransformableEntity transformableEntity in transformableEntities)
+        {
+            TransformationContext<TTransformableEntity> tCtx = new TransformationContext<TTransformableEntity>(transformableEntity, startTime);
+            TransformationContexts.Add(tCtx);
+        }
     }
 
     #endregion
@@ -93,10 +102,11 @@ public sealed class TransformationContextIEnumerable<TTransformableEntity> : Tra
 
     public override Animation End()
     {
-        foreach (TTransformableEntity transformableEntity in TransformableEntities)
+        foreach (TransformationContext<TTransformableEntity> transformationContext in TransformationContexts)
         {
-            AssembleTransformation(transformableEntity);
-        }
+            AssembleTransformation(transformationContext.TransformableEntity);
+            if (transformationContext.TransformationAnimation is not null) Transformation.KeyFrameAnimations.Add(transformationContext.TransformationAnimation);
+        }        
 
         return new Animation(Transformation);
     }
@@ -109,7 +119,7 @@ public sealed class TransformationContextNode : TransformationContextBase
     #region Fields and Properties
 
     public Node TransformableEntityNode { get; set; }
-    internal List<InstantaneousAnimation<TransformableEntity>> TransformationAnimations { get; set; }
+    internal List<InstantaneousAnimation<TransformableEntity>>? TransformationAnimations { get; set; }
 
     #endregion
 
@@ -126,10 +136,18 @@ public sealed class TransformationContextNode : TransformationContextBase
 
     public override Animation End()
     {
-        var descendants = TransformableEntityNode.GetDescendantsAndThis(n => n.Content is TransformableEntity);
+        var descendants = TransformableEntityNode.GetDescendantsAndThisOfType<TransformableEntity>();
         foreach (Node node in descendants)
         {
             AssembleTransformation((TransformableEntity)(node.Content));
+        }
+
+        if (TransformationAnimations is not null)
+        {
+            foreach (InstantaneousAnimation<TransformableEntity> ia in TransformationAnimations)
+            {
+                Transformation.KeyFrameAnimations.Add(ia);
+            }
         }
 
         return new Animation(Transformation);
@@ -139,7 +157,7 @@ public sealed class TransformationContextNode : TransformationContextBase
 
     public TransformationContextNode Orientate(Orientation orientation, float time)
     {
-        var descendants = TransformableEntityNode.GetDescendantsAndThis(n => n.Content is OrientatedEntity);
+        var descendants = TransformableEntityNode.GetDescendantsAndThisOfType<OrientatedEntity>();
         foreach (Node node in descendants)
         {
             OrientatedEntity orientatedEntity = (OrientatedEntity)node.Content;
@@ -166,7 +184,7 @@ public sealed class TransformationContextNode : TransformationContextBase
 
     public TransformationContextNode Rotate(Quaternion q, float time)
     {
-        var descendants = TransformableEntityNode.GetDescendantsAndThis(n => n.Content is OrientatedEntity);
+        var descendants = TransformableEntityNode.GetDescendantsAndThisOfType<OrientatedEntity>();
         foreach (Node node in descendants)
         {
             OrientatedEntity orientatedEntity = (OrientatedEntity)node.Content;
@@ -223,7 +241,7 @@ public sealed class TransformationContextNode : TransformationContextBase
 
     public TransformationContextNode Scale(Vector3D scaleFactor, float time)
     {
-        var descendants = TransformableEntityNode.GetDescendantsAndThis(n => n.Content is PhysicalEntity);
+        var descendants = TransformableEntityNode.GetDescendantsAndThisOfType<PhysicalEntity>();
         foreach (Node node in descendants)
         {
             PhysicalEntity physicalEntity = (PhysicalEntity)node.Content;
@@ -249,14 +267,16 @@ public sealed class TransformationContextNode : TransformationContextBase
 
     public TransformationContextNode Transform(Action<TransformableEntity> transformation, float time)
     {
-        var descendants = TransformableEntityNode.GetDescendantsAndThis(n => n.Content is TransformableEntity).ToList();
-        for (int i = 0; i < descendants.Count; i++)
+        TransformationAnimations ??= new List<InstantaneousAnimation<TransformableEntity>>();
+        var descendants = TransformableEntityNode.GetDescendantsAndThisOfType<TransformableEntity>();
+        foreach (Node node in descendants)
         {
-            TransformableEntity transformableEntity = (TransformableEntity)descendants[i].Content;
+            TransformableEntity transformableEntity = (TransformableEntity)node.Content;
 
-            TransformationAnimations[i] ??= new InstantaneousAnimation<TransformableEntity>(transformableEntity, new List<KeyFrame<Action<TransformableEntity>>>());
+            InstantaneousAnimation<TransformableEntity> ia = new InstantaneousAnimation<TransformableEntity>(transformableEntity, new List<KeyFrame<Action<TransformableEntity>>>());
             KeyFrame<Action<TransformableEntity>> newKeyFrame = new KeyFrame<Action<TransformableEntity>>(time, transformation);
-            TransformationAnimations[i].KeyFrames.Add(newKeyFrame);
+            ia.KeyFrames.Add(newKeyFrame);
+            TransformationAnimations.Add(ia);
         }
 
         return this;
@@ -266,9 +286,33 @@ public sealed class TransformationContextNode : TransformationContextBase
 
     #region Translate
 
+    public TransformationContextNode TranslateX(float distance, float time)
+    {
+        Vector3D displacement = new Vector3D(distance, 0, 0);
+        return Translate(displacement, time);
+    }
+
+    public TransformationContextNode TranslateY(float distance, float time)
+    {
+        Vector3D displacement = new Vector3D(0, distance, 0);
+        return Translate(displacement, time);
+    }
+
+    public TransformationContextNode TranslateZ(float distance, float time)
+    {
+        Vector3D displacement = new Vector3D(0, 0, distance);
+        return Translate(displacement, time);
+    }
+
+    public TransformationContextNode Translate(float distanceX, float distanceY, float distanceZ, float time)
+    {
+        Vector3D displacement = new Vector3D(distanceX, distanceY, distanceZ);
+        return Translate(displacement, time);
+    }
+
     public TransformationContextNode Translate(Vector3D displacement, float time)
     {
-        var descendants = TransformableEntityNode.GetDescendantsAndThis(n => n.Content is TranslatableEntity);
+        var descendants = TransformableEntityNode.GetDescendantsAndThisOfType<TranslatableEntity>();
         foreach (Node node in descendants)
         {
             TranslatableEntity translatableEntity = (TranslatableEntity)node.Content;
@@ -323,6 +367,14 @@ public class TransformationContextIAsyncEnumerable<TTransformableEntity> : Trans
         await foreach (TTransformableEntity transformableEntity in TransformableEntities)
         {
             AssembleTransformation(transformableEntity);
+        }
+
+        if (TransformationAnimations is not null)
+        {
+            foreach (InstantaneousAnimation<TTransformableEntity> ia in TransformationAnimations)
+            {
+                Transformation.KeyFrameAnimations.Add(ia);
+            }
         }
 
         return new Animation(Transformation);

@@ -91,5 +91,22 @@ public partial class Node
         }
     }
 
+    public IEnumerable<Node> GetDescendantsOfType<T>()
+    {
+        foreach (Node child in GetDescendants(n => n.Content is T))
+        {
+            yield return child;
+        }
+    }
+
+    public IEnumerable<Node> GetDescendantsAndThisOfType<T>()
+    {
+        if (Content is T) yield return this;
+        foreach (Node child in GetDescendantsOfType<T>())
+        {
+            yield return child;
+        }
+    }
+
     #endregion
 }

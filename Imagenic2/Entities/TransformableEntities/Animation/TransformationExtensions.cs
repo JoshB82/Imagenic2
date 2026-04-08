@@ -182,25 +182,137 @@ public static class TransformationExtensions
 
     #endregion
 
+    #region Orientate with predicate
+
+    public static TransformationContext<TOrientatedEntity> Orientate<TOrientatedEntity>(this TransformationContext<TOrientatedEntity> orientatedTCtx, Orientation orientation, Func<TOrientatedEntity, bool> predicate, float time) where TOrientatedEntity : OrientatedEntity
+    {
+        if (predicate(orientatedTCtx.TransformableEntity))
+        {
+            orientatedTCtx.Orientate(orientation, time);
+        }
+        return orientatedTCtx;
+    }
+
+    #endregion
+
+    #region Rotate with predicate
+
+    public static TransformationContext<TOrientatedEntity> Rotate<TOrientatedEntity>(this TransformationContext<TOrientatedEntity> orientatedTCtx, Quaternion q, Func<TOrientatedEntity, bool> predicate, float time) where TOrientatedEntity : OrientatedEntity
+    {
+        if (predicate(orientatedTCtx.TransformableEntity))
+        {
+            orientatedTCtx.Rotate(q, time);
+        }
+        return orientatedTCtx;
+    }
+
+    public static TransformationContext<TOrientatedEntity> Rotate<TOrientatedEntity>(this TransformationContext<TOrientatedEntity> orientatedTCtx, Vector3D axis, float angle, Func<TOrientatedEntity, bool> predicate, float time) where TOrientatedEntity : OrientatedEntity
+    {
+        if (predicate(orientatedTCtx.TransformableEntity))
+        {
+            orientatedTCtx.Rotate(axis, angle, time);
+        }
+        return orientatedTCtx;
+    }
+
+    #endregion
+
+    #region Scale with predicate
+
+    public static TransformationContext<TPhysicalEntity> ScaleX<TPhysicalEntity>(this TransformationContext<TPhysicalEntity> physicalTCtx, float scaleFactorX, Func<TPhysicalEntity, bool> predicate, float time) where TPhysicalEntity : PhysicalEntity
+    {
+        Vector3D scaleFactor = new Vector3D(scaleFactorX, 1, 1);
+        return physicalTCtx.Scale(scaleFactor, predicate, time);
+    }
+
+    public static TransformationContext<TPhysicalEntity> ScaleY<TPhysicalEntity>(this TransformationContext<TPhysicalEntity> physicalTCtx, float scaleFactorY, Func<TPhysicalEntity, bool> predicate, float time) where TPhysicalEntity : PhysicalEntity
+    {
+        Vector3D scaleFactor = new Vector3D(1, scaleFactorY, 1);
+        return physicalTCtx.Scale(scaleFactor, predicate, time);
+    }
+
+    public static TransformationContext<TPhysicalEntity> ScaleZ<TPhysicalEntity>(this TransformationContext<TPhysicalEntity> physicalTCtx, float scaleFactorZ, Func<TPhysicalEntity, bool> predicate, float time) where TPhysicalEntity : PhysicalEntity
+    {
+        Vector3D scaleFactor = new Vector3D(1, 1, scaleFactorZ);
+        return physicalTCtx.Scale(scaleFactor, predicate, time);
+    }
+
+    public static TransformationContext<TPhysicalEntity> Scale<TPhysicalEntity>(this TransformationContext<TPhysicalEntity> physicalTCtx, float scaleFactorX, float scaleFactorY, float scaleFactorZ, Func<TPhysicalEntity, bool> predicate, float time) where TPhysicalEntity : PhysicalEntity
+    {
+        Vector3D scaleFactor = new Vector3D(scaleFactorX, scaleFactorY, scaleFactorZ);
+        return physicalTCtx.Scale(scaleFactor, predicate, time);
+    }
+
+    public static TransformationContext<TPhysicalEntity> Scale<TPhysicalEntity>(this TransformationContext<TPhysicalEntity> physicalTCtx, Vector3D scaleFactor, Func<TPhysicalEntity, bool> predicate, float time) where TPhysicalEntity : PhysicalEntity
+    {
+        if (predicate(physicalTCtx.TransformableEntity))
+        {
+            physicalTCtx.Scale(scaleFactor, time);
+        }
+        return physicalTCtx;
+    }
+
+    #endregion
+
+    #region Transform with predicate
+
+    public static TransformationContext<TTransformableEntity> Transform<TTransformableEntity>(this TransformationContext<TTransformableEntity> transformableTCtx, Action<TTransformableEntity> transformation, Func<TTransformableEntity, bool> predicate, float time) where TTransformableEntity : TransformableEntity
+    {
+        if (predicate(transformableTCtx.TransformableEntity))
+        {
+            transformableTCtx.Transform(transformation, time);
+        }
+        return transformableTCtx;
+    }
+
+    #endregion
+
+    #region Translate with predicate
+
+    public static TransformationContext<TTranslatableEntity> TranslateX<TTranslatableEntity>(this TransformationContext<TTranslatableEntity> translatableTCtx, float distanceX, Func<TTranslatableEntity, bool> predicate, float time) where TTranslatableEntity : TranslatableEntity
+    {
+        Vector3D displacement = new Vector3D(distanceX, 0, 0);
+        return translatableTCtx.Translate(displacement, predicate, time);
+    }
+
+    public static TransformationContext<TTranslatableEntity> TranslateY<TTranslatableEntity>(this TransformationContext<TTranslatableEntity> translatableTCtx, float distanceY, Func<TTranslatableEntity, bool> predicate, float time) where TTranslatableEntity : TranslatableEntity
+    {
+        Vector3D displacement = new Vector3D(0, distanceY, 0);
+        return translatableTCtx.Translate(displacement, predicate, time);
+    }
+
+    public static TransformationContext<TTranslatableEntity> TranslateZ<TTranslatableEntity>(this TransformationContext<TTranslatableEntity> translatableTCtx, float distanceZ, Func<TTranslatableEntity, bool> predicate, float time) where TTranslatableEntity : TranslatableEntity
+    {
+        Vector3D displacement = new Vector3D(0, 0, distanceZ);
+        return translatableTCtx.Translate(displacement, predicate, time);
+    }
+
+    public static TransformationContext<TTranslatableEntity> Translate<TTranslatableEntity>(this TransformationContext<TTranslatableEntity> translatableTCtx, float distanceX, float distanceY, float distanceZ, Func<TTranslatableEntity, bool> predicate, float time) where TTranslatableEntity : TranslatableEntity
+    {
+        Vector3D displacement = new Vector3D(distanceX, distanceY, distanceZ);
+        return translatableTCtx.Translate(displacement, predicate, time);
+    }
+
+    public static TransformationContext<TTranslatableEntity> Translate<TTranslatableEntity>(this TransformationContext<TTranslatableEntity> translatableTCtx, Vector3D displacement, Func<TTranslatableEntity, bool> predicate, float time) where TTranslatableEntity : TranslatableEntity
+    {
+        if (predicate(translatableTCtx.TransformableEntity))
+        {
+            translatableTCtx.Translate(displacement, time);
+        }
+        return translatableTCtx;
+    }
+
+    #endregion
+
     #region IEnumerable Orientate
 
     public static TransformationContextIEnumerable<TOrientatedEntity> Orientate<TOrientatedEntity>(this TransformationContextIEnumerable<TOrientatedEntity> orientatedTCtx, Orientation orientation, float time) where TOrientatedEntity : OrientatedEntity
     {
         ThrowIfNull(orientatedTCtx);
 
-        foreach (TOrientatedEntity orientatedEntity in orientatedTCtx.TransformableEntities)
+        foreach (TransformationContext<TOrientatedEntity> tCtx in orientatedTCtx.TransformationContexts)
         {
-            if (orientatedEntity.OrientationKeyFrameAnimation is null)
-            {
-                orientatedEntity.OrientationKeyFrameAnimation = new KeyFrameAnimation<Quaternion>(new List<KeyFrame<Quaternion>>(), v => orientatedEntity.WorldOrientation.Rotate(v), MathsHelper.Lerp);
-                Quaternion startingQuaternion = MathsHelper.QuaternionRotateBetweenOrientations(Orientation.ModelOrientation, orientatedEntity.WorldOrientation);
-                KeyFrame<Quaternion> startingKeyFrame = new KeyFrame<Quaternion>(orientatedTCtx.StartTime, startingQuaternion);
-                orientatedEntity.OrientationKeyFrameAnimation.KeyFrames.Add(startingKeyFrame);
-            }
-
-            Quaternion newQuaternion = MathsHelper.QuaternionRotateBetweenOrientations(Orientation.ModelOrientation, orientation);
-            KeyFrame<Quaternion> newKeyFrame = new KeyFrame<Quaternion>(time, newQuaternion);
-            orientatedEntity.OrientationKeyFrameAnimation.KeyFrames.Add(newKeyFrame);
+            tCtx.Orientate(orientation, time);
         }
 
         return orientatedTCtx;
@@ -214,20 +326,9 @@ public static class TransformationExtensions
     {
         ThrowIfNull(orientatedTCtx);
 
-        foreach (TOrientatedEntity orientatedEntity in orientatedTCtx.TransformableEntities)
+        foreach (TransformationContext<TOrientatedEntity> tCtx in orientatedTCtx.TransformationContexts)
         {
-            if (orientatedEntity.OrientationKeyFrameAnimation is null)
-            {
-                orientatedEntity.OrientationKeyFrameAnimation = new KeyFrameAnimation<Quaternion>(new List<KeyFrame<Quaternion>>(), v => orientatedEntity.WorldOrientation.Rotate(v), MathsHelper.Lerp);
-                Quaternion startingQuaternion = MathsHelper.QuaternionRotateBetweenOrientations(Orientation.ModelOrientation, orientatedEntity.WorldOrientation);
-                KeyFrame<Quaternion> startingKeyFrame = new KeyFrame<Quaternion>(orientatedTCtx.StartTime, startingQuaternion);
-                orientatedEntity.OrientationKeyFrameAnimation.KeyFrames.Add(startingKeyFrame);
-            }
-
-            Quaternion latestQuaternion = orientatedEntity.OrientationKeyFrameAnimation.KeyFrames[^1].value;
-            Quaternion newQuaternion = q * latestQuaternion;
-            KeyFrame<Quaternion> newKeyFrame = new KeyFrame<Quaternion>(time, newQuaternion);
-            orientatedEntity.OrientationKeyFrameAnimation.KeyFrames.Add(newKeyFrame);
+            tCtx.Rotate(q, time);
         }
 
         return orientatedTCtx;
@@ -270,18 +371,9 @@ public static class TransformationExtensions
     {
         ThrowIfNull(physicalTCtx);
 
-        foreach (TPhysicalEntity physicalEntity in physicalTCtx.TransformableEntities)
+        foreach (TransformationContext<TPhysicalEntity> tCtx in physicalTCtx.TransformationContexts)
         {
-            if (physicalEntity.ScalingKeyFrameAnimation is null)
-            {
-                physicalEntity.ScalingKeyFrameAnimation = new KeyFrameAnimation<Vector3D>(new List<KeyFrame<Vector3D>>(), v => physicalEntity.Scaling = v, MathsHelper.Lerp);
-                KeyFrame<Vector3D> startingKeyFrame = new KeyFrame<Vector3D>(physicalTCtx.StartTime, physicalEntity.Scaling);
-                physicalEntity.ScalingKeyFrameAnimation.KeyFrames.Add(startingKeyFrame);
-            }
-
-            Vector3D latestScaling = physicalEntity.ScalingKeyFrameAnimation.KeyFrames[^1].value;
-            KeyFrame<Vector3D> newKeyFrame = new KeyFrame<Vector3D>(time, new Vector3D(latestScaling.x * scaleFactor.x, latestScaling.y * scaleFactor.y, latestScaling.z * scaleFactor.z));
-            physicalEntity.ScalingKeyFrameAnimation.KeyFrames.Add(newKeyFrame);
+            tCtx.Scale(scaleFactor, time);
         }
 
         return physicalTCtx;
@@ -295,12 +387,9 @@ public static class TransformationExtensions
     {
         ThrowIfNull(transformableTCtx);
 
-        transformableTCtx.TransformationAnimations ??= new List<InstantaneousAnimation<TTransformableEntity>>();
-        foreach (TTransformableEntity transformableEntity in transformableTCtx.TransformableEntities)
+        foreach (TransformationContext<TTransformableEntity> tCtx in transformableTCtx.TransformationContexts)
         {
-            transformableTCtx.TransformationAnimations.Add(new InstantaneousAnimation<TTransformableEntity>(transformableEntity, new List<KeyFrame<Action<TTransformableEntity>>>()));
-            KeyFrame<Action<TTransformableEntity>> newKeyFrame = new KeyFrame<Action<TTransformableEntity>>(time, transformation);
-            transformableTCtx.TransformationAnimations[^1].KeyFrames.Add(newKeyFrame);
+            tCtx.Transform(transformation, time);
         }
 
         return transformableTCtx;
@@ -338,20 +427,151 @@ public static class TransformationExtensions
     {
         ThrowIfNull(translatableTCtx);
 
-        foreach (TTranslatableEntity translatableEntity in translatableTCtx.TransformableEntities)
+        foreach (TransformationContext<TTranslatableEntity> tCtx in translatableTCtx.TransformationContexts)
         {
-            if (translatableEntity.TranslationKeyFrameAnimation is null)
-            {
-                translatableEntity.TranslationKeyFrameAnimation = new KeyFrameAnimation<Vector3D>(new List<KeyFrame<Vector3D>>(), v => translatableEntity.WorldOrigin = v, MathsHelper.Lerp);
-                KeyFrame<Vector3D> startingKeyFrame = new KeyFrame<Vector3D>(translatableTCtx.StartTime, translatableEntity.WorldOrigin);
-                translatableEntity.TranslationKeyFrameAnimation.KeyFrames.Add(startingKeyFrame);
-            }
-
-            Vector3D latestWorldOrigin = translatableEntity.TranslationKeyFrameAnimation.KeyFrames[^1].value;
-            KeyFrame<Vector3D> newKeyFrame = new KeyFrame<Vector3D>(time, latestWorldOrigin + displacement);
-            translatableEntity.TranslationKeyFrameAnimation.KeyFrames.Add(newKeyFrame);
+            tCtx.Translate(displacement, time);
         }
 
+        return translatableTCtx;
+    }
+
+    #endregion
+
+    #region IEnumerable Orientate with predicate
+
+    public static TransformationContextIEnumerable<TOrientatedEntity> Orientate<TOrientatedEntity>(this TransformationContextIEnumerable<TOrientatedEntity> orientatedTCtx, Orientation orientation, Func<TOrientatedEntity, bool> predicate, float time) where TOrientatedEntity : OrientatedEntity
+    {
+        foreach (TransformationContext<TOrientatedEntity> tCtx in orientatedTCtx.TransformationContexts)
+        {
+            if (predicate(tCtx.TransformableEntity))
+            {
+                tCtx.Orientate(orientation, time);
+            }
+        }
+        return orientatedTCtx;
+    }
+
+    #endregion
+
+    #region IEnumerable Rotate with predicate
+
+    public static TransformationContextIEnumerable<TOrientatedEntity> Rotate<TOrientatedEntity>(this TransformationContextIEnumerable<TOrientatedEntity> orientatedTCtx, Quaternion q, Func<TOrientatedEntity, bool> predicate, float time) where TOrientatedEntity : OrientatedEntity
+    {
+        foreach (TransformationContext<TOrientatedEntity> tCtx in orientatedTCtx.TransformationContexts)
+        {
+            if (predicate(tCtx.TransformableEntity))
+            {
+                tCtx.Rotate(q, time);
+            }
+        }
+        return orientatedTCtx;
+    }
+
+    public static TransformationContextIEnumerable<TOrientatedEntity> Rotate<TOrientatedEntity>(this TransformationContextIEnumerable<TOrientatedEntity> orientatedTCtx, Vector3D axis, float angle, Func<TOrientatedEntity, bool> predicate, float time) where TOrientatedEntity : OrientatedEntity
+    {
+        foreach (TransformationContext<TOrientatedEntity> tCtx in orientatedTCtx.TransformationContexts)
+        {
+            if (predicate(tCtx.TransformableEntity))
+            {
+                tCtx.Rotate(axis, angle, time);
+            }
+        }
+        return orientatedTCtx;
+    }
+
+    #endregion
+
+    #region IEnumerable Scale with predicate
+
+    public static TransformationContextIEnumerable<TPhysicalEntity> ScaleX<TPhysicalEntity>(this TransformationContextIEnumerable<TPhysicalEntity> physicalTCtx, float scaleFactorX, Func<TPhysicalEntity, bool> predicate, float time) where TPhysicalEntity : PhysicalEntity
+    {
+        Vector3D scaleFactor = new Vector3D(scaleFactorX, 1, 1);
+        return physicalTCtx.Scale(scaleFactor, predicate, time);
+    }
+
+    public static TransformationContextIEnumerable<TPhysicalEntity> ScaleY<TPhysicalEntity>(this TransformationContextIEnumerable<TPhysicalEntity> physicalTCtx, float scaleFactorY, Func<TPhysicalEntity, bool> predicate, float time) where TPhysicalEntity : PhysicalEntity
+    {
+        Vector3D scaleFactor = new Vector3D(1, scaleFactorY, 1);
+        return physicalTCtx.Scale(scaleFactor, predicate, time);
+    }
+
+    public static TransformationContextIEnumerable<TPhysicalEntity> ScaleZ<TPhysicalEntity>(this TransformationContextIEnumerable<TPhysicalEntity> physicalTCtx, float scaleFactorZ, Func<TPhysicalEntity, bool> predicate, float time) where TPhysicalEntity : PhysicalEntity
+    {
+        Vector3D scaleFactor = new Vector3D(1, 1, scaleFactorZ);
+        return physicalTCtx.Scale(scaleFactor, predicate, time);
+    }
+
+    public static TransformationContextIEnumerable<TPhysicalEntity> Scale<TPhysicalEntity>(this TransformationContextIEnumerable<TPhysicalEntity> physicalTCtx, float scaleFactorX, float scaleFactorY, float scaleFactorZ, Func<TPhysicalEntity, bool> predicate, float time) where TPhysicalEntity : PhysicalEntity
+    {
+        Vector3D scaleFactor = new Vector3D(scaleFactorX, scaleFactorY, scaleFactorZ);
+        return physicalTCtx.Scale(scaleFactor, predicate, time);
+    }
+
+    public static TransformationContextIEnumerable<TPhysicalEntity> Scale<TPhysicalEntity>(this TransformationContextIEnumerable<TPhysicalEntity> physicalTCtx, Vector3D scaleFactor, Func<TPhysicalEntity, bool> predicate, float time) where TPhysicalEntity : PhysicalEntity
+    {
+        foreach (TransformationContext<TPhysicalEntity> tCtx in physicalTCtx.TransformationContexts)
+        {
+            if (predicate(tCtx.TransformableEntity))
+            {
+                tCtx.Scale(scaleFactor, time);
+            }
+        }
+        return physicalTCtx;
+    }
+
+    #endregion
+
+    #region IEnumerable Transform with predicate
+
+    public static TransformationContextIEnumerable<TTransformableEntity> Transform<TTransformableEntity>(this TransformationContextIEnumerable<TTransformableEntity> transformableTCtx, Action<TTransformableEntity> transformation, Func<TTransformableEntity, bool> predicate, float time) where TTransformableEntity : TransformableEntity
+    {
+        foreach (TransformationContext<TTransformableEntity> tCtx in transformableTCtx.TransformationContexts)
+        {
+            if (predicate(tCtx.TransformableEntity))
+            {
+                tCtx.Transform(transformation, time);
+            }
+        }
+        return transformableTCtx;
+    }
+
+    #endregion
+
+    #region IEnumerable Translate with predicate
+
+    public static TransformationContextIEnumerable<TTranslatableEntity> TranslateX<TTranslatableEntity>(this TransformationContextIEnumerable<TTranslatableEntity> translatableTCtx, float distanceX, Func<TTranslatableEntity, bool> predicate, float time) where TTranslatableEntity : TranslatableEntity
+    {
+        Vector3D displacement = new Vector3D(distanceX, 0, 0);
+        return translatableTCtx.Translate(displacement, predicate, time);
+    }
+
+    public static TransformationContextIEnumerable<TTranslatableEntity> TranslateY<TTranslatableEntity>(this TransformationContextIEnumerable<TTranslatableEntity> translatableTCtx, float distanceY, Func<TTranslatableEntity, bool> predicate, float time) where TTranslatableEntity : TranslatableEntity
+    {
+        Vector3D displacement = new Vector3D(0, distanceY, 0);
+        return translatableTCtx.Translate(displacement, predicate, time);
+    }
+
+    public static TransformationContextIEnumerable<TTranslatableEntity> TranslateZ<TTranslatableEntity>(this TransformationContextIEnumerable<TTranslatableEntity> translatableTCtx, float distanceZ, Func<TTranslatableEntity, bool> predicate, float time) where TTranslatableEntity : TranslatableEntity
+    {
+        Vector3D displacement = new Vector3D(0, 0, distanceZ);
+        return translatableTCtx.Translate(displacement, predicate, time);
+    }
+
+    public static TransformationContextIEnumerable<TTranslatableEntity> Translate<TTranslatableEntity>(this TransformationContextIEnumerable<TTranslatableEntity> translatableTCtx, float distanceX, float distanceY, float distanceZ, Func<TTranslatableEntity, bool> predicate, float time) where TTranslatableEntity : TranslatableEntity
+    {
+        Vector3D displacement = new Vector3D(distanceX, distanceY, distanceZ);
+        return translatableTCtx.Translate(displacement, predicate, time);
+    }
+
+    public static TransformationContextIEnumerable<TTranslatableEntity> Translate<TTranslatableEntity>(this TransformationContextIEnumerable<TTranslatableEntity> translatableTCtx, Vector3D displacement, Func<TTranslatableEntity, bool> predicate, float time) where TTranslatableEntity : TranslatableEntity
+    {
+        foreach (TransformationContext<TTranslatableEntity> tCtx in translatableTCtx.TransformationContexts)
+        {
+            if (predicate(tCtx.TransformableEntity))
+            {
+                tCtx.Translate(displacement, time);
+            }
+        }
         return translatableTCtx;
     }
 
@@ -366,9 +586,10 @@ public static class TransformationExtensions
         transformableTCtx.TransformationAnimations ??= new List<InstantaneousAnimation<TTransformableEntity>>();
         await foreach (TTransformableEntity transformableEntity in transformableTCtx.TransformableEntities)
         {
-            transformableTCtx.TransformationAnimations.Add(new InstantaneousAnimation<TTransformableEntity>(transformableEntity, new List<KeyFrame<Action<TTransformableEntity>>>()));
+            InstantaneousAnimation<TTransformableEntity> ia = new InstantaneousAnimation<TTransformableEntity>(transformableEntity, new List<KeyFrame<Action<TTransformableEntity>>>());
             KeyFrame<Action<TTransformableEntity>> newKeyFrame = new KeyFrame<Action<TTransformableEntity>>(time, transformation);
-            transformableTCtx.TransformationAnimations[^1].KeyFrames.Add(newKeyFrame);
+            ia.KeyFrames.Add(newKeyFrame);
+            transformableTCtx.TransformationAnimations.Add(ia);
         }
         
         return transformableTCtx;

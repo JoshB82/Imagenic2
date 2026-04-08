@@ -6,7 +6,16 @@ public class Animation
 
     private readonly List<Transformation> transformations;
 
-    public int DurationSeconds { get; set; }
+    private int durationSeconds;
+    public int DurationSeconds
+    {
+        get => durationSeconds;
+        set
+        {
+            ThrowIfNonpositive(value);
+            durationSeconds = value;
+        }
+    }
     public int FPS { get; set; }
 
     private int repeat;
