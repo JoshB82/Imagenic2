@@ -6,14 +6,19 @@ public static class TransformationExtensions
 {
     #region Start
 
-    public static TransformationContext<TTransformableEntity> Start<TTransformableEntity>(this TTransformableEntity transformableEntity, float time) where TTransformableEntity : TransformableEntity
+    public static TransformationContext<TTransformableEntity> Start<TTransformableEntity>(this TTransformableEntity transformableEntity, float time = 0) where TTransformableEntity : TransformableEntity
     {
         return new TransformationContext<TTransformableEntity>(transformableEntity, time);
     }
 
-    public static TransformationContextIEnumerable<TTransformableEntity> Start<TTransformableEntity>(this IEnumerable<TTransformableEntity> transformableEntities, float time) where TTransformableEntity : TransformableEntity
+    public static TransformationContextIEnumerable<TTransformableEntity> Start<TTransformableEntity>(this IEnumerable<TTransformableEntity> transformableEntities, float time = 0) where TTransformableEntity : TransformableEntity
     {
         return new TransformationContextIEnumerable<TTransformableEntity>(transformableEntities, time);
+    }
+
+    public static TransformationContextIAsyncEnumerable<TTransformableEntity> Start<TTransformableEntity>(this IAsyncEnumerable<TTransformableEntity> transformableEntities, float time = 0) where TTransformableEntity : TransformableEntity
+    {
+        return new TransformationContextIAsyncEnumerable<TTransformableEntity>(transformableEntities, time);
     }
 
     #endregion
@@ -26,7 +31,7 @@ public static class TransformationExtensions
 
         if (orientatedTCtx.TransformableEntity.OrientationKeyFrameAnimation is null)
         {
-            orientatedTCtx.TransformableEntity.OrientationKeyFrameAnimation = new KeyFrameAnimation<Quaternion>(new List<KeyFrame<Quaternion>>(), v => orientatedTCtx.TransformableEntity.WorldOrientation.Rotate(v), NumberHelpers.Interpolate);
+            orientatedTCtx.TransformableEntity.OrientationKeyFrameAnimation = new KeyFrameAnimation<Quaternion>(new List<KeyFrame<Quaternion>>(), v => orientatedTCtx.TransformableEntity.WorldOrientation.Rotate(v), MathsHelper.Lerp);
             Quaternion startingQuaternion = MathsHelper.QuaternionRotateBetweenOrientations(Orientation.ModelOrientation, orientatedTCtx.TransformableEntity.WorldOrientation);
             KeyFrame<Quaternion> startingKeyFrame = new KeyFrame<Quaternion>(orientatedTCtx.StartTime, startingQuaternion);
             orientatedTCtx.TransformableEntity.OrientationKeyFrameAnimation.KeyFrames.Add(startingKeyFrame);
@@ -49,7 +54,7 @@ public static class TransformationExtensions
 
         if (orientatedTCtx.TransformableEntity.OrientationKeyFrameAnimation is null)
         {
-            orientatedTCtx.TransformableEntity.OrientationKeyFrameAnimation = new KeyFrameAnimation<Quaternion>(new List<KeyFrame<Quaternion>>(), v => orientatedTCtx.TransformableEntity.WorldOrientation.Rotate(v), NumberHelpers.Interpolate);
+            orientatedTCtx.TransformableEntity.OrientationKeyFrameAnimation = new KeyFrameAnimation<Quaternion>(new List<KeyFrame<Quaternion>>(), v => orientatedTCtx.TransformableEntity.WorldOrientation.Rotate(v), MathsHelper.Lerp);
             Quaternion startingQuaternion = MathsHelper.QuaternionRotateBetweenOrientations(Orientation.ModelOrientation, orientatedTCtx.TransformableEntity.WorldOrientation);
             KeyFrame<Quaternion> startingKeyFrame = new KeyFrame<Quaternion>(orientatedTCtx.StartTime, startingQuaternion);
             orientatedTCtx.TransformableEntity.OrientationKeyFrameAnimation.KeyFrames.Add(startingKeyFrame);
@@ -102,7 +107,7 @@ public static class TransformationExtensions
 
         if (physicalTCtx.TransformableEntity.ScalingKeyFrameAnimation is null)
         {
-            physicalTCtx.TransformableEntity.ScalingKeyFrameAnimation = new KeyFrameAnimation<Vector3D>(new List<KeyFrame<Vector3D>>(), v => physicalTCtx.TransformableEntity.Scaling = v, NumberHelpers.Interpolate);
+            physicalTCtx.TransformableEntity.ScalingKeyFrameAnimation = new KeyFrameAnimation<Vector3D>(new List<KeyFrame<Vector3D>>(), v => physicalTCtx.TransformableEntity.Scaling = v, MathsHelper.Lerp);
             KeyFrame<Vector3D> startingKeyFrame = new KeyFrame<Vector3D>(physicalTCtx.StartTime, physicalTCtx.TransformableEntity.Scaling);
             physicalTCtx.TransformableEntity.ScalingKeyFrameAnimation.KeyFrames.Add(startingKeyFrame);
         }
@@ -163,7 +168,7 @@ public static class TransformationExtensions
 
         if (translatableTCtx.TransformableEntity.TranslationKeyFrameAnimation is null)
         {
-            translatableTCtx.TransformableEntity.TranslationKeyFrameAnimation = new KeyFrameAnimation<Vector3D>(new List<KeyFrame<Vector3D>>(), v => translatableTCtx.TransformableEntity.WorldOrigin = v, NumberHelpers.Interpolate);
+            translatableTCtx.TransformableEntity.TranslationKeyFrameAnimation = new KeyFrameAnimation<Vector3D>(new List<KeyFrame<Vector3D>>(), v => translatableTCtx.TransformableEntity.WorldOrigin = v, MathsHelper.Lerp);
             KeyFrame<Vector3D> startingKeyFrame = new KeyFrame<Vector3D>(translatableTCtx.StartTime, translatableTCtx.TransformableEntity.WorldOrigin);
             translatableTCtx.TransformableEntity.TranslationKeyFrameAnimation.KeyFrames.Add(startingKeyFrame);
         }
@@ -187,7 +192,7 @@ public static class TransformationExtensions
         {
             if (orientatedEntity.OrientationKeyFrameAnimation is null)
             {
-                orientatedEntity.OrientationKeyFrameAnimation = new KeyFrameAnimation<Quaternion>(new List<KeyFrame<Quaternion>>(), v => orientatedEntity.WorldOrientation.Rotate(v), NumberHelpers.Interpolate);
+                orientatedEntity.OrientationKeyFrameAnimation = new KeyFrameAnimation<Quaternion>(new List<KeyFrame<Quaternion>>(), v => orientatedEntity.WorldOrientation.Rotate(v), MathsHelper.Lerp);
                 Quaternion startingQuaternion = MathsHelper.QuaternionRotateBetweenOrientations(Orientation.ModelOrientation, orientatedEntity.WorldOrientation);
                 KeyFrame<Quaternion> startingKeyFrame = new KeyFrame<Quaternion>(orientatedTCtx.StartTime, startingQuaternion);
                 orientatedEntity.OrientationKeyFrameAnimation.KeyFrames.Add(startingKeyFrame);
@@ -213,7 +218,7 @@ public static class TransformationExtensions
         {
             if (orientatedEntity.OrientationKeyFrameAnimation is null)
             {
-                orientatedEntity.OrientationKeyFrameAnimation = new KeyFrameAnimation<Quaternion>(new List<KeyFrame<Quaternion>>(), v => orientatedEntity.WorldOrientation.Rotate(v), NumberHelpers.Interpolate);
+                orientatedEntity.OrientationKeyFrameAnimation = new KeyFrameAnimation<Quaternion>(new List<KeyFrame<Quaternion>>(), v => orientatedEntity.WorldOrientation.Rotate(v), MathsHelper.Lerp);
                 Quaternion startingQuaternion = MathsHelper.QuaternionRotateBetweenOrientations(Orientation.ModelOrientation, orientatedEntity.WorldOrientation);
                 KeyFrame<Quaternion> startingKeyFrame = new KeyFrame<Quaternion>(orientatedTCtx.StartTime, startingQuaternion);
                 orientatedEntity.OrientationKeyFrameAnimation.KeyFrames.Add(startingKeyFrame);
@@ -269,7 +274,7 @@ public static class TransformationExtensions
         {
             if (physicalEntity.ScalingKeyFrameAnimation is null)
             {
-                physicalEntity.ScalingKeyFrameAnimation = new KeyFrameAnimation<Vector3D>(new List<KeyFrame<Vector3D>>(), v => physicalEntity.Scaling = v, NumberHelpers.Interpolate);
+                physicalEntity.ScalingKeyFrameAnimation = new KeyFrameAnimation<Vector3D>(new List<KeyFrame<Vector3D>>(), v => physicalEntity.Scaling = v, MathsHelper.Lerp);
                 KeyFrame<Vector3D> startingKeyFrame = new KeyFrame<Vector3D>(physicalTCtx.StartTime, physicalEntity.Scaling);
                 physicalEntity.ScalingKeyFrameAnimation.KeyFrames.Add(startingKeyFrame);
             }
@@ -291,6 +296,7 @@ public static class TransformationExtensions
         ThrowIfNull(transformableTCtx);
 
         List<TTransformableEntity> transformableEntities = transformableTCtx.TransformableEntities.ToList();
+        transformableTCtx.TransformationAnimations ??= new List<InstantaneousAnimation<TTransformableEntity>>(transformableEntities.Count);
         for (int i = 0; i < transformableEntities.Count; i++)
         {
             transformableTCtx.TransformationAnimations[i] ??= new InstantaneousAnimation<TTransformableEntity>(transformableEntities[i], new List<KeyFrame<Action<TTransformableEntity>>>());
@@ -337,7 +343,7 @@ public static class TransformationExtensions
         {
             if (translatableEntity.TranslationKeyFrameAnimation is null)
             {
-                translatableEntity.TranslationKeyFrameAnimation = new KeyFrameAnimation<Vector3D>(new List<KeyFrame<Vector3D>>(), v => translatableEntity.WorldOrigin = v, NumberHelpers.Interpolate);
+                translatableEntity.TranslationKeyFrameAnimation = new KeyFrameAnimation<Vector3D>(new List<KeyFrame<Vector3D>>(), v => translatableEntity.WorldOrigin = v, MathsHelper.Lerp);
                 KeyFrame<Vector3D> startingKeyFrame = new KeyFrame<Vector3D>(translatableTCtx.StartTime, translatableEntity.WorldOrigin);
                 translatableEntity.TranslationKeyFrameAnimation.KeyFrames.Add(startingKeyFrame);
             }
@@ -348,6 +354,26 @@ public static class TransformationExtensions
         }
 
         return translatableTCtx;
+    }
+
+    #endregion
+
+    #region IAsyncEnumerable Transform
+
+    public static TransformationContextIAsyncEnumerable<TTransformableEntity> Transform<TTransformableEntity>(this TransformationContextIAsyncEnumerable<TTransformableEntity> transformableTCtx, Action<TTransformableEntity> transformation, float time) where TTransformableEntity : TransformableEntity
+    {
+        ThrowIfNull(transformableTCtx);
+
+        List<TTransformableEntity> transformableEntities = transformableTCtx.TransformableEntities.ToList();
+        transformableTCtx.TransformationAnimations ??= new List<InstantaneousAnimation<TTransformableEntity>>(transformableEntities.Count);
+        for (int i = 0; i < transformableEntities.Count; i++)
+        {
+            transformableTCtx.TransformationAnimations[i] ??= new InstantaneousAnimation<TTransformableEntity>(transformableEntities[i], new List<KeyFrame<Action<TTransformableEntity>>>());
+            KeyFrame<Action<TTransformableEntity>> newKeyFrame = new KeyFrame<Action<TTransformableEntity>>(time, transformation);
+            transformableTCtx.TransformationAnimations[i].KeyFrames.Add(newKeyFrame);
+        }
+
+        return transformableTCtx;
     }
 
     #endregion

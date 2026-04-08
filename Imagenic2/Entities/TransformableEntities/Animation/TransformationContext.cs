@@ -76,7 +76,7 @@ public sealed class TransformationContextIEnumerable<TTransformableEntity> : Tra
     #region Fields and Properties
 
     public IEnumerable<TTransformableEntity> TransformableEntities { get; set; }
-    internal List<InstantaneousAnimation<TTransformableEntity>> TransformationAnimations { get; set; }
+    internal List<InstantaneousAnimation<TTransformableEntity>>? TransformationAnimations { get; set; }
 
     #endregion
 
@@ -146,7 +146,7 @@ public sealed class TransformationContextNode : TransformationContextBase
 
             if (orientatedEntity.OrientationKeyFrameAnimation is null)
             {
-                orientatedEntity.OrientationKeyFrameAnimation = new KeyFrameAnimation<Quaternion>(new List<KeyFrame<Quaternion>>(), v => orientatedEntity.WorldOrientation.Rotate(v), NumberHelpers.Interpolate);
+                orientatedEntity.OrientationKeyFrameAnimation = new KeyFrameAnimation<Quaternion>(new List<KeyFrame<Quaternion>>(), v => orientatedEntity.WorldOrientation.Rotate(v), MathsHelper.Lerp);
                 Quaternion startingQuaternion = MathsHelper.QuaternionRotateBetweenOrientations(Orientation.ModelOrientation, orientatedEntity.WorldOrientation);
                 KeyFrame<Quaternion> startingKeyFrame = new KeyFrame<Quaternion>(StartTime, startingQuaternion);
                 orientatedEntity.OrientationKeyFrameAnimation.KeyFrames.Add(startingKeyFrame);
@@ -173,7 +173,7 @@ public sealed class TransformationContextNode : TransformationContextBase
 
             if (orientatedEntity.OrientationKeyFrameAnimation is null)
             {
-                orientatedEntity.OrientationKeyFrameAnimation = new KeyFrameAnimation<Quaternion>(new List<KeyFrame<Quaternion>>(), v => orientatedEntity.WorldOrientation.Rotate(v), NumberHelpers.Interpolate);
+                orientatedEntity.OrientationKeyFrameAnimation = new KeyFrameAnimation<Quaternion>(new List<KeyFrame<Quaternion>>(), v => orientatedEntity.WorldOrientation.Rotate(v), MathsHelper.Lerp);
                 Quaternion startingQuaternion = MathsHelper.QuaternionRotateBetweenOrientations(Orientation.ModelOrientation, orientatedEntity.WorldOrientation);
                 KeyFrame<Quaternion> startingKeyFrame = new KeyFrame<Quaternion>(StartTime, startingQuaternion);
                 orientatedEntity.OrientationKeyFrameAnimation.KeyFrames.Add(startingKeyFrame);
@@ -230,7 +230,7 @@ public sealed class TransformationContextNode : TransformationContextBase
 
             if (physicalEntity.ScalingKeyFrameAnimation is null)
             {
-                physicalEntity.ScalingKeyFrameAnimation = new KeyFrameAnimation<Vector3D>(new List<KeyFrame<Vector3D>>(), v => physicalEntity.Scaling = v, NumberHelpers.Interpolate);
+                physicalEntity.ScalingKeyFrameAnimation = new KeyFrameAnimation<Vector3D>(new List<KeyFrame<Vector3D>>(), v => physicalEntity.Scaling = v, MathsHelper.Lerp);
                 KeyFrame<Vector3D> startingKeyFrame = new KeyFrame<Vector3D>(StartTime, physicalEntity.Scaling);
                 physicalEntity.ScalingKeyFrameAnimation.KeyFrames.Add(startingKeyFrame);
             }
@@ -275,7 +275,7 @@ public sealed class TransformationContextNode : TransformationContextBase
 
             if (translatableEntity.TranslationKeyFrameAnimation is null)
             {
-                translatableEntity.TranslationKeyFrameAnimation = new KeyFrameAnimation<Vector3D>(new List<KeyFrame<Vector3D>>(), v => translatableEntity.WorldOrigin = v, NumberHelpers.Interpolate);
+                translatableEntity.TranslationKeyFrameAnimation = new KeyFrameAnimation<Vector3D>(new List<KeyFrame<Vector3D>>(), v => translatableEntity.WorldOrigin = v, MathsHelper.Lerp);
                 KeyFrame<Vector3D> startingKeyFrame = new KeyFrame<Vector3D>(StartTime, translatableEntity.WorldOrigin);
                 translatableEntity.TranslationKeyFrameAnimation.KeyFrames.Add(startingKeyFrame);
             }
@@ -298,7 +298,7 @@ public class TransformationContextIAsyncEnumerable<TTransformableEntity> : Trans
     #region Fields and Properties
 
     public IAsyncEnumerable<TTransformableEntity> TransformableEntities { get; set; }
-    internal List<InstantaneousAnimation<TTransformableEntity>> TransformationAnimations { get; set; }
+    internal List<InstantaneousAnimation<TTransformableEntity>>? TransformationAnimations { get; set; }
 
     #endregion
 

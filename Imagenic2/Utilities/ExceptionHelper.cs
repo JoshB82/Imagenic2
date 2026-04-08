@@ -4,8 +4,6 @@ namespace Imagenic2.Core.Utilities;
 
 internal static class ExceptionHelper
 {
-    internal const float epsilonSetting = 1e-5f;
-
     internal static void ThrowIfNull(object? param,
         [CallerArgumentExpression(nameof(param))] string? paramName = null)
     {
@@ -42,19 +40,31 @@ internal static class ExceptionHelper
         if (param4 is null) throw new ArgumentNullException(param4Name);
     }
 
-    internal static void ThrowIfApproxZero(Quaternion param, float epsilon = epsilonSetting,
+    internal static void ThrowIfApproxZero(Quaternion param, float epsilon = Settings.epsilon,
         [CallerArgumentExpression(nameof(param))] string? paramName = null)
     {
         if (param.ApproxEquals(Quaternion.Zero, epsilon)) throw new CannotBeZeroException($"{paramName} cannot equal zero.");
     }
 
-    internal static void ThrowIfApproxZero(Vector3D param, float epsilon = epsilonSetting,
+    internal static void ThrowIfApproxZero(Vector2D param, float epsilon = Settings.epsilon,
+        [CallerArgumentExpression(nameof(param))] string? paramName = null)
+    {
+        if (param.ApproxEquals(Vector2D.Zero, epsilon)) throw new CannotBeZeroException($"{paramName} cannot equal zero.");
+    }
+
+    internal static void ThrowIfApproxZero(Vector3D param, float epsilon = Settings.epsilon,
         [CallerArgumentExpression(nameof(param))] string? paramName = null)
     {
         if (param.ApproxEquals(Vector3D.Zero, epsilon)) throw new CannotBeZeroException($"{paramName} cannot equal zero.");
     }
 
-    internal static void ThrowIfNotOrthogonal(Vector3D param1, Vector3D param2, float epsilon = epsilonSetting,
+    internal static void ThrowIfApproxZero(Vector4D param, float epsilon = Settings.epsilon,
+        [CallerArgumentExpression(nameof(param))] string? paramName = null)
+    {
+        if (param.ApproxEquals(Vector4D.Zero, epsilon)) throw new CannotBeZeroException($"{paramName} cannot equal zero.");
+    }
+
+    internal static void ThrowIfNotOrthogonal(Vector3D param1, Vector3D param2, float epsilon = Settings.epsilon,
         [CallerArgumentExpression(nameof(param1))] string? param1Name = null,
         [CallerArgumentExpression(nameof(param2))] string? param2Name = null)
     {

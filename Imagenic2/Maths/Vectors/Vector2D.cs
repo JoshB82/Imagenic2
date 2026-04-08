@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using Imagenic2.Core.Utilities;
+using System.Numerics;
 
 namespace Imagenic2.Core.Maths.Vectors;
 
@@ -10,19 +11,48 @@ public struct Vector2D : IApproximatelyEquatable<Vector2D>,
                          IDivisionOperators<Vector2D, float, Vector2D>,
                          IUnaryPlusOperators<Vector2D, Vector2D>,
                          IUnaryNegationOperators<Vector2D, Vector2D>,
-                         IAdditiveIdentity<Vector2D, Vector2D>
+                         IAdditiveIdentity<Vector2D, Vector2D>,
+                         IVector<Vector2D>
 {
     #region Fields and Properties
 
+    /// <summary>
+    /// A <see cref="Vector2D"/> equal to (0, 0).
+    /// </summary>
     public static readonly Vector2D Zero = new(0, 0);
+    /// <summary>
+    /// A <see cref="Vector2D"/> equal to (0, 0).
+    /// </summary>
     public static Vector2D AdditiveIdentity => Zero;
+    /// <summary>
+    /// A <see cref="Vector2D"/> equal to (1, 1).
+    /// </summary>
     public static readonly Vector2D One = new(1, 1);
+    /// <summary>
+    /// A <see cref="Vector2D"/> equal to (1, 0).
+    /// </summary>
     public static readonly Vector2D UnitX = new(1, 0);
+    /// <summary>
+    /// A <see cref="Vector2D"/> equal to (0, 1).
+    /// </summary>
     public static readonly Vector2D UnitY = new(0, 1);
+    /// <summary>
+    /// A <see cref="Vector2D"/> equal to (-1, 0).
+    /// </summary>
     public static readonly Vector2D UnitNegativeX = new(-1, 0);
+    /// <summary>
+    /// A <see cref="Vector2D"/> equal to (0, -1).
+    /// </summary>
     public static readonly Vector2D UnitNegativeY = new(0, -1);
 
-    public float x, y;
+    /// <summary>
+    /// The x-component of the <see cref="Vector2D"/> (x, y).
+    /// </summary>
+    public float x;
+    /// <summary>
+    /// The y-component of the <see cref="Vector2D"/> (x, y).
+    /// </summary>
+    public float y;
 
     #endregion
 
@@ -39,24 +69,23 @@ public struct Vector2D : IApproximatelyEquatable<Vector2D>,
     #region Methods
 
     public static bool IsFinite(Vector2D v) => float.IsFinite(v.x) && float.IsFinite(v.y);
+    public readonly bool IsZero(float epsilon = Settings.epsilon) => ApproxEquals(Zero, epsilon);
 
-    public readonly bool IsZero(float epsilon = float.Epsilon) => ApproxEquals(Zero, epsilon);
+    public readonly float SquaredMagnitude() => x * x + y * y;
+    public readonly float Magnitude() => Sqrt(SquaredMagnitude());
+    public static float Magnitude(Vector2D v) => v.Magnitude();
 
-    public readonly float Angle(Vector2D v, float epsilon = float.Epsilon)
+    public static float Dot(Vector2D v1, Vector2D v2) => v1 * v2;
+
+    public readonly float Angle(Vector2D v, float epsilon = Settings.epsilon)
     {
-        if (IsZero(epsilon))
-        {
-            throw new InvalidOperationException();
-        }
-        if (v.IsZero(epsilon))
-        {
-            throw new InvalidOperationException();
-        }
+        ThrowIfApproxZero(this, epsilon);
+        ThrowIfApproxZero(v, epsilon);
+        
         float quotient = this * v / Sqrt(SquaredMagnitude() * v.SquaredMagnitude());
         return Acos(quotient.Clamp(-1, 1));
     }
-
-    public readonly bool TryGetAngle(Vector2D v, out float angle, float epsilon = float.Epsilon)
+    public readonly bool TryGetAngle(Vector2D v, out float angle, float epsilon = Settings.epsilon)
     {
         angle = 0;
         if (IsZero(epsilon) || v.IsZero(epsilon))
@@ -68,16 +97,13 @@ public struct Vector2D : IApproximatelyEquatable<Vector2D>,
         return true;
     }
 
-    public readonly Vector2D Normalise(float epsilon = float.Epsilon)
+    public readonly Vector2D Normalise(float epsilon = Settings.epsilon)
     {
-        if (IsZero(epsilon))
-        {
-            throw new InvalidOperationException();
-        }
+        ThrowIfApproxZero(this, epsilon);
         return this / Magnitude();
     }
 
-    public readonly bool TryNormalise(out Vector2D v, float epsilon = float.Epsilon)
+    public readonly bool TryNormalise(out Vector2D v, float epsilon = Settings.epsilon)
     {
         v = Zero;
         if (IsZero(epsilon))
@@ -88,13 +114,10 @@ public struct Vector2D : IApproximatelyEquatable<Vector2D>,
         return true;
     }
 
-    public readonly float Magnitude() => Sqrt(SquaredMagnitude());
-
-    public readonly float SquaredMagnitude() => x * x + y * y;
-
     public readonly override string ToString() => $"(x: {x}, y: {y})";
     public readonly string ToString(string? format, IFormatProvider? formatProvider) => $"(x: {x.ToString(format, formatProvider)}, y: {y.ToString(format, formatProvider)})";
 
+    // Operators
     public static Vector2D operator checked *(Vector2D v, float scalar) => checked(new(v.x * scalar, v.y * scalar));
     public static Vector2D operator *(Vector2D v, float scalar) => new(v.x * scalar, v.y * scalar);
 
@@ -117,19 +140,18 @@ public struct Vector2D : IApproximatelyEquatable<Vector2D>,
     public static Vector2D operator +(Vector2D v) => new(v.x, v.y);
     public static Vector2D operator -(Vector2D v) => new(-v.x, -v.y);
 
-    public static bool operator ==(Vector2D v1, Vector2D v2) => v1.x == v2.x && v1.y == v2.y;
+    public static implicit operator Vector3D(Vector2D v) => new Vector3D(v);
 
+    // Equality
+    public static bool operator ==(Vector2D v1, Vector2D v2) => v1.x == v2.x && v1.y == v2.y;
     public static bool operator !=(Vector2D v1, Vector2D v2) => !(v1 == v2);
 
     public readonly bool Equals(Vector2D v) => this == v;
-
-    public readonly bool ApproxEquals(Vector2D v, float epsilon = float.Epsilon) => x.ApproxEquals(v.x, epsilon) && y.ApproxEquals(v.y, epsilon);
-
-    public override readonly bool Equals(object obj) => this == (Vector2D)obj;
+    public override readonly bool Equals(object obj) => obj is Vector2D v && this == v;
 
     public override readonly int GetHashCode() => (x, y).GetHashCode();
 
-    public static implicit operator Vector3D(Vector2D v) => new Vector3D(v);
+    public readonly bool ApproxEquals(Vector2D v, float epsilon = Settings.epsilon) => x.ApproxEquals(v.x, epsilon) && y.ApproxEquals(v.y, epsilon);
 
     #endregion
 }

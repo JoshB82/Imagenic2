@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using Imagenic2.Core.Utilities;
+using System.Numerics;
 
 namespace Imagenic2.Core.Maths;
 
@@ -17,7 +18,13 @@ public struct Matrix4x4 : IApproximatelyEquatable<Matrix4x4>,
 {
     #region Fields and Properties
 
+    /// <summary>
+    /// A <see cref="Matrix4x4"/> equal to a 4x4 array of zeros.
+    /// </summary>
     public static readonly Matrix4x4 Zero = new();
+    /// <summary>
+    /// A <see cref="Matrix4x4"/> equal to a 4x4 array of zeros.
+    /// </summary>
     public static Matrix4x4 AdditiveIdentity => Zero;
     public static readonly Matrix4x4 Identity = new() { m00 = 1, m11 = 1, m22 = 1, m33 = 1 };
     public static Matrix4x4 MultiplicativeIdentity => Identity;
@@ -46,6 +53,15 @@ public struct Matrix4x4 : IApproximatelyEquatable<Matrix4x4>,
     #endregion
 
     #region Methods
+
+    public static bool IsFinite(Matrix4x4 m)
+    {
+        return float.IsFinite(m.m00) && float.IsFinite(m.m01) && float.IsFinite(m.m02) && float.IsFinite(m.m03) &&
+               float.IsFinite(m.m10) && float.IsFinite(m.m11) && float.IsFinite(m.m12) && float.IsFinite(m.m13) &&
+               float.IsFinite(m.m20) && float.IsFinite(m.m21) && float.IsFinite(m.m22) && float.IsFinite(m.m23) &&
+               float.IsFinite(m.m30) && float.IsFinite(m.m31) && float.IsFinite(m.m32) && float.IsFinite(m.m33);
+    }
+    public readonly bool IsZero(float epsilon = Settings.epsilon) => ApproxEquals(Zero, epsilon);
 
     public readonly float Determinant()
     {
@@ -110,28 +126,6 @@ public struct Matrix4x4 : IApproximatelyEquatable<Matrix4x4>,
 
     public readonly float Trace() => m00 + m11 + m22 + m33;
 
-    public static bool operator ==(Matrix4x4 v1, Matrix4x4 v2)
-    {
-        return (v1.m00, v1.m01, v1.m02, v1.m03) == (v2.m00, v2.m01, v2.m02, v2.m03) &&
-               (v1.m10, v1.m11, v1.m12, v1.m13) == (v2.m10, v2.m11, v2.m12, v2.m13) &&
-               (v1.m20, v1.m21, v1.m22, v1.m23) == (v2.m20, v2.m21, v2.m22, v2.m23) &&
-               (v1.m30, v1.m31, v1.m32, v1.m33) == (v2.m30, v2.m31, v2.m32, v2.m33);
-    }
-
-    public static bool operator !=(Matrix4x4 v1, Matrix4x4 v2) => !(v1 == v2);
-
-    public readonly bool Equals(Matrix4x4 m) => this == m;
-    public override readonly bool Equals(object obj) => this == (Matrix4x4)obj;
-    public readonly bool ApproxEquals(Matrix4x4 m, float epsilon = float.Epsilon)
-    {
-        return m00.ApproxEquals(m.m00, epsilon) && m01.ApproxEquals(m.m01, epsilon) && m02.ApproxEquals(m.m02, epsilon) && m03.ApproxEquals(m.m03, epsilon) &&
-               m10.ApproxEquals(m.m10, epsilon) && m11.ApproxEquals(m.m11, epsilon) && m12.ApproxEquals(m.m12, epsilon) && m13.ApproxEquals(m.m13, epsilon) &&
-               m20.ApproxEquals(m.m20, epsilon) && m21.ApproxEquals(m.m21, epsilon) && m22.ApproxEquals(m.m22, epsilon) && m23.ApproxEquals(m.m23, epsilon) &&
-               m30.ApproxEquals(m.m30, epsilon) && m31.ApproxEquals(m.m31, epsilon) && m32.ApproxEquals(m.m32, epsilon) && m33.ApproxEquals(m.m33, epsilon);
-    }
-
-    public readonly override int GetHashCode() => (m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33).GetHashCode();
-
     public readonly override string ToString()
     {
         return $"({m00}, {m01}, {m02}, {m03}, \n" +
@@ -147,6 +141,7 @@ public struct Matrix4x4 : IApproximatelyEquatable<Matrix4x4>,
                $"{m30.ToString(format, formatProvider)}, {m31.ToString(format, formatProvider)}, {m32.ToString(format, formatProvider)}, {m33.ToString(format, formatProvider)})";
     }
 
+    // Operators
     public static Matrix4x4 operator +(Matrix4x4 m1, Matrix4x4 m2)
     {
         return new Matrix4x4
@@ -227,6 +222,28 @@ public struct Matrix4x4 : IApproximatelyEquatable<Matrix4x4>,
 
     public static Matrix4x4 operator +(Matrix4x4 m) => m;
     public static Matrix4x4 operator -(Matrix4x4 m) => m * -1;
+
+    // Equality
+    public static bool operator ==(Matrix4x4 v1, Matrix4x4 v2)
+    {
+        return (v1.m00, v1.m01, v1.m02, v1.m03) == (v2.m00, v2.m01, v2.m02, v2.m03) &&
+               (v1.m10, v1.m11, v1.m12, v1.m13) == (v2.m10, v2.m11, v2.m12, v2.m13) &&
+               (v1.m20, v1.m21, v1.m22, v1.m23) == (v2.m20, v2.m21, v2.m22, v2.m23) &&
+               (v1.m30, v1.m31, v1.m32, v1.m33) == (v2.m30, v2.m31, v2.m32, v2.m33);
+    }
+    public static bool operator !=(Matrix4x4 v1, Matrix4x4 v2) => !(v1 == v2);
+
+    public readonly bool Equals(Matrix4x4 m) => this == m;
+    public override readonly bool Equals(object obj) => obj is Matrix4x4 m && this == m;
+    public readonly bool ApproxEquals(Matrix4x4 m, float epsilon = Settings.epsilon)
+    {
+        return m00.ApproxEquals(m.m00, epsilon) && m01.ApproxEquals(m.m01, epsilon) && m02.ApproxEquals(m.m02, epsilon) && m03.ApproxEquals(m.m03, epsilon) &&
+               m10.ApproxEquals(m.m10, epsilon) && m11.ApproxEquals(m.m11, epsilon) && m12.ApproxEquals(m.m12, epsilon) && m13.ApproxEquals(m.m13, epsilon) &&
+               m20.ApproxEquals(m.m20, epsilon) && m21.ApproxEquals(m.m21, epsilon) && m22.ApproxEquals(m.m22, epsilon) && m23.ApproxEquals(m.m23, epsilon) &&
+               m30.ApproxEquals(m.m30, epsilon) && m31.ApproxEquals(m.m31, epsilon) && m32.ApproxEquals(m.m32, epsilon) && m33.ApproxEquals(m.m33, epsilon);
+    }
+
+    public readonly override int GetHashCode() => (m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33).GetHashCode();
 
     #endregion
 }

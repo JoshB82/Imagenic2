@@ -4,14 +4,7 @@ namespace Imagenic2.Core.Maths;
 
 internal static class NumberHelpers
 {
-    #region Interpolation
-
-    internal static T Interpolate<T>(T v1, T v2, float d) where T : IAdditionOperators<T, T, T>, ISubtractionOperators<T, T, T>, IMultiplyOperators<T, float, T>
-    {
-        return (v2 - v1) * d + v1;
-    }
-
-    #endregion
+    
 
     internal static void Swap<T>(ref T x1, ref T x2)
     {

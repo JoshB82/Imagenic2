@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using Imagenic2.Core.Utilities;
+using System.Drawing;
 using System.Numerics;
 
 namespace Imagenic2.Core.Maths.Vectors;
@@ -10,22 +11,64 @@ public struct Vector3D : IApproximatelyEquatable<Vector3D>,
                          IDivisionOperators<Vector3D, float, Vector3D>,
                          IUnaryPlusOperators<Vector3D, Vector3D>,
                          IUnaryNegationOperators<Vector3D, Vector3D>,
-                         IAdditiveIdentity<Vector3D, Vector3D>
+                         IAdditiveIdentity<Vector3D, Vector3D>,
+                         IVector<Vector3D>
 {
     #region Fields and Properties
 
+    /// <summary>
+    /// A <see cref="Vector3D"/> equal to (0, 0, 0).
+    /// </summary>
     public static readonly Vector3D Zero = new(0, 0, 0);
+    /// <summary>
+    /// A <see cref="Vector3D"/> equal to (0, 0, 0).
+    /// </summary>
     public static Vector3D AdditiveIdentity => Zero;
+    /// <summary>
+    /// A <see cref="Vector3D"/> equal to (1, 1, 1).
+    /// </summary>
     public static readonly Vector3D One = new(1, 1, 1);
+    /// <summary>
+    /// A <see cref="Vector3D"/> equal to (-1, -1, -1).
+    /// </summary>
     public static readonly Vector3D NegativeOne = new(-1, -1, -1);
+    /// <summary>
+    /// A <see cref="Vector3D"/> equal to (1, 0, 0).
+    /// </summary>
     public static readonly Vector3D UnitX = new(1, 0, 0);
+    /// <summary>
+    /// A <see cref="Vector3D"/> equal to (0, 1, 0).
+    /// </summary>
     public static readonly Vector3D UnitY = new(0, 1, 0);
+    /// <summary>
+    /// A <see cref="Vector3D"/> equal to (0, 0, 1).
+    /// </summary>
     public static readonly Vector3D UnitZ = new(0, 0, 1);
+    /// <summary>
+    /// A <see cref="Vector3D"/> equal to (-1, 0, 0).
+    /// </summary>
     public static readonly Vector3D UnitNegativeX = new(-1, 0, 0);
+    /// <summary>
+    /// A <see cref="Vector3D"/> equal to (0, -1, 0).
+    /// </summary>
     public static readonly Vector3D UnitNegativeY = new(0, -1, 0);
+    /// <summary>
+    /// A <see cref="Vector3D"/> equal to (0, 0, -1).
+    /// </summary>
     public static readonly Vector3D UnitNegativeZ = new(0, 0, -1);
 
-    public float x, y, z;
+    /// <summary>
+    /// The x-component of the <see cref="Vector3D"/> (x, y, z).
+    /// </summary>
+    public float x;
+    /// <summary>
+    /// The y-component of the <see cref="Vector3D"/> (x, y, z).
+    /// </summary>
+    public float y;
+    /// <summary>
+    /// The z-component of the <see cref="Vector3D"/> (x, y, z).
+    /// </summary>
+    public float z;
 
     #endregion
 
@@ -50,6 +93,13 @@ public struct Vector3D : IApproximatelyEquatable<Vector3D>,
     #region Methods
 
     public static bool IsFinite(Vector3D v) => float.IsFinite(v.x) && float.IsFinite(v.y) && float.IsFinite(v.z);
+    public readonly bool IsZero(float epsilon = Settings.epsilon) => ApproxEquals(Zero, epsilon);
+
+    public readonly float SquaredMagnitude() => x * x + y * y + z * z;
+    public readonly float Magnitude() => Sqrt(SquaredMagnitude());
+    public static float Magnitude(Vector3D v) => v.Magnitude();
+
+    public static float Dot(Vector3D v1, Vector3D v2) => v1 * v2;
 
     public static Vector3D LineIntersectPlane(Vector3D lineStart, Vector3D lineFinish, Vector3D planePoint, Vector3D planeNormal, out float d)
     {
@@ -66,22 +116,15 @@ public struct Vector3D : IApproximatelyEquatable<Vector3D>,
 
     public static Vector3D NormalFromPlane(Vector3D p1, Vector3D p2, Vector3D p3) => (p3 - p1).CrossProduct(p2 - p1).Normalise();
 
-    public readonly bool IsZero(float epsilon = float.Epsilon) => ApproxEquals(Zero, epsilon);
-
-    public readonly float Angle(Vector3D v, float epsilon = float.Epsilon)
+    public readonly float Angle(Vector3D v, float epsilon = Settings.epsilon)
     {
-        if (IsZero(epsilon))
-        {
-            throw new InvalidOperationException();
-        }
-        if (v.IsZero(epsilon))
-        {
-            throw new InvalidOperationException();
-        }
+        ThrowIfApproxZero(this, epsilon);
+        ThrowIfApproxZero(v, epsilon);
+
         float quotient = this * v / Sqrt(SquaredMagnitude() * v.SquaredMagnitude());
         return Acos(quotient.Clamp(-1, 1));
     }
-    public readonly bool TryGetAngle(Vector3D v, out float angle, float epsilon = float.Epsilon)
+    public readonly bool TryGetAngle(Vector3D v, out float angle, float epsilon = Settings.epsilon)
     {
         angle = 0;
         if (IsZero(epsilon) || v.IsZero(epsilon))
@@ -93,15 +136,12 @@ public struct Vector3D : IApproximatelyEquatable<Vector3D>,
         return true;
     }
 
-    public readonly Vector3D Normalise(float epsilon = float.Epsilon)
+    public readonly Vector3D Normalise(float epsilon = Settings.epsilon)
     {
-        if (IsZero(epsilon))
-        {
-            throw new InvalidOperationException();
-        }
+        ThrowIfApproxZero(this, epsilon);
         return this / Magnitude();
     }
-    public readonly bool TryNormalise(out Vector3D v, float epsilon = float.Epsilon)
+    public readonly bool TryNormalise(out Vector3D v, float epsilon = Settings.epsilon)
     {
         v = Zero;
         if (IsZero(epsilon))
@@ -113,9 +153,8 @@ public struct Vector3D : IApproximatelyEquatable<Vector3D>,
     }
 
     public readonly Vector3D CrossProduct(Vector3D v) => new Vector3D(y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x);
-
-    public readonly float Magnitude() => Sqrt(SquaredMagnitude());
-    public readonly float SquaredMagnitude() => x * x + y * y + z * z;
+    
+    
 
     public override readonly string ToString() => $"(x: {x}, y: {y}, z: {z})";
     public readonly string ToString(string? format, IFormatProvider? formatProvider) => $"(x: {x.ToString(format, formatProvider)}, y: {y.ToString(format, formatProvider)}, z: {z.ToString(format, formatProvider)})";
@@ -147,16 +186,16 @@ public struct Vector3D : IApproximatelyEquatable<Vector3D>,
 
     public static bool operator !=(Vector3D v1, Vector3D v2) => !(v1 == v2);
 
-    public readonly bool Equals(Vector3D v) => this == v;
-
-    public readonly bool ApproxEquals(Vector3D v, float epsilon = float.Epsilon) => x.ApproxEquals(v.x, epsilon) && y.ApproxEquals(v.y, epsilon) && z.ApproxEquals(v.z, epsilon);
-
-    public override readonly bool Equals(object obj) => this == (Vector3D)obj;
-
-    public override readonly int GetHashCode() => (x, y, z).GetHashCode();
-
     public static implicit operator Vector4D(Vector3D v) => new Vector4D(v);
     public static explicit operator Vector2D(Vector3D v) => new Vector2D(v.x, v.y);
+
+    // Equality
+    public readonly bool Equals(Vector3D v) => this == v;
+    public override readonly bool Equals(object obj) => obj is Vector3D v && this == v;
+
+    public readonly bool ApproxEquals(Vector3D v, float epsilon = Settings.epsilon) => x.ApproxEquals(v.x, epsilon) && y.ApproxEquals(v.y, epsilon) && z.ApproxEquals(v.z, epsilon);
+
+    public override readonly int GetHashCode() => (x, y, z).GetHashCode();
 
     public readonly Color ToSystemDrawingColor()
     {

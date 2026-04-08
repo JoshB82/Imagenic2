@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using Imagenic2.Core.Utilities;
+using System.Numerics;
 
 namespace Imagenic2.Core.Maths;
 
@@ -36,12 +37,22 @@ public struct Quaternion : IApproximatelyEquatable<Quaternion>,
     /// </summary>
     public static Quaternion MultiplicativeIdentity => One;
 
+    /// <summary>
+    /// The w-component of the <see cref="Quaternion"/> (w, x, y, z).
+    /// </summary>
     public float w;
+    /// <summary>
+    /// The x-component of the <see cref="Quaternion"/> (w, x, y, z).
+    /// </summary>
     public float x;
+    /// <summary>
+    /// The y-component of the <see cref="Quaternion"/> (w, x, y, z).
+    /// </summary>
     public float y;
+    /// <summary>
+    /// The z-component of the <see cref="Quaternion"/> (w, x, y, z).
+    /// </summary>
     public float z;
-
-    private const float epsilon = 1e-6f;
 
     #endregion
 
@@ -68,24 +79,20 @@ public struct Quaternion : IApproximatelyEquatable<Quaternion>,
     #region Methods
 
     public static bool IsFinite(Quaternion q) => float.IsFinite(q.w) && float.IsFinite(q.x) && float.IsFinite(q.y) && float.IsFinite(q.z);
-
-    public readonly float Magnitude() => Sqrt(SquaredMagnitude());
+    public readonly bool IsZero(float epsilon = Settings.epsilon) => ApproxEquals(Zero, epsilon);
+    
     public readonly float SquaredMagnitude() => w * w + x * x + y * y + z * z;
+    public readonly float Magnitude() => Sqrt(SquaredMagnitude());
 
-    public readonly Quaternion Normalise()
+    public readonly Quaternion Normalise(float epsilon = Settings.epsilon)
     {
         ThrowIfApproxZero(this, epsilon);
         return this / Magnitude();
-
-        //return
-        //ApproxEquals(Zero, 1E-6f)
-        //  ? Quaternion.Zero//throw Exceptions.QuaternionNormalise
-        //: this / Magnitude();
     }
-    public readonly bool TryNormalise(out Quaternion q)
+    public readonly bool TryNormalise(out Quaternion q, float epsilon = Settings.epsilon)
     {
         q = Zero;
-        if (IsZero())
+        if (IsZero(epsilon))
         {
             return false;
         }
@@ -93,13 +100,17 @@ public struct Quaternion : IApproximatelyEquatable<Quaternion>,
         return true;
     }
 
-    public readonly bool IsZero() => ApproxEquals(Zero, epsilon);
+    public readonly bool Equals(Quaternion q) => this == q;
+    public override readonly bool Equals(object obj) => obj is Quaternion q && this == q;
+    public override readonly int GetHashCode() => (w, x, y, z).GetHashCode();
 
-    public readonly bool ApproxEquals(Quaternion q, float epsilon = float.Epsilon) =>
-        w.ApproxEquals(q.w, epsilon) &&
-        x.ApproxEquals(q.x, epsilon) &&
-        y.ApproxEquals(q.y, epsilon) &&
-        z.ApproxEquals(q.z, epsilon);
+    public readonly bool ApproxEquals(Quaternion q, float epsilon = Settings.epsilon)
+    {
+        return w.ApproxEquals(q.w, epsilon) &&
+               x.ApproxEquals(q.x, epsilon) &&
+               y.ApproxEquals(q.y, epsilon) &&
+               z.ApproxEquals(q.z, epsilon);
+    }
 
     public override readonly string ToString() => $"(w: {w}, x: {x}, y: {y}, z: {z})";
     public readonly string ToString(string? format, IFormatProvider? formatProvider) => $"(w: {w.ToString(format, formatProvider)}, x: {x.ToString(format, formatProvider)}, y: {y.ToString(format, formatProvider)}, z: {z.ToString(format, formatProvider)})";
@@ -107,10 +118,6 @@ public struct Quaternion : IApproximatelyEquatable<Quaternion>,
     public static bool operator ==(Quaternion v1, Quaternion v2) => v1.w == v2.w && v1.x == v2.x && v1.y == v2.y && v1.z == v2.z;
 
     public static bool operator !=(Quaternion v1, Quaternion v2) => !(v1 == v2);
-
-    public readonly bool Equals(Quaternion q) => this == q;
-    public override readonly bool Equals(object obj) => this == (Quaternion)obj;
-    public override readonly int GetHashCode() => (w, x, y, z).GetHashCode();
 
     public static Quaternion operator +(Quaternion q) => q;
     public static Quaternion operator -(Quaternion q) => new Quaternion(-q.w, -q.x, -q.y, -q.z);
@@ -138,7 +145,7 @@ public struct Quaternion : IApproximatelyEquatable<Quaternion>,
 
     #endregion
 
-    public int ApproximatelyCompareTo(Quaternion other, float epsilon)
+    public int ApproximatelyCompareTo(Quaternion other, float epsilon = Settings.epsilon)
     {
         throw new NotImplementedException();
     }

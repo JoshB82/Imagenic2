@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using Imagenic2.Core.Utilities;
+using System.Numerics;
 
 namespace Imagenic2.Core.Maths.Vectors;
 
@@ -9,24 +10,76 @@ public struct Vector4D : IApproximatelyEquatable<Vector4D>,
                          IDivisionOperators<Vector4D, float, Vector4D>,
                          IUnaryPlusOperators<Vector4D, Vector4D>,
                          IUnaryNegationOperators<Vector4D, Vector4D>,
-                         IAdditiveIdentity<Vector4D, Vector4D>
+                         IAdditiveIdentity<Vector4D, Vector4D>,
+                         IVector<Vector4D>
 {
     #region Fields and Methods
 
+    /// <summary>
+    /// A <see cref="Vector4D"/> equal to (0, 0, 0, 0).
+    /// </summary>
     public static readonly Vector4D Zero = new();
+    /// <summary>
+    /// A <see cref="Vector4D"/> equal to (0, 0, 0, 0).
+    /// </summary>
     public static Vector4D AdditiveIdentity => Zero;
+    /// <summary>
+    /// A <see cref="Vector4D"/> equal to (1, 1, 1, 1).
+    /// </summary>
     public static readonly Vector4D One = new(1, 1, 1, 1);
+    /// <summary>
+    /// A <see cref="Vector4D"/> equal to (-1, -1, -1, -1).
+    /// </summary>
     public static readonly Vector4D NegativeOne = new(-1, -1, -1, -1);
+    /// <summary>
+    /// A <see cref="Vector4D"/> equal to (1, 0, 0, 0).
+    /// </summary>
     public static readonly Vector4D UnitX = new(1, 0, 0, 0);
+    /// <summary>
+    /// A <see cref="Vector4D"/> equal to (0, 1, 0, 0).
+    /// </summary>
     public static readonly Vector4D UnitY = new(0, 1, 0, 0);
+    /// <summary>
+    /// A <see cref="Vector4D"/> equal to (0, 0, 1, 0).
+    /// </summary>
     public static readonly Vector4D UnitZ = new(0, 0, 1, 0);
+    /// <summary>
+    /// A <see cref="Vector4D"/> equal to (0, 0, 0, 1).
+    /// </summary>
     public static readonly Vector4D UnitW = new(0, 0, 0, 1);
+    /// <summary>
+    /// A <see cref="Vector4D"/> equal to (-1, 0, 0, 0).
+    /// </summary>
     public static readonly Vector4D UnitNegativeX = new(-1, 0, 0, 0);
+    /// <summary>
+    /// A <see cref="Vector4D"/> equal to (0, -1, 0, 0).
+    /// </summary>
     public static readonly Vector4D UnitNegativeY = new(0, -1, 0, 0);
+    /// <summary>
+    /// A <see cref="Vector4D"/> equal to (0, 0, -1, 0).
+    /// </summary>
     public static readonly Vector4D UnitNegativeZ = new(0, 0, -1, 0);
+    /// <summary>
+    /// A <see cref="Vector4D"/> equal to (0, 0, 0, -1).
+    /// </summary>
     public static readonly Vector4D UnitNegativeW = new(0, 0, 0, -1);
 
-    public float x, y, z, w;
+    /// <summary>
+    /// The x-component of the <see cref="Vector4D"/> (x, y, z, w).
+    /// </summary>
+    public float x;
+    /// <summary>
+    /// The y-component of the <see cref="Vector4D"/> (x, y, z, w).
+    /// </summary>
+    public float y;
+    /// <summary>
+    /// The z-component of the <see cref="Vector4D"/> (x, y, z, w).
+    /// </summary>
+    public float z;
+    /// <summary>
+    /// The w-component of the <see cref="Vector4D"/> (x, y, z, w).
+    /// </summary>
+    public float w;
 
     #endregion
 
@@ -61,24 +114,23 @@ public struct Vector4D : IApproximatelyEquatable<Vector4D>,
     #region Methods
 
     public static bool IsFinite(Vector4D v) => float.IsFinite(v.x) && float.IsFinite(v.y) && float.IsFinite(v.z) && float.IsFinite(v.w);
+    public readonly bool IsZero(float epsilon = Settings.epsilon) => ApproxEquals(Zero, epsilon);
 
-    public readonly bool IsZero(float epsilon = float.Epsilon) => ApproxEquals(Zero, epsilon);
+    public readonly float SquaredMagnitude() => x * x + y * y + z * z + w * w;
+    public readonly float Magnitude() => Sqrt(SquaredMagnitude());
+    public static float Magnitude(Vector4D v) => v.Magnitude();
 
-    public readonly float Angle(Vector4D v, float epsilon = float.Epsilon)
+    public static float Dot(Vector4D v1, Vector4D v2) => v1 * v2;
+
+    public readonly float Angle(Vector4D v, float epsilon = Settings.epsilon)
     {
-        if (ApproxEquals(Zero, epsilon))
-        {
-            throw new InvalidOperationException();
-        }
-        if (v.ApproxEquals(Zero, epsilon))
-        {
-            throw new InvalidOperationException();
-        }
+        ThrowIfApproxZero(this, epsilon);
+        ThrowIfApproxZero(v, epsilon);
 
         float quotient = this * v / Sqrt(SquaredMagnitude() * v.SquaredMagnitude());
         return Acos(quotient.Clamp(-1, 1));
     }
-    public readonly bool TryGetAngle(Vector4D v, out float angle, float epsilon = float.Epsilon)
+    public readonly bool TryGetAngle(Vector4D v, out float angle, float epsilon = Settings.epsilon)
     {
         angle = 0;
         if (ApproxEquals(Zero, epsilon) || v.ApproxEquals(Zero, epsilon))
@@ -90,15 +142,12 @@ public struct Vector4D : IApproximatelyEquatable<Vector4D>,
         return true;
     }
 
-    public readonly Vector4D Normalise(float epsilon = float.Epsilon)
+    public readonly Vector4D Normalise(float epsilon = Settings.epsilon)
     {
-        if (ApproxEquals(Zero, epsilon))
-        {
-            throw new InvalidOperationException();
-        }
+        ThrowIfApproxZero(this, epsilon);
         return this / Magnitude();
     }
-    public readonly bool TryNormalise(out Vector4D v, float epsilon = float.Epsilon)
+    public readonly bool TryNormalise(out Vector4D v, float epsilon = Settings.epsilon)
     {
         v = Zero;
         if (ApproxEquals(Zero, epsilon))
@@ -108,14 +157,11 @@ public struct Vector4D : IApproximatelyEquatable<Vector4D>,
         v = this / Magnitude();
         return true;
     }
-
-    public readonly float Magnitude() => Sqrt(SquaredMagnitude());
-    public readonly float SquaredMagnitude() => x * x + y * y + z * z + w * w;
-    public override readonly int GetHashCode() => (x, y, z, w).GetHashCode();
-
+    
     public override readonly string ToString() => $"(x: {x}, y: {y}, z: {z}, w: {w})";
     public readonly string ToString(string? format, IFormatProvider? formatProvider) => $"(x: {x.ToString(format, formatProvider)}, y: {y.ToString(format, formatProvider)}, z: {z.ToString(format, formatProvider)}, w: {w.ToString(format, formatProvider)})";
 
+    // Operators
     public static Vector4D operator checked +(Vector4D v1, Vector4D v2) => checked(new(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z, v1.w + v2.w));
     public static Vector4D operator +(Vector4D v1, Vector4D v2) => new(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z, v1.w + v2.w);
 
@@ -141,15 +187,17 @@ public struct Vector4D : IApproximatelyEquatable<Vector4D>,
     public static Vector4D operator +(Vector4D v) => new(v.x, v.y, v.z, v.w);
     public static Vector4D operator -(Vector4D v) => new(-v.x, -v.y, -v.z, -v.w);
 
+    public static explicit operator Vector3D(Vector4D v) => new Vector3D(v.x, v.y, v.z);
+
+    // Equality
     public static bool operator ==(Vector4D v1, Vector4D v2) => v1.x == v2.x && v1.y == v2.y && v1.z == v2.z && v1.w == v2.w;
     public static bool operator !=(Vector4D v1, Vector4D v2) => !(v1 == v2);
     public readonly bool Equals(Vector4D v) => this == v;
-    public override readonly bool Equals(object obj) => this == (Vector4D)obj;
-    public readonly bool ApproxEquals(Vector4D v, float epsilon = float.Epsilon) =>
+    public override readonly bool Equals(object obj) => obj is Vector4D v && this == v;
+    public readonly bool ApproxEquals(Vector4D v, float epsilon = Settings.epsilon) =>
         x.ApproxEquals(v.x, epsilon) && y.ApproxEquals(v.y, epsilon) &&
         z.ApproxEquals(v.z, epsilon) && w.ApproxEquals(v.w, epsilon);
-
-    public static explicit operator Vector3D(Vector4D v) => new Vector3D(v.x, v.y, v.z);
+    public override readonly int GetHashCode() => (x, y, z, w).GetHashCode();
 
     #endregion
 }

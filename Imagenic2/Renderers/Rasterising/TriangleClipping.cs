@@ -1,5 +1,5 @@
 ﻿using Imagenic2.Core.Entities;
-using static Imagenic2.Core.Maths.NumberHelpers;
+using static Imagenic2.Core.Maths.Transformations.MathsHelper;
 
 namespace Imagenic2.Core.Renderers.Rasterising;
 
@@ -325,8 +325,8 @@ public partial class Rasteriser<TImage>
                 triangle1.p2.transformedPosition = intersection1;
                 triangle1.p3.transformedPosition = intersection2;
                 triangle1.p1.transformedTexturePosition = t1;
-                triangle1.p2.transformedTexturePosition = Interpolate(t1, t2, d1);
-                triangle1.p3.transformedTexturePosition = Interpolate(t1, t3, d2);
+                triangle1.p2.transformedTexturePosition = Lerp(t1, t2, d1);
+                triangle1.p3.transformedTexturePosition = Lerp(t1, t3, d2);
 
                 triangleQueue.Enqueue(triangle1);
                 break;
@@ -338,8 +338,8 @@ public partial class Rasteriser<TImage>
                 triangle1.p2.transformedPosition = intersection1;
                 triangle1.p3.transformedPosition = intersection2;
                 triangle1.p1.transformedTexturePosition = t2;
-                triangle1.p2.transformedTexturePosition = Interpolate(t2, t3, d1);
-                triangle1.p3.transformedTexturePosition = Interpolate(t2, t1, d2);
+                triangle1.p2.transformedTexturePosition = Lerp(t2, t3, d1);
+                triangle1.p3.transformedTexturePosition = Lerp(t2, t1, d2);
 
                 triangleQueue.Enqueue(triangle1);
                 break;
@@ -351,8 +351,8 @@ public partial class Rasteriser<TImage>
                 triangle1.p2.transformedPosition = intersection1;
                 triangle1.p3.transformedPosition = intersection2;
                 triangle1.p1.transformedTexturePosition = t3;
-                triangle1.p2.transformedTexturePosition = Interpolate(t3, t1, d1);
-                triangle1.p3.transformedTexturePosition = Interpolate(t3, t2, d2);
+                triangle1.p2.transformedTexturePosition = Lerp(t3, t1, d1);
+                triangle1.p3.transformedTexturePosition = Lerp(t3, t2, d2);
 
                 triangleQueue.Enqueue(triangle1);
                 break;
@@ -362,8 +362,8 @@ public partial class Rasteriser<TImage>
                 intersection1 = new Vector4D(Vector3D.LineIntersectPlane(p1, p3, planePoint, planeNormal, out d1), 1);
                 intersection2 = new Vector4D(Vector3D.LineIntersectPlane(p2, p3, planePoint, planeNormal, out d2), 1);
 
-                Vector2D t13 = Interpolate(t1, t3, d1);
-                Vector2D t23 = Interpolate(t2, t3, d2);
+                Vector2D t13 = Lerp(t1, t3, d1);
+                Vector2D t23 = Lerp(t2, t3, d2);
 
                 triangle1.p1.transformedPosition = new Vector4D(p1, 1);
                 triangle1.p2.transformedPosition = new Vector4D(p2, 1);
@@ -387,8 +387,8 @@ public partial class Rasteriser<TImage>
                 intersection1 = new Vector4D(Vector3D.LineIntersectPlane(p1, p2, planePoint, planeNormal, out d1), 1);
                 intersection2 = new Vector4D(Vector3D.LineIntersectPlane(p3, p2, planePoint, planeNormal, out d2), 1);
 
-                Vector2D t12 = Interpolate(t1, t2, d1);
-                Vector2D t32 = Interpolate(t3, t2, d2);
+                Vector2D t12 = Lerp(t1, t2, d1);
+                Vector2D t32 = Lerp(t3, t2, d2);
 
                 triangle1.p1.transformedPosition = new Vector4D(p1, 1);
                 triangle1.p2.transformedPosition = intersection1;
@@ -412,8 +412,8 @@ public partial class Rasteriser<TImage>
                 intersection1 = new Vector4D(Vector3D.LineIntersectPlane(p2, p1, planePoint, planeNormal, out d1), 1);
                 intersection2 = new Vector4D(Vector3D.LineIntersectPlane(p3, p1, planePoint, planeNormal, out d2), 1);
 
-                Vector2D t21 = Interpolate(t2, t1, d1);
-                Vector2D t31 = Interpolate(t3, t1, d2);
+                Vector2D t21 = Lerp(t2, t1, d1);
+                Vector2D t31 = Lerp(t3, t1, d2);
 
                 triangle1.p1.transformedPosition = new Vector4D(p2, 1);
                 triangle1.p2.transformedPosition = new Vector4D(p3, 1);
