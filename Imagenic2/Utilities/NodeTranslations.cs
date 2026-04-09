@@ -88,7 +88,7 @@ public partial class Node
 
     #region Start
 
-    public TransformationContextNode Start(float time)
+    public TransformationContextNode Start(float time = 0)
     {
         return new TransformationContextNode(this, time);
     }
