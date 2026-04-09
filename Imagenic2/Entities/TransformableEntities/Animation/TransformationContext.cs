@@ -138,7 +138,7 @@ public sealed class TransformationContextNode : TransformationContextBase
     #region Fields and Properties
 
     public Node TransformableEntityNode { get; set; }
-    internal List<TransformationContext<TransformableEntity>> TransformationContexts { get; set; }
+    internal List<TransformationContext<TransformableEntity>> TransformationContexts { get; set; } = new List<TransformationContext<TransformableEntity>>();
 
     #endregion
 
