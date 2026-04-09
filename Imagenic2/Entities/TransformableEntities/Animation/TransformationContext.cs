@@ -87,7 +87,7 @@ public sealed class TransformationContextIEnumerable<TTransformableEntity> : Tra
 {
     #region Fields and Properties
 
-    internal List<TransformationContext<TTransformableEntity>> TransformationContexts { get; set; }
+    internal List<TransformationContext<TTransformableEntity>> TransformationContexts { get; set; } = new List<TransformationContext<TTransformableEntity>>();
 
     #endregion
 
@@ -95,12 +95,25 @@ public sealed class TransformationContextIEnumerable<TTransformableEntity> : Tra
 
     public TransformationContextIEnumerable(IEnumerable<TTransformableEntity> transformableEntities, float startTime) : base(startTime)
     {
-        TransformationContexts = new List<TransformationContext<TTransformableEntity>>();
         foreach (TTransformableEntity transformableEntity in transformableEntities)
         {
             TransformationContext<TTransformableEntity> tCtx = new TransformationContext<TTransformableEntity>(transformableEntity, startTime);
             TransformationContexts.Add(tCtx);
         }
+    }
+
+    private TransformationContextIEnumerable(float startTime) : base(startTime) { }
+    public async static Task<TransformationContextIEnumerable<TTransformableEntity>> Create(IAsyncEnumerable<TTransformableEntity> transformableEntities, float startTime)
+    {
+        TransformationContextIEnumerable<TTransformableEntity> tCtxIE = new TransformationContextIEnumerable<TTransformableEntity>(startTime);
+
+        await foreach (TTransformableEntity transformableEntity in transformableEntities)
+        {
+            TransformationContext<TTransformableEntity> tCtx = new TransformationContext<TTransformableEntity>(transformableEntity, startTime);
+            tCtxIE.TransformationContexts.Add(tCtx);
+        }
+
+        return tCtxIE;
     }
 
     #endregion
@@ -379,44 +392,6 @@ public sealed class TransformationContextNode : TransformationContextBase
     }
 
     #endregion
-
-    #endregion
-}
-
-public sealed class TransformationContextIAsyncEnumerable<TTransformableEntity> : TransformationContextBase where TTransformableEntity : TransformableEntity
-{
-    #region Fields and Properties
-
-    public IAsyncEnumerable<TTransformableEntity> TransformableEntities { get; set; }
-    internal List<TransformationContext<TTransformableEntity>> TransformationContexts { get; set; }
-
-    #endregion
-
-    #region Constructors
-
-    public TransformationContextIAsyncEnumerable(IAsyncEnumerable<TTransformableEntity> transformableEntities, float startTime) : base(startTime)
-    {
-        TransformationContexts = new List<TransformationContext<TTransformableEntity>>();
-        await foreach (TTransformableEntity transformableEntity in transformableEntities)
-        {
-            TransformationContext<TTransformableEntity> tCtx = new TransformationContext<TTransformableEntity>(transformableEntity, startTime);
-            TransformationContexts.Add(tCtx);
-        }
-    }
-
-    #endregion
-
-    #region Methods
-
-    public override Animation End()
-    {
-        foreach (TransformationContext<TTransformableEntity> transformationContext in TransformationContexts)
-        {
-            transformationContext.AssembleTransformation();
-        }
-
-        return new Animation(Transformation);
-    }
 
     #endregion
 }

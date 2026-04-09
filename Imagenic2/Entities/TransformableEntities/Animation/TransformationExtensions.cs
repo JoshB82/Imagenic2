@@ -16,9 +16,9 @@ public static class TransformationExtensions
         return new TransformationContextIEnumerable<TTransformableEntity>(transformableEntities, time);
     }
 
-    public static TransformationContextIAsyncEnumerable<TTransformableEntity> Start<TTransformableEntity>(this IAsyncEnumerable<TTransformableEntity> transformableEntities, float time = 0) where TTransformableEntity : TransformableEntity
+    public static async Task<TransformationContextIEnumerable<TTransformableEntity>> Start<TTransformableEntity>(this IAsyncEnumerable<TTransformableEntity> transformableEntities, float time = 0) where TTransformableEntity : TransformableEntity
     {
-        return new TransformationContextIAsyncEnumerable<TTransformableEntity>(transformableEntities, time);
+        return await TransformationContextIEnumerable<TTransformableEntity>.Create(transformableEntities, time);
     }
 
     #endregion
@@ -573,22 +573,6 @@ public static class TransformationExtensions
             }
         }
         return translatableTCtx;
-    }
-
-    #endregion
-
-    #region IAsyncEnumerable Transform
-
-    public static TransformationContextIAsyncEnumerable<TTransformableEntity> Transform<TTransformableEntity>(this TransformationContextIAsyncEnumerable<TTransformableEntity> transformableTCtx, Action<TTransformableEntity> transformation, float time) where TTransformableEntity : TransformableEntity
-    {
-        ThrowIfNull(transformableTCtx);
-
-        foreach (TransformationContext<TTransformableEntity> tCtx in transformableTCtx.TransformationContexts)
-        {
-            tCtx.Transform(transformation, time);
-        }
-        
-        return transformableTCtx;
     }
 
     #endregion
