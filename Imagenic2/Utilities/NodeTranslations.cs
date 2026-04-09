@@ -88,9 +88,9 @@ public partial class Node
 
     #region Start
 
-    public TransformationContextNode Start(float time = 0)
+    public AnimationContextNode Start(float time = 0)
     {
-        return new TransformationContextNode(this, time);
+        return new AnimationContextNode(this, time);
     }
 
     #endregion
