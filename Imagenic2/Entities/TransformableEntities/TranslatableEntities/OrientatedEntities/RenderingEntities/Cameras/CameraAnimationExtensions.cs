@@ -229,56 +229,56 @@ public static class CameraAnimationExtensions
 
     #region IEnumerable Rotate, Roll
 
-    public static AnimationContextIEnumerable<TCamera> RotateUp<TCamera>(this AnimationContextIEnumerable<TCamera> cameraTCtx, float distance, float time) where TCamera : Camera
+    public static AnimationContextIEnumerable<TCamera> RotateUp<TCamera>(this AnimationContextIEnumerable<TCamera> cameraTCtx, float angle, float time) where TCamera : Camera
     {
         foreach (AnimationContext<TCamera> tCtx in cameraTCtx.TransformationContexts)
         {
-            tCtx.RotateUp(distance, time);
+            tCtx.RotateUp(angle, time);
         }
 
         return cameraTCtx;
     }
-    public static AnimationContextIEnumerable<TCamera> RotateDown<TCamera>(this AnimationContextIEnumerable<TCamera> cameraTCtx, float distance, float time) where TCamera : Camera
+    public static AnimationContextIEnumerable<TCamera> RotateDown<TCamera>(this AnimationContextIEnumerable<TCamera> cameraTCtx, float angle, float time) where TCamera : Camera
     {
         foreach (AnimationContext<TCamera> tCtx in cameraTCtx.TransformationContexts)
         {
-            tCtx.RotateDown(distance, time);
+            tCtx.RotateDown(angle, time);
         }
 
         return cameraTCtx;
     }
-    public static AnimationContextIEnumerable<TCamera> RotateLeft<TCamera>(this AnimationContextIEnumerable<TCamera> cameraTCtx, float distance, float time) where TCamera : Camera
+    public static AnimationContextIEnumerable<TCamera> RotateLeft<TCamera>(this AnimationContextIEnumerable<TCamera> cameraTCtx, float angle, float time) where TCamera : Camera
     {
         foreach (AnimationContext<TCamera> tCtx in cameraTCtx.TransformationContexts)
         {
-            tCtx.RotateLeft(distance, time);
+            tCtx.RotateLeft(angle, time);
         }
 
         return cameraTCtx;
     }
-    public static AnimationContextIEnumerable<TCamera> RotateRight<TCamera>(this AnimationContextIEnumerable<TCamera> cameraTCtx, float distance, float time) where TCamera : Camera
+    public static AnimationContextIEnumerable<TCamera> RotateRight<TCamera>(this AnimationContextIEnumerable<TCamera> cameraTCtx, float angle, float time) where TCamera : Camera
     {
         foreach (AnimationContext<TCamera> tCtx in cameraTCtx.TransformationContexts)
         {
-            tCtx.RotateRight(distance, time);
+            tCtx.RotateRight(angle, time);
         }
 
         return cameraTCtx;
     }
-    public static AnimationContextIEnumerable<TCamera> RollLeft<TCamera>(this AnimationContextIEnumerable<TCamera> cameraTCtx, float distance, float time) where TCamera : Camera
+    public static AnimationContextIEnumerable<TCamera> RollLeft<TCamera>(this AnimationContextIEnumerable<TCamera> cameraTCtx, float angle, float time) where TCamera : Camera
     {
         foreach (AnimationContext<TCamera> tCtx in cameraTCtx.TransformationContexts)
         {
-            tCtx.RollLeft(distance, time);
+            tCtx.RollLeft(angle, time);
         }
 
         return cameraTCtx;
     }
-    public static AnimationContextIEnumerable<TCamera> RollRight<TCamera>(this AnimationContextIEnumerable<TCamera> cameraTCtx, float distance, float time) where TCamera : Camera
+    public static AnimationContextIEnumerable<TCamera> RollRight<TCamera>(this AnimationContextIEnumerable<TCamera> cameraTCtx, float angle, float time) where TCamera : Camera
     {
         foreach (AnimationContext<TCamera> tCtx in cameraTCtx.TransformationContexts)
         {
-            tCtx.RollRight(distance, time);
+            tCtx.RollRight(angle, time);
         }
 
         return cameraTCtx;
@@ -365,73 +365,73 @@ public static class CameraAnimationExtensions
 
     #region IEnumerable Rotate, Roll with predicate
 
-    public static AnimationContextIEnumerable<TCamera> RotateUp<TCamera>(this AnimationContextIEnumerable<TCamera> cameraTCtx, float distance, Func<TCamera, bool> predicate, float time) where TCamera : Camera
+    public static AnimationContextIEnumerable<TCamera> RotateUp<TCamera>(this AnimationContextIEnumerable<TCamera> cameraTCtx, float angle, Func<TCamera, bool> predicate, float time) where TCamera : Camera
     {
         foreach (AnimationContext<TCamera> tCtx in cameraTCtx.TransformationContexts)
         {
             if (predicate(tCtx.TransformableEntity))
             {
-                tCtx.RotateUp(distance, time);
+                tCtx.RotateUp(angle, time);
             }
         }
 
         return cameraTCtx;
     }
-    public static AnimationContextIEnumerable<TCamera> RotateDown<TCamera>(this AnimationContextIEnumerable<TCamera> cameraTCtx, float distance, Func<TCamera, bool> predicate, float time) where TCamera : Camera
+    public static AnimationContextIEnumerable<TCamera> RotateDown<TCamera>(this AnimationContextIEnumerable<TCamera> cameraTCtx, float angle, Func<TCamera, bool> predicate, float time) where TCamera : Camera
     {
         foreach (AnimationContext<TCamera> tCtx in cameraTCtx.TransformationContexts)
         {
             if (predicate(tCtx.TransformableEntity))
             {
-                tCtx.RotateDown(distance, time);
+                tCtx.RotateDown(angle, time);
             }
         }
 
         return cameraTCtx;
     }
-    public static AnimationContextIEnumerable<TCamera> RotateLeft<TCamera>(this AnimationContextIEnumerable<TCamera> cameraTCtx, float distance, Func<TCamera, bool> predicate, float time) where TCamera : Camera
+    public static AnimationContextIEnumerable<TCamera> RotateLeft<TCamera>(this AnimationContextIEnumerable<TCamera> cameraTCtx, float angle, Func<TCamera, bool> predicate, float time) where TCamera : Camera
     {
         foreach (AnimationContext<TCamera> tCtx in cameraTCtx.TransformationContexts)
         {
             if (predicate(tCtx.TransformableEntity))
             {
-                tCtx.RotateLeft(distance, time);
+                tCtx.RotateLeft(angle, time);
             }
         }
 
         return cameraTCtx;
     }
-    public static AnimationContextIEnumerable<TCamera> RotateRight<TCamera>(this AnimationContextIEnumerable<TCamera> cameraTCtx, float distance, Func<TCamera, bool> predicate, float time) where TCamera : Camera
+    public static AnimationContextIEnumerable<TCamera> RotateRight<TCamera>(this AnimationContextIEnumerable<TCamera> cameraTCtx, float angle, Func<TCamera, bool> predicate, float time) where TCamera : Camera
     {
         foreach (AnimationContext<TCamera> tCtx in cameraTCtx.TransformationContexts)
         {
             if (predicate(tCtx.TransformableEntity))
             {
-                tCtx.RotateRight(distance, time);
+                tCtx.RotateRight(angle, time);
             }
         }
 
         return cameraTCtx;
     }
-    public static AnimationContextIEnumerable<TCamera> RollLeft<TCamera>(this AnimationContextIEnumerable<TCamera> cameraTCtx, float distance, Func<TCamera, bool> predicate, float time) where TCamera : Camera
+    public static AnimationContextIEnumerable<TCamera> RollLeft<TCamera>(this AnimationContextIEnumerable<TCamera> cameraTCtx, float angle, Func<TCamera, bool> predicate, float time) where TCamera : Camera
     {
         foreach (AnimationContext<TCamera> tCtx in cameraTCtx.TransformationContexts)
         {
             if (predicate(tCtx.TransformableEntity))
             {
-                tCtx.RollLeft(distance, time);
+                tCtx.RollLeft(angle, time);
             }
         }
 
         return cameraTCtx;
     }
-    public static AnimationContextIEnumerable<TCamera> RollRight<TCamera>(this AnimationContextIEnumerable<TCamera> cameraTCtx, float distance, Func<TCamera, bool> predicate, float time) where TCamera : Camera
+    public static AnimationContextIEnumerable<TCamera> RollRight<TCamera>(this AnimationContextIEnumerable<TCamera> cameraTCtx, float angle, Func<TCamera, bool> predicate, float time) where TCamera : Camera
     {
         foreach (AnimationContext<TCamera> tCtx in cameraTCtx.TransformationContexts)
         {
             if (predicate(tCtx.TransformableEntity))
             {
-                tCtx.RollRight(distance, time);
+                tCtx.RollRight(angle, time);
             }
         }
 

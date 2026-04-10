@@ -1,9 +1,12 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using Imagenic2.Core.Maths.Transformations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Imagenic2.Core.Entities;
 
 public static class OrientatedEntityTransformations
 {
+    #region Orientate
+
     /// <summary>
     /// Orientates a <typeparamref name="TOrientatedEntity"/> to the specified <see cref="Orientation"/>.
     /// <remarks>The specified orientation and the <typeparamref name="TOrientatedEntity"/> cannot be <see langword="null"/>.</remarks>
@@ -36,6 +39,129 @@ public static class OrientatedEntityTransformations
         return orientatedEntity;
     }
 
+    #endregion
+
+    #region Rotate
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TOrientatedEntity"></typeparam>
+    /// <param name="orientatedEntity"></param>
+    /// <param name="q"></param>
+    /// <returns></returns>
+    public static TOrientatedEntity Rotate<TOrientatedEntity>(this TOrientatedEntity orientatedEntity, Quaternion q) where TOrientatedEntity : OrientatedEntity
+    {
+        ThrowIfNull(orientatedEntity);
+
+        Orientation newOrientation = orientatedEntity.WorldOrientation;
+        newOrientation.Rotate(q);
+        orientatedEntity.WorldOrientation = newOrientation;
+        return orientatedEntity;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TOrientatedEntity"></typeparam>
+    /// <param name="orientatedEntity"></param>
+    /// <param name="axis"></param>
+    /// <param name="angle"></param>
+    /// <returns></returns>
+    public static TOrientatedEntity Rotate<TOrientatedEntity>([DisallowNull] this TOrientatedEntity orientatedEntity, Vector3D axis, float angle) where TOrientatedEntity : OrientatedEntity
+    {
+        ThrowIfNull(orientatedEntity);
+
+        return orientatedEntity.Rotate(MathsHelper.QuaternionRotate(axis, angle));
+    }
+
+    #endregion
+
+    #region Look At
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TOrientatedEntity"></typeparam>
+    /// <param name="orientatedEntity"></param>
+    /// <param name="translatableEntity"></param>
+    /// <returns></returns>
+    public static TOrientatedEntity LookAt<TOrientatedEntity>(this TOrientatedEntity orientatedEntity, TranslatableEntity translatableEntity) where TOrientatedEntity : OrientatedEntity
+    {
+        Vector3D newDirectionForward = translatableEntity.WorldOrigin - orientatedEntity.WorldOrigin;
+        return orientatedEntity.Rotate(MathsHelper.QuaternionRotateBetweenVectors(orientatedEntity.WorldOrientation.DirectionForward, newDirectionForward));
+    }
+
+    #endregion
+
+    #region Orientate with predicate
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TOrientatedEntity"></typeparam>
+    /// <param name="orientatedEntity"></param>
+    /// <param name="orientation"></param>
+    /// <param name="predicate"></param>
+    /// <returns></returns>
+    public static TOrientatedEntity Orientate<TOrientatedEntity>([DisallowNull] this TOrientatedEntity orientatedEntity,
+        Orientation orientation, Func<TOrientatedEntity, bool> predicate) where TOrientatedEntity : OrientatedEntity
+    {
+        return predicate(orientatedEntity) ? orientatedEntity.Orientate(orientation) : orientatedEntity;
+    }
+
+    #endregion
+
+    #region Rotate with predicate
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TOrientatedEntity"></typeparam>
+    /// <param name="orientatedEntity"></param>
+    /// <param name="q"></param>
+    /// <param name="predicate"></param>
+    /// <returns></returns>
+    public static TOrientatedEntity Rotate<TOrientatedEntity>(this TOrientatedEntity orientatedEntity, Quaternion q, Func<TOrientatedEntity, bool> predicate) where TOrientatedEntity : OrientatedEntity
+    {
+        return predicate(orientatedEntity) ? orientatedEntity.Rotate(q) : orientatedEntity;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TOrientatedEntity"></typeparam>
+    /// <param name="orientatedEntity"></param>
+    /// <param name="axis"></param>
+    /// <param name="angle"></param>
+    /// <param name="predicate"></param>
+    /// <returns></returns>
+    public static TOrientatedEntity Rotate<TOrientatedEntity>(this TOrientatedEntity orientatedEntity, Vector3D axis, float angle, Func<TOrientatedEntity, bool> predicate) where TOrientatedEntity : OrientatedEntity
+    {
+        return predicate(orientatedEntity) ? orientatedEntity.Rotate(axis, angle) : orientatedEntity;
+    }
+
+    #endregion
+
+    #region Look At with predicate
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TOrientatedEntity"></typeparam>
+    /// <param name="orientatedEntity"></param>
+    /// <param name="translatableEntity"></param>
+    /// <param name="predicate"></param>
+    /// <returns></returns>
+    public static TOrientatedEntity LookAt<TOrientatedEntity>(this TOrientatedEntity orientatedEntity, TranslatableEntity translatableEntity, Func<TOrientatedEntity, bool> predicate) where TOrientatedEntity : OrientatedEntity
+    {
+        return predicate(orientatedEntity) ? orientatedEntity.LookAt(translatableEntity) : orientatedEntity;
+    }
+
+    #endregion
+
+    #region IEnumerable Orientate
+
     /// <summary>
     /// Orientates each element of a <typeparamref name="TOrientatedEntity"/> sequence to the specified <see cref="Orientation"/>.
     /// <remarks>The specified orientation and the <typeparamref name="TOrientatedEntity"/> cannot be <see langword="null"/>.</remarks>
@@ -62,12 +188,74 @@ public static class OrientatedEntityTransformations
         Orientation orientation) where TOrientatedEntity : OrientatedEntity
     {
         ThrowIfNull(orientatedEntities);
-        return orientatedEntities.Select(orientatedEntity =>
+
+        foreach (TOrientatedEntity orientatedEntity in orientatedEntities)
         {
-            orientatedEntity.WorldOrientation = orientation;
-            return orientatedEntity;
-        });
+            yield return orientatedEntity.Orientate(orientation);
+        }
     }
+
+    #endregion
+
+    #region IEnumerable Rotate
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TOrientatedEntity"></typeparam>
+    /// <param name="orientatedEntities"></param>
+    /// <param name="q"></param>
+    /// <returns></returns>
+    public static IEnumerable<TOrientatedEntity> Rotate<TOrientatedEntity>([DisallowNull] this IEnumerable<TOrientatedEntity> orientatedEntities, Quaternion q) where TOrientatedEntity : OrientatedEntity
+    {
+        foreach (TOrientatedEntity orientatedEntity in orientatedEntities)
+        {
+            yield return orientatedEntity.Rotate(q);
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TOrientatedEntity"></typeparam>
+    /// <param name="orientatedEntities"></param>
+    /// <param name="axis"></param>
+    /// <param name="angle"></param>
+    /// <returns></returns>
+    public static IEnumerable<TOrientatedEntity> Rotate<TOrientatedEntity>([DisallowNull] this IEnumerable<TOrientatedEntity> orientatedEntities, Vector3D axis, float angle) where TOrientatedEntity : OrientatedEntity
+    {
+        ThrowIfNull(orientatedEntities);
+
+        foreach (TOrientatedEntity orientatedEntity in orientatedEntities)
+        {
+            yield return orientatedEntity.Rotate(axis, angle);
+        }
+    }
+
+    #endregion
+
+    #region IEnumerable Look At
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TOrientatedEntity"></typeparam>
+    /// <param name="orientatedEntities"></param>
+    /// <param name="translatableEntity"></param>
+    /// <returns></returns>
+    public static IEnumerable<TOrientatedEntity> LookAt<TOrientatedEntity>(this IEnumerable<TOrientatedEntity> orientatedEntities, TranslatableEntity translatableEntity) where TOrientatedEntity : OrientatedEntity
+    {
+        ThrowIfNull(orientatedEntities);
+
+        foreach (TOrientatedEntity orientatedEntity in orientatedEntities)
+        {
+            yield return orientatedEntity.LookAt(translatableEntity);
+        }
+    }
+
+    #endregion
+
+    #region IEnumerable Orientate with predicate
 
     /// <summary>
     /// Orientates each element of a <typeparamref name="TOrientatedEntity"/> sequence that satisfies a specified predicate to the specified <see cref="Orientation"/>.
@@ -95,61 +283,30 @@ public static class OrientatedEntityTransformations
         Orientation orientation, [DisallowNull] Func<TOrientatedEntity, bool> predicate) where TOrientatedEntity : OrientatedEntity
     {
         ThrowIfNull(orientatedEntities, predicate);
-        return orientatedEntities.Select(orientatedEntity =>
+
+        foreach (TOrientatedEntity orientatedEntity in orientatedEntities)
         {
-            if (predicate(orientatedEntity))
-            {
-                orientatedEntity.WorldOrientation = orientation;
-            }
-            return orientatedEntity;
-        });
+            yield return orientatedEntity.Orientate(orientation, predicate);
+        }
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TOrientatedEntity"></typeparam>
-    /// <param name="orientatedEntity"></param>
-    /// <param name="q"></param>
-    /// <returns></returns>
-    public static TOrientatedEntity Rotate<TOrientatedEntity>(this TOrientatedEntity orientatedEntity, Quaternion q) where TOrientatedEntity : OrientatedEntity
-    {
-        ThrowIfNull(orientatedEntity);
-        Orientation newOrientation = orientatedEntity.WorldOrientation;
-        newOrientation.Rotate(q);
-        orientatedEntity.WorldOrientation = newOrientation;
-        return orientatedEntity;
-    }
+    #endregion
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TOrientatedEntity"></typeparam>
-    /// <param name="orientatedEntity"></param>
-    /// <param name="axis"></param>
-    /// <param name="angle"></param>
-    /// <returns></returns>
-    public static TOrientatedEntity Rotate<TOrientatedEntity>([DisallowNull] this TOrientatedEntity orientatedEntity, Vector3D axis, float angle) where TOrientatedEntity : OrientatedEntity
-    {
-        ThrowIfNull(orientatedEntity);
-        Orientation newOrientation = orientatedEntity.WorldOrientation;
-        newOrientation.Rotate(axis, angle);
-        orientatedEntity.WorldOrientation = newOrientation;
-        return orientatedEntity;
-    }
+    #region IEnumerable Rotate with predicate
 
     /// <summary>
     /// 
     /// </summary>
     /// <typeparam name="TOrientatedEntity"></typeparam>
     /// <param name="orientatedEntities"></param>
-    /// <param name="axis"></param>
-    /// <param name="angle"></param>
+    /// <param name="q"></param>
     /// <returns></returns>
-    public static IEnumerable<TOrientatedEntity> Rotate<TOrientatedEntity>([DisallowNull] this IEnumerable<TOrientatedEntity> orientatedEntities, Vector3D axis, float angle) where TOrientatedEntity : OrientatedEntity
+    public static IEnumerable<TOrientatedEntity> Rotate<TOrientatedEntity>([DisallowNull] this IEnumerable<TOrientatedEntity> orientatedEntities, Quaternion q, [DisallowNull] Func<TOrientatedEntity, bool> predicate) where TOrientatedEntity : OrientatedEntity
     {
-        ThrowIfNull(orientatedEntities);
-        return orientatedEntities.Select(orientatedEntity => orientatedEntity.Rotate(axis, angle));
+        foreach (TOrientatedEntity orientatedEntity in orientatedEntities)
+        {
+            yield return orientatedEntity.Rotate(q, predicate);
+        }
     }
 
     /// <summary>
@@ -161,17 +318,203 @@ public static class OrientatedEntityTransformations
     /// <param name="angle"></param>
     /// <param name="predicate"></param>
     /// <returns></returns>
-    public static IEnumerable<TOrientatedEntity> Rotate<TOrientatedEntity>([DisallowNull] this IEnumerable<TOrientatedEntity> orientatedEntities,
-        Vector3D axis, float angle, [DisallowNull] Func<TOrientatedEntity, bool> predicate) where TOrientatedEntity : OrientatedEntity
+    public static IEnumerable<TOrientatedEntity> Rotate<TOrientatedEntity>([DisallowNull] this IEnumerable<TOrientatedEntity> orientatedEntities, Vector3D axis, float angle, [DisallowNull] Func<TOrientatedEntity, bool> predicate) where TOrientatedEntity : OrientatedEntity
     {
         ThrowIfNull(orientatedEntities, predicate);
-        return orientatedEntities.Select(orientatedEntity =>
+
+        foreach (TOrientatedEntity orientatedEntity in orientatedEntities)
         {
-            if (predicate(orientatedEntity))
-            {
-                orientatedEntity.Rotate(axis, angle);
-            }
-            return orientatedEntity;
-        });
+            yield return orientatedEntity.Rotate(axis, angle, predicate);
+        }
     }
+
+    #endregion
+
+    #region IEnumerable Look At with predicate
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TOrientatedEntity"></typeparam>
+    /// <param name="orientatedEntities"></param>
+    /// <param name="translatableEntity"></param>
+    /// <param name="predicate"></param>
+    /// <returns></returns>
+    public static IEnumerable<TOrientatedEntity> LookAt<TOrientatedEntity>(this IEnumerable<TOrientatedEntity> orientatedEntities, TranslatableEntity translatableEntity, [DisallowNull] Func<TOrientatedEntity, bool> predicate) where TOrientatedEntity : OrientatedEntity
+    {
+        ThrowIfNull(orientatedEntities, predicate);
+
+        foreach (TOrientatedEntity orientatedEntity in orientatedEntities)
+        {
+            yield return orientatedEntity.LookAt(translatableEntity, predicate);
+        }
+    }
+
+    #endregion
+
+    #region IAsyncEnumerable Orientate
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TOrientatedEntity"></typeparam>
+    /// <param name="orientatedEntities"></param>
+    /// <param name="orientation"></param>
+    /// <returns></returns>
+    public static async IAsyncEnumerable<TOrientatedEntity> Orientate<TOrientatedEntity>(this IAsyncEnumerable<TOrientatedEntity> orientatedEntities, Orientation orientation) where TOrientatedEntity : OrientatedEntity
+    {
+        ThrowIfNull(orientatedEntities);
+
+        await foreach (TOrientatedEntity orientatedEntity in orientatedEntities)
+        {
+            yield return orientatedEntity.Orientate(orientation);
+        }
+    }
+
+    #endregion
+
+    #region IAsyncEnumerable Rotate
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TOrientatedEntity"></typeparam>
+    /// <param name="orientatedEntities"></param>
+    /// <param name="q"></param>
+    /// <returns></returns>
+    public static async IAsyncEnumerable<TOrientatedEntity> Rotate<TOrientatedEntity>(this IAsyncEnumerable<TOrientatedEntity> orientatedEntities, Quaternion q) where TOrientatedEntity : OrientatedEntity
+    {
+        ThrowIfNull(orientatedEntities);
+
+        await foreach (TOrientatedEntity orientatedEntity in orientatedEntities)
+        {
+            yield return orientatedEntity.Rotate(q);
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TOrientatedEntity"></typeparam>
+    /// <param name="orientatedEntities"></param>
+    /// <param name="axis"></param>
+    /// <param name="angle"></param>
+    /// <returns></returns>
+    public static async IAsyncEnumerable<TOrientatedEntity> Rotate<TOrientatedEntity>(this IAsyncEnumerable<TOrientatedEntity> orientatedEntities, Vector3D axis, float angle) where TOrientatedEntity : OrientatedEntity
+    {
+        ThrowIfNull(orientatedEntities);
+
+        await foreach (TOrientatedEntity orientatedEntity in orientatedEntities)
+        {
+            yield return orientatedEntity.Rotate(axis, angle);
+        }
+    }
+
+    #endregion
+
+    #region IAsyncEnumerable Look At
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TOrientatedEntity"></typeparam>
+    /// <param name="orientatedEntities"></param>
+    /// <param name="translatableEntity"></param>
+    /// <returns></returns>
+    public static async IAsyncEnumerable<TOrientatedEntity> LookAt<TOrientatedEntity>(this IAsyncEnumerable<TOrientatedEntity> orientatedEntities, TranslatableEntity translatableEntity) where TOrientatedEntity : OrientatedEntity
+    {
+        ThrowIfNull(orientatedEntities);
+
+        await foreach (TOrientatedEntity orientatedEntity in orientatedEntities)
+        {
+            yield return orientatedEntity.LookAt(translatableEntity);
+        }
+    }
+
+    #endregion
+
+    #region IAsyncEnumerable Orientate with predicate
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TOrientatedEntity"></typeparam>
+    /// <param name="orientatedEntities"></param>
+    /// <param name="orientation"></param>
+    /// <param name="predicate"></param>
+    /// <returns></returns>
+    public static async IAsyncEnumerable<TOrientatedEntity> Orientate<TOrientatedEntity>(this IAsyncEnumerable<TOrientatedEntity> orientatedEntities, Orientation orientation, [DisallowNull] Func<TOrientatedEntity, bool> predicate) where TOrientatedEntity : OrientatedEntity
+    {
+        ThrowIfNull(orientatedEntities);
+
+        await foreach (TOrientatedEntity orientatedEntity in orientatedEntities)
+        {
+            yield return orientatedEntity.Orientate(orientation, predicate);
+        }
+    }
+
+    #endregion
+
+    #region IAsyncEnumerable Rotate with predicate
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TOrientatedEntity"></typeparam>
+    /// <param name="orientatedEntities"></param>
+    /// <param name="q"></param>
+    /// <param name="predicate"></param>
+    /// <returns></returns>
+    public static async IAsyncEnumerable<TOrientatedEntity> Rotate<TOrientatedEntity>(this IAsyncEnumerable<TOrientatedEntity> orientatedEntities, Quaternion q, [DisallowNull] Func<TOrientatedEntity, bool> predicate) where TOrientatedEntity : OrientatedEntity
+    {
+        ThrowIfNull(orientatedEntities);
+
+        await foreach (TOrientatedEntity orientatedEntity in orientatedEntities)
+        {
+            yield return orientatedEntity.Rotate(q, predicate);
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TOrientatedEntity"></typeparam>
+    /// <param name="orientatedEntities"></param>
+    /// <param name="axis"></param>
+    /// <param name="angle"></param>
+    /// <param name="predicate"></param>
+    /// <returns></returns>
+    public static async IAsyncEnumerable<TOrientatedEntity> Rotate<TOrientatedEntity>(this IAsyncEnumerable<TOrientatedEntity> orientatedEntities, Vector3D axis, float angle, [DisallowNull] Func<TOrientatedEntity, bool> predicate) where TOrientatedEntity : OrientatedEntity
+    {
+        ThrowIfNull(orientatedEntities);
+
+        await foreach (TOrientatedEntity orientatedEntity in orientatedEntities)
+        {
+            yield return orientatedEntity.Rotate(axis, angle, predicate);
+        }
+    }
+
+    #endregion
+
+    #region IAsyncEnumerable Look At with predicate
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TOrientatedEntity"></typeparam>
+    /// <param name="orientatedEntities"></param>
+    /// <param name="translatableEntity"></param>
+    /// <param name="predicate"></param>
+    /// <returns></returns>
+    public static async IAsyncEnumerable<TOrientatedEntity> LookAt<TOrientatedEntity>(this IAsyncEnumerable<TOrientatedEntity> orientatedEntities, TranslatableEntity translatableEntity, [DisallowNull] Func<TOrientatedEntity, bool> predicate) where TOrientatedEntity : OrientatedEntity
+    {
+        ThrowIfNull(orientatedEntities);
+
+        await foreach (TOrientatedEntity orientatedEntity in orientatedEntities)
+        {
+            yield return orientatedEntity.LookAt(translatableEntity);
+        }
+    }
+
+    #endregion
 }
