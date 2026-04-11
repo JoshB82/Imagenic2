@@ -2,6 +2,8 @@
 using Imagenic2.Core.Entities.Animation;
 using Imagenic2.Core.Enums;
 using Imagenic2.Core.Images;
+using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.CompilerServices;
 
@@ -111,6 +113,17 @@ public abstract class Renderer<TImage> where TImage : Images.Image, IFactory<TIm
         RenderingOptions = renderingOptions;
         renderingOptions.RenderAlteringPropertyChanged += OnRenderingAlteringPropertyChanged;
         colourBuffer = new Buffer2D<Color>(RenderingOptions.RenderWidth, RenderingOptions.RenderHeight);
+
+        #if DEBUG
+
+        var loggerFactory = LoggerFactory.Create(builder =>
+        {
+            builder.AddConsole();
+        });
+
+        renderingOptions.Logger = loggerFactory.CreateLogger<Renderer<TImage>>();
+
+        #endif
     }
 
     #endregion
@@ -127,6 +140,13 @@ public abstract class Renderer<TImage> where TImage : Images.Image, IFactory<TIm
 
     public async IAsyncEnumerable<TImage?> RenderAsync(Animation animation, [EnumeratorCancellation] CancellationToken token = default)
     {
+        #if DEBUG
+
+        RenderingOptions.Logger?.LogInformation("Animation rendering started...");
+        Stopwatch sw = Stopwatch.StartNew();
+
+        #endif
+
         int duration = animation.DurationSeconds;
         int fps = animation.FPS;
         int numberOfFrames = duration * fps;
@@ -144,6 +164,13 @@ public abstract class Renderer<TImage> where TImage : Images.Image, IFactory<TIm
                 yield return render;
             }
         }
+
+        #if DEBUG
+
+        long renderTime = sw.ElapsedMilliseconds;
+        RenderingOptions.Logger?.LogInformation("Animation rendering finished; took {RenderTime} ms.", renderTime);
+
+        #endif
     }
 
     #endregion

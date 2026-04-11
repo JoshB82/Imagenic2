@@ -1,6 +1,7 @@
 ﻿using Imagenic2.Core.Entities;
 using Imagenic2.Core.Enums;
 using Imagenic2.Core.Maths.Transformations;
+using Microsoft.Extensions.Logging;
 using System.Drawing;
 
 namespace Imagenic2.Core.Renderers;
@@ -8,6 +9,8 @@ namespace Imagenic2.Core.Renderers;
 public sealed class RenderingOptions
 {
     #region Fields and Properties
+
+    public ILogger Logger { get; set; }
 
     internal event Action<RenderUpdate>? RenderAlteringPropertyChanged;
 
@@ -106,6 +109,26 @@ public sealed class RenderingOptions
         {
             light.RenderAlteringPropertyChanged += args => InvokeRenderEvent(args);
             Lights.Add(light);
+        }
+        return this;
+    }
+
+    public RenderingOptions RemoveFromRender(params IEnumerable<PhysicalEntity> physicalEntities)
+    {
+        foreach (PhysicalEntity physicalEntity in physicalEntities)
+        {
+            physicalEntity.RenderAlteringPropertyChanged -= args => InvokeRenderEvent(args);
+            PhysicalEntitiesToRender.Remove(physicalEntity);
+        }
+        return this;
+    }
+
+    public RenderingOptions RemoveFromRender(params IEnumerable<Light> lights)
+    {
+        foreach (Light light in lights)
+        {
+            light.RenderAlteringPropertyChanged -= args => InvokeRenderEvent(args);
+            Lights.Remove(light);
         }
         return this;
     }

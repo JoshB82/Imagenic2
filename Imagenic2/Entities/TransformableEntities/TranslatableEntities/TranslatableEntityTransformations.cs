@@ -1,5 +1,4 @@
-﻿using Imagenic2.Core.Utilities;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 namespace Imagenic2.Core.Entities;
@@ -33,7 +32,8 @@ public static class TranslatableEntityTransformations
     /// <exception cref="ArgumentNullException"></exception>
     public static TTranslatableEntity TranslateX<TTranslatableEntity>([DisallowNull] this TTranslatableEntity translatableEntity, float distanceX) where TTranslatableEntity : TranslatableEntity
     {
-        return translatableEntity.Translate(new Vector3D(distanceX, 0, 0));
+        Vector3D displacement = new Vector3D(distanceX, 0, 0);
+        return translatableEntity.Translate(displacement);
     }
 
     /// <summary>
@@ -61,7 +61,8 @@ public static class TranslatableEntityTransformations
     /// <exception cref="ArgumentNullException"></exception>
     public static TTranslatableEntity TranslateY<TTranslatableEntity>([DisallowNull] this TTranslatableEntity translatableEntity, float distanceY) where TTranslatableEntity : TranslatableEntity
     {
-        return translatableEntity.Translate(new Vector3D(0, distanceY, 0));
+        Vector3D displacement = new Vector3D(0, distanceY, 0);
+        return translatableEntity.Translate(displacement);
     }
 
     /// <summary>
@@ -89,7 +90,8 @@ public static class TranslatableEntityTransformations
     /// <exception cref="ArgumentNullException"></exception>
     public static TTranslatableEntity TranslateZ<TTranslatableEntity>([DisallowNull] this TTranslatableEntity translatableEntity, float distanceZ) where TTranslatableEntity : TranslatableEntity
     {
-        return translatableEntity.Translate(new Vector3D(0, 0, distanceZ));
+        Vector3D displacement = new Vector3D(0, 0, distanceZ);
+        return translatableEntity.Translate(displacement);
     }
 
     /// <summary>
@@ -120,7 +122,8 @@ public static class TranslatableEntityTransformations
     /// <exception cref="ArgumentNullException"></exception>
     public static TTranslatableEntity Translate<TTranslatableEntity>([DisallowNull] this TTranslatableEntity translatableEntity, float distanceX, float distanceY, float distanceZ) where TTranslatableEntity : TranslatableEntity
     {
-        return translatableEntity.Translate(new Vector3D(distanceX, distanceY, distanceZ));
+        Vector3D displacement = new Vector3D(distanceX, distanceY, distanceZ);
+        return translatableEntity.Translate(displacement);
     }
 
     /// <summary>
@@ -151,6 +154,88 @@ public static class TranslatableEntityTransformations
     {
         ThrowIfNull(translatableEntity);
         translatableEntity.WorldOrigin += displacement;
+        return translatableEntity;
+    }
+
+    #endregion
+
+    #region Translate with predicate
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TTranslatableEntity">The type of the object being translated.</typeparam>
+    /// <param name="translatableEntity"></param>
+    /// <param name="distance"></param>
+    /// <param name="predicate"></param>
+    /// <returns></returns>
+    public static TTranslatableEntity TranslateX<TTranslatableEntity>([DisallowNull] this TTranslatableEntity translatableEntity, float distance, Func<TTranslatableEntity, bool> predicate) where TTranslatableEntity : TranslatableEntity
+    {
+        Vector3D displacement = new Vector3D(distance, 0, 0);
+        return translatableEntity.Translate(displacement, predicate);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TTranslatableEntity">The type of the object being translated.</typeparam>
+    /// <param name="translatableEntity"></param>
+    /// <param name="distance"></param>
+    /// <param name="predicate"></param>
+    /// <returns></returns>
+    public static TTranslatableEntity TranslateY<TTranslatableEntity>([DisallowNull] this TTranslatableEntity translatableEntity, float distance, Func<TTranslatableEntity, bool> predicate) where TTranslatableEntity : TranslatableEntity
+    {
+        Vector3D displacement = new Vector3D(0, distance, 0);
+        return translatableEntity.Translate(displacement, predicate);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TTranslatableEntity">The type of the object being translated.</typeparam>
+    /// <param name="translatableEntity"></param>
+    /// <param name="distance"></param>
+    /// <param name="predicate"></param>
+    /// <returns></returns>
+    public static TTranslatableEntity TranslateZ<TTranslatableEntity>([DisallowNull] this TTranslatableEntity translatableEntity, float distance, Func<TTranslatableEntity, bool> predicate) where TTranslatableEntity : TranslatableEntity
+    {
+        Vector3D displacement = new Vector3D(0, 0, distance);
+        return translatableEntity.Translate(displacement, predicate);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TTranslatableEntity">The type of the object being translated.</typeparam>
+    /// <param name="translatableEntity"></param>
+    /// <param name="distanceX"></param>
+    /// <param name="distanceY"></param>
+    /// <param name="distanceZ"></param>
+    /// <param name="predicate"></param>
+    /// <returns></returns>
+    public static TTranslatableEntity Translate<TTranslatableEntity>([DisallowNull] this TTranslatableEntity translatableEntity, float distanceX, float distanceY, float distanceZ, Func<TTranslatableEntity, bool> predicate) where TTranslatableEntity : TranslatableEntity
+    {
+        Vector3D displacement = new Vector3D(distanceX, distanceY, distanceZ);
+        return translatableEntity.Translate(displacement, predicate);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TTranslatableEntity">The type of the object being translated.</typeparam>
+    /// <param name="translatableEntity"></param>
+    /// <param name="displacement"></param>
+    /// <param name="predicate"></param>
+    /// <returns></returns>
+    public static TTranslatableEntity Translate<TTranslatableEntity>([DisallowNull] this TTranslatableEntity translatableEntity, Vector3D displacement, Func<TTranslatableEntity, bool> predicate) where TTranslatableEntity : TranslatableEntity
+    {
+        ThrowIfNull(translatableEntity);
+
+        if (predicate(translatableEntity))
+        {
+            translatableEntity.WorldOrigin += displacement;
+        }
+
         return translatableEntity;
     }
 

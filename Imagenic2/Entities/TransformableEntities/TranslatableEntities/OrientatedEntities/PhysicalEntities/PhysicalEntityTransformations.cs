@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace Imagenic2.Core.Entities;
 
@@ -510,7 +511,204 @@ public static class PhysicalEntityTransformations
         [DisallowNull] Func<TPhysicalEntity, bool> predicate) where TPhysicalEntity : PhysicalEntity
     {
         ThrowIfNull(physicalEntities, predicate);
-        return physicalEntities.Transform(e => { e.Scaling = new Vector3D(e.Scaling.x * scaleFactor.x, e.Scaling.y * scaleFactor.y, e.Scaling.z * scaleFactor.z); }, predicate);
+
+        foreach (TPhysicalEntity physicalEntity in physicalEntities)
+        {
+            if (predicate(physicalEntity))
+            {
+                physicalEntity.Scaling = new Vector3D(physicalEntity.Scaling.x * scaleFactor.x, physicalEntity.Scaling.y * scaleFactor.y, physicalEntity.Scaling.z * scaleFactor.z);
+            }
+        }
+        return physicalEntities;
+    }
+
+    #endregion
+
+    #region IAsyncEnumerable Scale
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TPhysicalEntity"></typeparam>
+    /// <param name="physicalEntities"></param>
+    /// <param name="scaleFactor"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static async IAsyncEnumerable<TPhysicalEntity> ScaleX<TPhysicalEntity>(this IAsyncEnumerable<TPhysicalEntity> physicalEntities, float scaleFactor, [EnumeratorCancellation] CancellationToken cancellationToken = default) where TPhysicalEntity : PhysicalEntity
+    {
+        Vector3D scaling = new Vector3D(scaleFactor, 1, 1);
+        await foreach (TPhysicalEntity physicalEntity in physicalEntities)
+        {
+            yield return physicalEntity.Scale(scaling);
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TPhysicalEntity"></typeparam>
+    /// <param name="physicalEntities"></param>
+    /// <param name="scaleFactor"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static async IAsyncEnumerable<TPhysicalEntity> ScaleY<TPhysicalEntity>(this IAsyncEnumerable<TPhysicalEntity> physicalEntities, float scaleFactor, [EnumeratorCancellation] CancellationToken cancellationToken = default) where TPhysicalEntity : PhysicalEntity
+    {
+        Vector3D scaling = new Vector3D(1, scaleFactor, 1);
+        await foreach (TPhysicalEntity physicalEntity in physicalEntities)
+        {
+            yield return physicalEntity.Scale(scaling);
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TPhysicalEntity"></typeparam>
+    /// <param name="physicalEntities"></param>
+    /// <param name="scaleFactor"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static async IAsyncEnumerable<TPhysicalEntity> ScaleZ<TPhysicalEntity>(this IAsyncEnumerable<TPhysicalEntity> physicalEntities, float scaleFactor, [EnumeratorCancellation] CancellationToken cancellationToken = default) where TPhysicalEntity : PhysicalEntity
+    {
+        Vector3D scaling = new Vector3D(1, 1, scaleFactor);
+        await foreach (TPhysicalEntity physicalEntity in physicalEntities)
+        {
+            yield return physicalEntity.Scale(scaling);
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TPhysicalEntity"></typeparam>
+    /// <param name="physicalEntities"></param>
+    /// <param name="scaleFactorX"></param>
+    /// <param name="scaleFactorY"></param>
+    /// <param name="scaleFactorZ"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static async IAsyncEnumerable<TPhysicalEntity> Scale<TPhysicalEntity>(this IAsyncEnumerable<TPhysicalEntity> physicalEntities, float scaleFactorX, float scaleFactorY, float scaleFactorZ, [EnumeratorCancellation] CancellationToken cancellationToken = default) where TPhysicalEntity : PhysicalEntity
+    {
+        Vector3D scaling = new Vector3D(scaleFactorX, scaleFactorY, scaleFactorZ);
+        await foreach (TPhysicalEntity physicalEntity in physicalEntities)
+        {
+            yield return physicalEntity.Scale(scaling);
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TPhysicalEntity"></typeparam>
+    /// <param name="physicalEntities"></param>
+    /// <param name="scaleFactor"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static async IAsyncEnumerable<TPhysicalEntity> Scale<TPhysicalEntity>(this IAsyncEnumerable<TPhysicalEntity> physicalEntities, Vector3D scaleFactor, [EnumeratorCancellation] CancellationToken cancellationToken = default) where TPhysicalEntity : PhysicalEntity
+    {
+        ThrowIfNull(physicalEntities);
+
+        await foreach (TPhysicalEntity physicalEntity in physicalEntities)
+        {
+            yield return physicalEntity.Scale(scaleFactor);
+        }
+    }
+
+    #endregion
+
+    #region IAsyncEnumerable Scale with predicate
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TPhysicalEntity"></typeparam>
+    /// <param name="physicalEntities"></param>
+    /// <param name="scaleFactor"></param>
+    /// <param name="predicate"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static async IAsyncEnumerable<TPhysicalEntity> ScaleX<TPhysicalEntity>(this IAsyncEnumerable<TPhysicalEntity> physicalEntities, float scaleFactor, Func<TPhysicalEntity, bool> predicate, [EnumeratorCancellation] CancellationToken cancellationToken = default) where TPhysicalEntity : PhysicalEntity
+    {
+        Vector3D scaling = new Vector3D(scaleFactor, 1, 1);
+        await foreach (TPhysicalEntity physicalEntity in physicalEntities)
+        {
+            yield return physicalEntity.Scale(scaling, predicate);
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TPhysicalEntity"></typeparam>
+    /// <param name="physicalEntities"></param>
+    /// <param name="scaleFactor"></param>
+    /// <param name="predicate"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static async IAsyncEnumerable<TPhysicalEntity> ScaleY<TPhysicalEntity>(this IAsyncEnumerable<TPhysicalEntity> physicalEntities, float scaleFactor, Func<TPhysicalEntity, bool> predicate, [EnumeratorCancellation] CancellationToken cancellationToken = default) where TPhysicalEntity : PhysicalEntity
+    {
+        Vector3D scaling = new Vector3D(1, scaleFactor, 1);
+        await foreach (TPhysicalEntity physicalEntity in physicalEntities)
+        {
+            yield return physicalEntity.Scale(scaling, predicate);
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TPhysicalEntity"></typeparam>
+    /// <param name="physicalEntities"></param>
+    /// <param name="scaleFactor"></param>
+    /// <param name="predicate"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static async IAsyncEnumerable<TPhysicalEntity> ScaleZ<TPhysicalEntity>(this IAsyncEnumerable<TPhysicalEntity> physicalEntities, float scaleFactor, Func<TPhysicalEntity, bool> predicate, [EnumeratorCancellation] CancellationToken cancellationToken = default) where TPhysicalEntity : PhysicalEntity
+    {
+        Vector3D scaling = new Vector3D(1, 1, scaleFactor);
+        await foreach (TPhysicalEntity physicalEntity in physicalEntities)
+        {
+            yield return physicalEntity.Scale(scaling, predicate);
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TPhysicalEntity"></typeparam>
+    /// <param name="physicalEntities"></param>
+    /// <param name="scaleFactorX"></param>
+    /// <param name="scaleFactorY"></param>
+    /// <param name="scaleFactorZ"></param>
+    /// <param name="predicate"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static async IAsyncEnumerable<TPhysicalEntity> Scale<TPhysicalEntity>(this IAsyncEnumerable<TPhysicalEntity> physicalEntities, float scaleFactorX, float scaleFactorY, float scaleFactorZ, Func<TPhysicalEntity, bool> predicate, [EnumeratorCancellation] CancellationToken cancellationToken = default) where TPhysicalEntity : PhysicalEntity
+    {
+        Vector3D scaling = new Vector3D(scaleFactorX, scaleFactorY, scaleFactorZ);
+        await foreach (TPhysicalEntity physicalEntity in physicalEntities)
+        {
+            yield return physicalEntity.Scale(scaling, predicate);
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TPhysicalEntity"></typeparam>
+    /// <param name="physicalEntities"></param>
+    /// <param name="scaleFactor"></param>
+    /// <param name="predicate"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static async IAsyncEnumerable<TPhysicalEntity> Scale<TPhysicalEntity>(this IAsyncEnumerable<TPhysicalEntity> physicalEntities, Vector3D scaleFactor, Func<TPhysicalEntity, bool> predicate, [EnumeratorCancellation] CancellationToken cancellationToken = default) where TPhysicalEntity : PhysicalEntity
+    {
+        ThrowIfNull(physicalEntities);
+
+        await foreach (TPhysicalEntity physicalEntity in physicalEntities)
+        {
+            yield return physicalEntity.Scale(scaleFactor, predicate);
+        }
     }
 
     #endregion

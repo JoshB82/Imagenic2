@@ -1,5 +1,6 @@
 ﻿using Imagenic2.Core.Maths.Transformations;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace Imagenic2.Core.Entities;
 
@@ -420,13 +421,15 @@ public static class OrientatedEntityTransformations
     /// <typeparam name="TOrientatedEntity"></typeparam>
     /// <param name="orientatedEntities"></param>
     /// <param name="translatableEntity"></param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public static async IAsyncEnumerable<TOrientatedEntity> LookAt<TOrientatedEntity>(this IAsyncEnumerable<TOrientatedEntity> orientatedEntities, TranslatableEntity translatableEntity) where TOrientatedEntity : OrientatedEntity
+    public static async IAsyncEnumerable<TOrientatedEntity> LookAt<TOrientatedEntity>(this IAsyncEnumerable<TOrientatedEntity> orientatedEntities, TranslatableEntity translatableEntity, [EnumeratorCancellation] CancellationToken cancellationToken = default) where TOrientatedEntity : OrientatedEntity
     {
         ThrowIfNull(orientatedEntities);
 
         await foreach (TOrientatedEntity orientatedEntity in orientatedEntities)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             yield return orientatedEntity.LookAt(translatableEntity);
         }
     }
@@ -442,13 +445,15 @@ public static class OrientatedEntityTransformations
     /// <param name="orientatedEntities"></param>
     /// <param name="orientation"></param>
     /// <param name="predicate"></param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public static async IAsyncEnumerable<TOrientatedEntity> Orientate<TOrientatedEntity>(this IAsyncEnumerable<TOrientatedEntity> orientatedEntities, Orientation orientation, [DisallowNull] Func<TOrientatedEntity, bool> predicate) where TOrientatedEntity : OrientatedEntity
+    public static async IAsyncEnumerable<TOrientatedEntity> Orientate<TOrientatedEntity>(this IAsyncEnumerable<TOrientatedEntity> orientatedEntities, Orientation orientation, [DisallowNull] Func<TOrientatedEntity, bool> predicate, [EnumeratorCancellation] CancellationToken cancellationToken = default) where TOrientatedEntity : OrientatedEntity
     {
         ThrowIfNull(orientatedEntities);
 
         await foreach (TOrientatedEntity orientatedEntity in orientatedEntities)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             yield return orientatedEntity.Orientate(orientation, predicate);
         }
     }
@@ -464,13 +469,15 @@ public static class OrientatedEntityTransformations
     /// <param name="orientatedEntities"></param>
     /// <param name="q"></param>
     /// <param name="predicate"></param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public static async IAsyncEnumerable<TOrientatedEntity> Rotate<TOrientatedEntity>(this IAsyncEnumerable<TOrientatedEntity> orientatedEntities, Quaternion q, [DisallowNull] Func<TOrientatedEntity, bool> predicate) where TOrientatedEntity : OrientatedEntity
+    public static async IAsyncEnumerable<TOrientatedEntity> Rotate<TOrientatedEntity>(this IAsyncEnumerable<TOrientatedEntity> orientatedEntities, Quaternion q, [DisallowNull] Func<TOrientatedEntity, bool> predicate, [EnumeratorCancellation] CancellationToken cancellationToken = default) where TOrientatedEntity : OrientatedEntity
     {
         ThrowIfNull(orientatedEntities);
 
         await foreach (TOrientatedEntity orientatedEntity in orientatedEntities)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             yield return orientatedEntity.Rotate(q, predicate);
         }
     }
@@ -483,13 +490,15 @@ public static class OrientatedEntityTransformations
     /// <param name="axis"></param>
     /// <param name="angle"></param>
     /// <param name="predicate"></param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public static async IAsyncEnumerable<TOrientatedEntity> Rotate<TOrientatedEntity>(this IAsyncEnumerable<TOrientatedEntity> orientatedEntities, Vector3D axis, float angle, [DisallowNull] Func<TOrientatedEntity, bool> predicate) where TOrientatedEntity : OrientatedEntity
+    public static async IAsyncEnumerable<TOrientatedEntity> Rotate<TOrientatedEntity>(this IAsyncEnumerable<TOrientatedEntity> orientatedEntities, Vector3D axis, float angle, [DisallowNull] Func<TOrientatedEntity, bool> predicate, [EnumeratorCancellation] CancellationToken cancellationToken = default) where TOrientatedEntity : OrientatedEntity
     {
         ThrowIfNull(orientatedEntities);
 
         await foreach (TOrientatedEntity orientatedEntity in orientatedEntities)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             yield return orientatedEntity.Rotate(axis, angle, predicate);
         }
     }
@@ -505,13 +514,15 @@ public static class OrientatedEntityTransformations
     /// <param name="orientatedEntities"></param>
     /// <param name="translatableEntity"></param>
     /// <param name="predicate"></param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public static async IAsyncEnumerable<TOrientatedEntity> LookAt<TOrientatedEntity>(this IAsyncEnumerable<TOrientatedEntity> orientatedEntities, TranslatableEntity translatableEntity, [DisallowNull] Func<TOrientatedEntity, bool> predicate) where TOrientatedEntity : OrientatedEntity
+    public static async IAsyncEnumerable<TOrientatedEntity> LookAt<TOrientatedEntity>(this IAsyncEnumerable<TOrientatedEntity> orientatedEntities, TranslatableEntity translatableEntity, [DisallowNull] Func<TOrientatedEntity, bool> predicate, [EnumeratorCancellation] CancellationToken cancellationToken = default) where TOrientatedEntity : OrientatedEntity
     {
         ThrowIfNull(orientatedEntities);
 
         await foreach (TOrientatedEntity orientatedEntity in orientatedEntities)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             yield return orientatedEntity.LookAt(translatableEntity);
         }
     }
