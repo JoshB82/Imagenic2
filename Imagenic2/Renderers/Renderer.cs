@@ -37,8 +37,13 @@ public abstract class Renderer<TImage> where TImage : Images.Image, IFactory<TIm
             ThrowIfNull(value);
             if (value == renderingOptions) return;
             renderingOptions = value;
+
+            value.RenderAlteringPropertyChanged -= OnRenderingAlteringPropertyChanged;
             renderingOptions.RenderAlteringPropertyChanged += OnRenderingAlteringPropertyChanged;
+
             ComputeTiles(renderingOptions.RenderWidth, renderingOptions.RenderHeight);
+
+            NewRenderNeeded = true;
         }
     }
 
@@ -87,8 +92,8 @@ public abstract class Renderer<TImage> where TImage : Images.Image, IFactory<TIm
 
     private void ComputeTiles(int width, int height)
     {
-        int sizeX = (int)(Ceiling((float)width / numberOfTilesHorizontal));
-        int sizeY = (int)(Ceiling((float)height / numberOfTilesVertical));
+        int sizeX = (int)Ceiling((float)width / numberOfTilesHorizontal);
+        int sizeY = (int)Ceiling((float)height / numberOfTilesVertical);
 
         Tiles = new Buffer2D<Tile>(numberOfTilesHorizontal, numberOfTilesVertical);
         for (int y = 0; y < numberOfTilesVertical; y++)
@@ -152,10 +157,11 @@ public abstract class Renderer<TImage> where TImage : Images.Image, IFactory<TIm
         int numberOfFrames = duration * fps;
         float invFPS = 1f / fps;
         int numberOfPlays = animation.Repeat + 1;
+        (int start, int finish, int step) = animation.PlaybackDirection == PlaybackDirection.Forwards ? (0, numberOfFrames + 1, 1) : (numberOfFrames, -1, -1);
 
         for (int j = 0; j < numberOfPlays; j++)
         {
-            for (int i = 0; i <= numberOfFrames; i++)
+            for (int i = start; i != finish; i += step)
             {
                 token.ThrowIfCancellationRequested();
                 float time = invFPS * i;

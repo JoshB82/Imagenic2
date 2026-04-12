@@ -138,7 +138,7 @@ public partial class Node
 
     public Node Translate(Vector3D displacement)
     {
-        var descendants = GetDescendantsAndThis(n => n.Content is TranslatableEntity);
+        var descendants = GetDescendantsAndThisOfType<TranslatableEntity>();
         foreach (Node node in descendants)
         {
             ((TranslatableEntity)(node.Content)).Translate(displacement);

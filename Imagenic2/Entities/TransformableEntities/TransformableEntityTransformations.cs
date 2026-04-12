@@ -7,6 +7,8 @@ namespace Imagenic2.Core.Entities;
 /// </summary>
 public static class TransformableEntityTransformations
 {
+    #region Transform
+
     /// <summary>
     /// Applies a custom transformation.
     /// <remarks>The <typeparamref name="TTransformableEntity"/> and transformation cannot be <see langword="null"/>.</remarks>
@@ -37,6 +39,10 @@ public static class TransformableEntityTransformations
         transformation(transformableEntity);
         return transformableEntity;
     }
+
+    #endregion
+
+    #region Transform with predicate
 
     /// <summary>
     /// Applies a custom transformation to a <typeparamref name="TTransformableEntity"/> that satisfies a specified predicate.
@@ -74,13 +80,9 @@ public static class TransformableEntityTransformations
         return transformableEntity;
     }
 
-    public static TOutput? Transform<TTransformableEntity, TOutput>(
-        [DisallowNull] this TTransformableEntity transformableEntity,
-        [DisallowNull] Func<TTransformableEntity, TOutput?> transformation) where TTransformableEntity : TransformableEntity
-    {
-        ThrowIfNull(transformableEntity, transformation);
-        return transformation(transformableEntity);
-    }
+    #endregion
+
+    #region IEnumerable Transform
 
     /// <summary>
     /// Transforms each element of a <typeparamref name="TTransformableEntity"/> sequence.
@@ -109,12 +111,17 @@ public static class TransformableEntityTransformations
         [DisallowNull] Action<TTransformableEntity> transformation) where TTransformableEntity : TransformableEntity
     {
         ThrowIfNull(transformableEntities, transformation);
-        return transformableEntities.Select(transformableEntity =>
+
+        foreach (TTransformableEntity transformableEntity in transformableEntities)
         {
             transformation(transformableEntity);
-            return transformableEntity;
-        });
+            yield return transformableEntity;
+        }
     }
+
+    #endregion
+
+    #region IEnumerable Transform with predicate
 
     /// <summary>
     /// Scales each element of a <typeparamref name="TTransformableEntity"/> sequence that satisfies a specified predicate.
@@ -145,13 +152,23 @@ public static class TransformableEntityTransformations
         [DisallowNull] Func<TTransformableEntity, bool> predicate) where TTransformableEntity : TransformableEntity
     {
         ThrowIfNull(transformableEntities, transformation, predicate);
-        return transformableEntities.Select(transformableEntity =>
+        foreach (TTransformableEntity transformableEntity in transformableEntities)
         {
             if (predicate(transformableEntity))
             {
                 transformation(transformableEntity);
             }
-            return transformableEntity;
-        });
+            yield return transformableEntity;
+        }
+    }
+
+    #endregion
+
+    public static TOutput? Transform<TTransformableEntity, TOutput>(
+        [DisallowNull] this TTransformableEntity transformableEntity,
+        [DisallowNull] Func<TTransformableEntity, TOutput?> transformation) where TTransformableEntity : TransformableEntity
+    {
+        ThrowIfNull(transformableEntity, transformation);
+        return transformation(transformableEntity);
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Imagenic2.Core.Entities.Animation;
 
-public class Animation
+public sealed class Animation
 {
     #region Fields and Properties
 
@@ -16,7 +16,16 @@ public class Animation
             durationSeconds = value;
         }
     }
-    public int FPS { get; set; }
+    private int fps;
+    public int FPS
+    {
+        get => fps;
+        set
+        {
+            ThrowIfNonpositive(value);
+            fps = value;
+        }
+    }
 
     private int repeat;
     public int Repeat
@@ -28,6 +37,8 @@ public class Animation
             repeat = value;
         }
     }
+
+    public PlaybackDirection PlaybackDirection { get; set; } = PlaybackDirection.Forwards;
 
     #endregion
 
