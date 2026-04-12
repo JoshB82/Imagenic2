@@ -36,9 +36,9 @@ public abstract class Renderer<TImage> where TImage : Images.Image, IFactory<TIm
         {
             ThrowIfNull(value);
             if (value == renderingOptions) return;
-            renderingOptions = value;
 
-            value.RenderAlteringPropertyChanged -= OnRenderingAlteringPropertyChanged;
+            renderingOptions.RenderAlteringPropertyChanged -= OnRenderingAlteringPropertyChanged;
+            renderingOptions = value;
             renderingOptions.RenderAlteringPropertyChanged += OnRenderingAlteringPropertyChanged;
 
             ComputeTiles(renderingOptions.RenderWidth, renderingOptions.RenderHeight);
@@ -116,7 +116,6 @@ public abstract class Renderer<TImage> where TImage : Images.Image, IFactory<TIm
     private protected Renderer(RenderingOptions renderingOptions)
     {
         RenderingOptions = renderingOptions;
-        renderingOptions.RenderAlteringPropertyChanged += OnRenderingAlteringPropertyChanged;
         colourBuffer = new Buffer2D<Color>(RenderingOptions.RenderWidth, RenderingOptions.RenderHeight);
 
         #if DEBUG
