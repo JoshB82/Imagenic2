@@ -87,6 +87,7 @@ public static class TransformableEntityTransformations
     /// <summary>
     /// Transforms each element of a <typeparamref name="TTransformableEntity"/> sequence.
     /// <remarks>The <typeparamref name="TTransformableEntity"/> sequence and transformation cannot be <see langword="null"/>.</remarks>
+    /// </summary>
     /// <para><example>
     /// Using call chaining, a sequence of cubes are subjected to multiple transformations, including a custom transformation.
     /// <code>
@@ -100,7 +101,6 @@ public static class TransformableEntityTransformations
     ///             .Scale(scaleFactor);
     /// </code>
     /// </example></para>
-    /// </summary>
     /// <typeparam name="TTransformableEntity">The type of the elements being transformed.</typeparam>
     /// <param name="transformableEntities">The <typeparamref name="TTransformableEntity"/> sequence containing elements being transformed.</param>
     /// <param name="transformation">The transformation to apply.</param>
@@ -124,8 +124,9 @@ public static class TransformableEntityTransformations
     #region IEnumerable Transform with predicate
 
     /// <summary>
-    /// Scales each element of a <typeparamref name="TTransformableEntity"/> sequence that satisfies a specified predicate.
+    /// Transforms each element of a <typeparamref name="TTransformableEntity"/> sequence that satisfies a specified predicate.
     /// <remarks>The <typeparamref name="TTransformableEntity"/> sequence and predicate cannot be <see langword="null"/>.</remarks>
+    /// </summary>
     /// <para><example>
     /// Using call chaining, a sequence of cubes are subjected to multiple transformations, including a custom transformation for cubes with side length 50.
     /// <code>
@@ -139,7 +140,6 @@ public static class TransformableEntityTransformations
     ///             .Scale(scaleFactor);
     /// </code>
     /// </example></para>
-    /// </summary>
     /// <typeparam name="TTransformableEntity">The type of the elements being transformed.</typeparam>
     /// <param name="transformableEntities">The <typeparamref name="TTransformableEntity"/> sequence containing elements being transformed.</param>
     /// <param name="transformation">The transformation to apply.</param>
@@ -163,12 +163,4 @@ public static class TransformableEntityTransformations
     }
 
     #endregion
-
-    public static TOutput? Transform<TTransformableEntity, TOutput>(
-        [DisallowNull] this TTransformableEntity transformableEntity,
-        [DisallowNull] Func<TTransformableEntity, TOutput?> transformation) where TTransformableEntity : TransformableEntity
-    {
-        ThrowIfNull(transformableEntity, transformation);
-        return transformation(transformableEntity);
-    }
 }
