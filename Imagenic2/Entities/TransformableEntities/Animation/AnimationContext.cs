@@ -133,6 +133,21 @@ public sealed class AnimationContextIEnumerable<TTransformableEntity> : Animatio
     #endregion
 }
 
+public static class AnimationExtensions2
+{
+
+    public static Animation End<TTransformableEntity>(this IEnumerable<AnimationContext<TTransformableEntity>> tCtxs) where TTransformableEntity : TransformableEntity
+    {
+        foreach (AnimationContext<TTransformableEntity> transformationContext in tCtxs)
+        {
+            transformationContext.AssembleTransformation();
+        }
+
+        return new Animation(tCtxs.Select(t => t.Transformation));
+    }
+}
+
+
 public sealed class AnimationContextNode : AnimationContextBase
 {
     #region Fields and Properties
@@ -170,7 +185,8 @@ public sealed class AnimationContextNode : AnimationContextBase
         var descendants = TransformableEntityNode.GetDescendantsAndThisOfType<OrientatedEntity>();
         foreach (Node node in descendants)
         {
-            OrientatedEntity orientatedEntity = (OrientatedEntity)node.Content;
+            OrientatedEntity? orientatedEntity = (OrientatedEntity?)node.Content;
+            if (orientatedEntity is null) continue;
 
             AnimationContext<TransformableEntity>? transformationContext = TransformationContexts.FirstOrDefault(c => c.TransformableEntity == orientatedEntity);
             if (transformationContext is null)
@@ -207,7 +223,8 @@ public sealed class AnimationContextNode : AnimationContextBase
         var descendants = TransformableEntityNode.GetDescendantsAndThisOfType<OrientatedEntity>();
         foreach (Node node in descendants)
         {
-            OrientatedEntity orientatedEntity = (OrientatedEntity)node.Content;
+            OrientatedEntity? orientatedEntity = (OrientatedEntity?)node.Content;
+            if (orientatedEntity is null) continue;
 
             AnimationContext<TransformableEntity>? transformationContext = TransformationContexts.FirstOrDefault(c => c.TransformableEntity == orientatedEntity);
             if (transformationContext is null)
@@ -274,7 +291,8 @@ public sealed class AnimationContextNode : AnimationContextBase
         var descendants = TransformableEntityNode.GetDescendantsAndThisOfType<PhysicalEntity>();
         foreach (Node node in descendants)
         {
-            PhysicalEntity physicalEntity = (PhysicalEntity)node.Content;
+            PhysicalEntity? physicalEntity = (PhysicalEntity?)node.Content;
+            if (physicalEntity is null) continue;
 
             AnimationContext<TransformableEntity>? transformationContext = TransformationContexts.FirstOrDefault(c => c.TransformableEntity == physicalEntity);
             if (transformationContext is null)
@@ -310,7 +328,8 @@ public sealed class AnimationContextNode : AnimationContextBase
         var descendants = TransformableEntityNode.GetDescendantsAndThisOfType<TransformableEntity>();
         foreach (Node node in descendants)
         {
-            TransformableEntity transformableEntity = (TransformableEntity)node.Content;
+            TransformableEntity? transformableEntity = (TransformableEntity?)node.Content;
+            if (transformableEntity is null) continue;
 
             AnimationContext<TransformableEntity>? transformationContext = TransformationContexts.FirstOrDefault(c => c.TransformableEntity == transformableEntity);
             if (transformationContext is null)
@@ -364,7 +383,8 @@ public sealed class AnimationContextNode : AnimationContextBase
         var descendants = TransformableEntityNode.GetDescendantsAndThisOfType<TranslatableEntity>();
         foreach (Node node in descendants)
         {
-            TranslatableEntity translatableEntity = (TranslatableEntity)node.Content;
+            TranslatableEntity? translatableEntity = (TranslatableEntity?)node.Content;
+            if (translatableEntity is null) continue;
 
             AnimationContext<TransformableEntity>? transformationContext = TransformationContexts.FirstOrDefault(c => c.TransformableEntity == translatableEntity);
             if (transformationContext is null)

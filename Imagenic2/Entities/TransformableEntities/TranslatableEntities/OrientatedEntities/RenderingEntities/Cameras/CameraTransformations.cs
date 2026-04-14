@@ -6,54 +6,54 @@ namespace Imagenic2.Core.Entities;
 public abstract partial class Camera
 {
     /// <summary>
-    /// Pans the camera in the forward direction.
+    /// Pans the camera in the forward direction (relative to the camera).
     /// </summary>
-    /// <param name="distance">Distance to pan by.</param>
+    /// <param name="distance">The distance to pan by.</param>
     public void PanForward(float distance)
     {
         this.Translate(WorldOrientation.DirectionForward * distance);
         InvokeRenderEvent(RenderUpdate.NewRender);
     }
     /// <summary>
-    /// Pans the camera in the left direction.
+    /// Pans the camera in the left direction (relative to the camera).
     /// </summary>
-    /// <param name="distance">Distance to pan by.</param>
+    /// <param name="distance">The distance to pan by.</param>
     public void PanLeft(float distance)
     {
         this.Translate(WorldOrientation.DirectionRight * -distance);
         InvokeRenderEvent(RenderUpdate.NewRender);
     }
     /// <summary>
-    /// Pans the camera in the right direction.
+    /// Pans the camera in the right direction (relative to the camera).
     /// </summary>
-    /// <param name="distance">Distance to pan by.</param>
+    /// <param name="distance">The distance to pan by.</param>
     public void PanRight(float distance)
     {
         this.Translate(WorldOrientation.DirectionRight * distance);
         InvokeRenderEvent(RenderUpdate.NewRender);
     }
     /// <summary>
-    /// Pans the camera in the backward direction.
+    /// Pans the camera in the backward direction (relative to the camera).
     /// </summary>
-    /// <param name="distance">Distance to pan by.</param>
+    /// <param name="distance">The distance to pan by.</param>
     public void PanBackward(float distance)
     {
         this.Translate(WorldOrientation.DirectionForward * -distance);
         InvokeRenderEvent(RenderUpdate.NewRender);
     }
     /// <summary>
-    /// Pans the camera in the up direction.
+    /// Pans the camera in the up direction (relative to the camera).
     /// </summary>
-    /// <param name="distance">Distance to pan by.</param>
+    /// <param name="distance">The distance to pan by.</param>
     public void PanUp(float distance)
     {
         this.Translate(WorldOrientation.DirectionUp * distance);
         InvokeRenderEvent(RenderUpdate.NewRender);
     }
     /// <summary>
-    /// Pans the camera in the down direction.
+    /// Pans the camera in the down direction (relative to the camera).
     /// </summary>
-    /// <param name="distance">Distance to pan by.</param>
+    /// <param name="distance">The distance to pan by.</param>
     public void PanDown(float distance)
     {
         this.Translate(WorldOrientation.DirectionUp * -distance);
