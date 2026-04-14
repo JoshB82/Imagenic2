@@ -5,7 +5,7 @@ namespace Imagenic2.Core.Entities;
 /// <summary>
 /// Provides extension methods for transforming transformable entities.
 /// </summary>
-public static class TransformableEntityTransformations
+public static partial class TransformableEntityTransformations
 {
     #region Transform
 
