@@ -168,7 +168,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <param name="cameraTCtx">The context for this <see cref="Animation"/>.</param>
     /// <param name="distance">The distance to pan by.</param>
     /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
-    /// <param name="time">The time by which this transformation should be completed by.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
     /// <returns>The context for this <see cref="Animation"/>.</returns>
     public static AnimationContext<TCamera> PanForward<TCamera>(this AnimationContext<TCamera> cameraTCtx, float distance, Func<TCamera, bool> predicate, float time) where TCamera : Camera
     {
@@ -181,7 +181,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <param name="cameraTCtx">The context for this <see cref="Animation"/>.</param>
     /// <param name="distance">The distance to pan by.</param>
     /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
-    /// <param name="time">The time by which this transformation should be completed by.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
     /// <returns>The context for this <see cref="Animation"/>.</returns>
     public static AnimationContext<TCamera> PanLeft<TCamera>(this AnimationContext<TCamera> cameraTCtx, float distance, Func<TCamera, bool> predicate, float time) where TCamera : Camera
     {
@@ -194,7 +194,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <param name="cameraTCtx">The context for this <see cref="Animation"/>.</param>
     /// <param name="distance">The distance to pan by.</param>
     /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
-    /// <param name="time">The time by which this transformation should be completed by.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
     /// <returns>The context for this <see cref="Animation"/>.</returns>
     public static AnimationContext<TCamera> PanRight<TCamera>(this AnimationContext<TCamera> cameraTCtx, float distance, Func<TCamera, bool> predicate, float time) where TCamera : Camera
     {
@@ -207,7 +207,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <param name="cameraTCtx">The context for this <see cref="Animation"/>.</param>
     /// <param name="distance">The distance to pan by.</param>
     /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
-    /// <param name="time">The time by which this transformation should be completed by.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
     /// <returns>The context for this <see cref="Animation"/>.</returns>
     public static AnimationContext<TCamera> PanBackward<TCamera>(this AnimationContext<TCamera> cameraTCtx, float distance, Func<TCamera, bool> predicate, float time) where TCamera : Camera
     {
@@ -220,7 +220,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <param name="cameraTCtx">The context for this <see cref="Animation"/>.</param>
     /// <param name="distance">The distance to pan by.</param>
     /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
-    /// <param name="time">The time by which this transformation should be completed by.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
     /// <returns>The context for this <see cref="Animation"/>.</returns>
     public static AnimationContext<TCamera> PanUp<TCamera>(this AnimationContext<TCamera> cameraTCtx, float distance, Func<TCamera, bool> predicate, float time) where TCamera : Camera
     {
@@ -233,7 +233,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <param name="cameraTCtx">The context for this <see cref="Animation"/>.</param>
     /// <param name="distance">The distance to pan by.</param>
     /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
-    /// <param name="time">The time by which this transformation should be completed by.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
     /// <returns>The context for this <see cref="Animation"/>.</returns>
     public static AnimationContext<TCamera> PanDown<TCamera>(this AnimationContext<TCamera> cameraTCtx, float distance, Func<TCamera, bool> predicate, float time) where TCamera : Camera
     {
@@ -251,7 +251,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <param name="cameraTCtx">The context for this <see cref="Animation"/>.</param>
     /// <param name="angle">The angle to rotate by.</param>
     /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
-    /// <param name="time">The time by which this transformation should be completed by.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
     /// <returns>The context for this <see cref="Animation"/>.</returns>
     public static AnimationContext<TCamera> RotateUp<TCamera>(this AnimationContext<TCamera> cameraTCtx, float angle, Func<TCamera, bool> predicate, float time) where TCamera : Camera
     {
@@ -264,7 +264,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <param name="cameraTCtx">The context for this <see cref="Animation"/>.</param>
     /// <param name="angle">The angle to rotate by.</param>
     /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
-    /// <param name="time">The time by which this transformation should be completed by.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
     /// <returns>The context for this <see cref="Animation"/>.</returns>
     public static AnimationContext<TCamera> RotateDown<TCamera>(this AnimationContext<TCamera> cameraTCtx, float angle, Func<TCamera, bool> predicate, float time) where TCamera : Camera
     {
@@ -277,7 +277,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <param name="cameraTCtx">The context for this <see cref="Animation"/>.</param>
     /// <param name="angle">The angle to rotate by.</param>
     /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
-    /// <param name="time">The time by which this transformation should be completed by.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
     /// <returns>The context for this <see cref="Animation"/>.</returns>
     public static AnimationContext<TCamera> RotateLeft<TCamera>(this AnimationContext<TCamera> cameraTCtx, float angle, Func<TCamera, bool> predicate, float time) where TCamera : Camera
     {
@@ -290,7 +290,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <param name="cameraTCtx">The context for this <see cref="Animation"/>.</param>
     /// <param name="angle">The angle to rotate by.</param>
     /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
-    /// <param name="time">The time by which this transformation should be completed by.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
     /// <returns>The context for this <see cref="Animation"/>.</returns>
     public static AnimationContext<TCamera> RotateRight<TCamera>(this AnimationContext<TCamera> cameraTCtx, float angle, Func<TCamera, bool> predicate, float time) where TCamera : Camera
     {
@@ -303,7 +303,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <param name="cameraTCtx">The context for this <see cref="Animation"/>.</param>
     /// <param name="angle">The angle to roll by.</param>
     /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
-    /// <param name="time">The time by which this transformation should be completed by.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
     /// <returns>The context for this <see cref="Animation"/>.</returns>
     public static AnimationContext<TCamera> RollLeft<TCamera>(this AnimationContext<TCamera> cameraTCtx, float angle, Func<TCamera, bool> predicate, float time) where TCamera : Camera
     {
@@ -316,7 +316,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <param name="cameraTCtx">The context for this <see cref="Animation"/>.</param>
     /// <param name="angle">The angle to roll by.</param>
     /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
-    /// <param name="time">The time by which this transformation should be completed by.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
     /// <returns>The context for this <see cref="Animation"/>.</returns>
     public static AnimationContext<TCamera> RollRight<TCamera>(this AnimationContext<TCamera> cameraTCtx, float angle, Func<TCamera, bool> predicate, float time) where TCamera : Camera
     {
@@ -333,7 +333,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <typeparam name="TCamera">The type of the <see cref="Camera"/> being panned.</typeparam>
     /// <param name="cameraTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     /// <param name="distance">The distance to pan by.</param>
-    /// <param name="time">The time by which this transformation should be completed by.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
     /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
     public static IEnumerable<AnimationContext<TCamera>> PanForward<TCamera>(this IEnumerable<AnimationContext<TCamera>> cameraTCtx, float distance, float time) where TCamera : Camera
     {
@@ -348,7 +348,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <typeparam name="TCamera">The type of the <see cref="Camera"/> being panned.</typeparam>
     /// <param name="cameraTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     /// <param name="distance">The distance to pan by.</param>
-    /// <param name="time">The time by which this transformation should be completed by.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
     /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
     public static IEnumerable<AnimationContext<TCamera>> PanLeft<TCamera>(this IEnumerable<AnimationContext<TCamera>> cameraTCtx, float distance, float time) where TCamera : Camera
     {
@@ -363,7 +363,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <typeparam name="TCamera">The type of the <see cref="Camera"/> being panned.</typeparam>
     /// <param name="cameraTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     /// <param name="distance">The distance to pan by.</param>
-    /// <param name="time">The time by which this transformation should be completed by.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
     /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
     public static IEnumerable<AnimationContext<TCamera>> PanRight<TCamera>(this IEnumerable<AnimationContext<TCamera>> cameraTCtx, float distance, float time) where TCamera : Camera
     {
@@ -378,7 +378,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <typeparam name="TCamera">The type of the <see cref="Camera"/> being panned.</typeparam>
     /// <param name="cameraTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     /// <param name="distance">The distance to pan by.</param>
-    /// <param name="time">The time by which this transformation should be completed by.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
     /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
     public static IEnumerable<AnimationContext<TCamera>> PanBackward<TCamera>(this IEnumerable<AnimationContext<TCamera>> cameraTCtx, float distance, float time) where TCamera : Camera
     {
@@ -393,7 +393,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <typeparam name="TCamera">The type of the <see cref="Camera"/> being panned.</typeparam>
     /// <param name="cameraTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     /// <param name="distance">The distance to pan by.</param>
-    /// <param name="time">The time by which this transformation should be completed by.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
     /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
     public static IEnumerable<AnimationContext<TCamera>> PanUp<TCamera>(this IEnumerable<AnimationContext<TCamera>> cameraTCtx, float distance, float time) where TCamera : Camera
     {
@@ -408,7 +408,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <typeparam name="TCamera">The type of the <see cref="Camera"/> being panned.</typeparam>
     /// <param name="cameraTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     /// <param name="distance">The distance to pan by.</param>
-    /// <param name="time">The time by which this transformation should be completed by.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
     /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
     public static IEnumerable<AnimationContext<TCamera>> PanDown<TCamera>(this IEnumerable<AnimationContext<TCamera>> cameraTCtx, float distance, float time) where TCamera : Camera
     {
@@ -428,7 +428,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <typeparam name="TCamera">The type of the <see cref="Camera"/> being rotated.</typeparam>
     /// <param name="cameraTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     /// <param name="angle">The angle to rotate by.</param>
-    /// <param name="time">The time by which this transformation should be completed by.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
     /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
     public static IEnumerable<AnimationContext<TCamera>> RotateUp<TCamera>(this IEnumerable<AnimationContext<TCamera>> cameraTCtx, float angle, float time) where TCamera : Camera
     {
@@ -443,7 +443,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <typeparam name="TCamera">The type of the <see cref="Camera"/> being rotated.</typeparam>
     /// <param name="cameraTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     /// <param name="angle">The angle to rotate by.</param>
-    /// <param name="time">The time by which this transformation should be completed by.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
     /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
     public static IEnumerable<AnimationContext<TCamera>> RotateDown<TCamera>(this IEnumerable<AnimationContext<TCamera>> cameraTCtx, float angle, float time) where TCamera : Camera
     {
@@ -458,7 +458,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <typeparam name="TCamera">The type of the <see cref="Camera"/> being rotated.</typeparam>
     /// <param name="cameraTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     /// <param name="angle">The angle to rotate by.</param>
-    /// <param name="time">The time by which this transformation should be completed by.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
     /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
     public static IEnumerable<AnimationContext<TCamera>> RotateLeft<TCamera>(this IEnumerable<AnimationContext<TCamera>> cameraTCtx, float angle, float time) where TCamera : Camera
     {
@@ -473,7 +473,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <typeparam name="TCamera">The type of the <see cref="Camera"/> being rotated.</typeparam>
     /// <param name="cameraTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     /// <param name="angle">The angle to rotate by.</param>
-    /// <param name="time">The time by which this transformation should be completed by.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
     /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
     public static IEnumerable<AnimationContext<TCamera>> RotateRight<TCamera>(this IEnumerable<AnimationContext<TCamera>> cameraTCtx, float angle, float time) where TCamera : Camera
     {
@@ -488,7 +488,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <typeparam name="TCamera">The type of the <see cref="Camera"/> being rolled.</typeparam>
     /// <param name="cameraTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     /// <param name="angle">The angle to roll by.</param>
-    /// <param name="time">The time by which this transformation should be completed by.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
     /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
     public static IEnumerable<AnimationContext<TCamera>> RollLeft<TCamera>(this IEnumerable<AnimationContext<TCamera>> cameraTCtx, float angle, float time) where TCamera : Camera
     {
@@ -503,7 +503,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <typeparam name="TCamera">The type of the <see cref="Camera"/> being rolled.</typeparam>
     /// <param name="cameraTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     /// <param name="angle">The angle to roll by.</param>
-    /// <param name="time">The time by which this transformation should be completed by.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
     /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
     public static IEnumerable<AnimationContext<TCamera>> RollRight<TCamera>(this IEnumerable<AnimationContext<TCamera>> cameraTCtx, float angle, float time) where TCamera : Camera
     {
@@ -524,7 +524,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <param name="cameraTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     /// <param name="distance">The distance to pan by.</param>
     /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
-    /// <param name="time">The time by which this transformation should be completed by.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
     /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
     public static IEnumerable<AnimationContext<TCamera>> PanForward<TCamera>(this IEnumerable<AnimationContext<TCamera>> cameraTCtx, float distance, Func<TCamera, bool> predicate, float time) where TCamera : Camera
     {
@@ -540,7 +540,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <param name="cameraTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     /// <param name="distance">The distance to pan by.</param>
     /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
-    /// <param name="time">The time by which this transformation should be completed by.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
     /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
     public static IEnumerable<AnimationContext<TCamera>> PanLeft<TCamera>(this IEnumerable<AnimationContext<TCamera>> cameraTCtx, float distance, Func<TCamera, bool> predicate, float time) where TCamera : Camera
     {
@@ -556,7 +556,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <param name="cameraTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     /// <param name="distance">The distance to pan by.</param>
     /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
-    /// <param name="time">The time by which this transformation should be completed by.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
     /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
     public static IEnumerable<AnimationContext<TCamera>> PanRight<TCamera>(this IEnumerable<AnimationContext<TCamera>> cameraTCtx, float distance, Func<TCamera, bool> predicate, float time) where TCamera : Camera
     {
@@ -572,7 +572,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <param name="cameraTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     /// <param name="distance">The distance to pan by.</param>
     /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
-    /// <param name="time">The time by which this transformation should be completed by.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
     /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
     public static IEnumerable<AnimationContext<TCamera>> PanBackward<TCamera>(this IEnumerable<AnimationContext<TCamera>> cameraTCtx, float distance, Func<TCamera, bool> predicate, float time) where TCamera : Camera
     {
@@ -588,7 +588,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <param name="cameraTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     /// <param name="distance">The distance to pan by.</param>
     /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
-    /// <param name="time">The time by which this transformation should be completed by.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
     /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
     public static IEnumerable<AnimationContext<TCamera>> PanUp<TCamera>(this IEnumerable<AnimationContext<TCamera>> cameraTCtx, float distance, Func<TCamera, bool> predicate, float time) where TCamera : Camera
     {
@@ -604,7 +604,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <param name="cameraTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     /// <param name="distance">The distance to pan by.</param>
     /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
-    /// <param name="time">The time by which this transformation should be completed by.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
     /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
     public static IEnumerable<AnimationContext<TCamera>> PanDown<TCamera>(this IEnumerable<AnimationContext<TCamera>> cameraTCtx, float distance, Func<TCamera, bool> predicate, float time) where TCamera : Camera
     {
@@ -625,7 +625,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <param name="cameraTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     /// <param name="angle">The angle to rotate by.</param>
     /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
-    /// <param name="time">The time by which this transformation should be completed by.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
     /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
     public static IEnumerable<AnimationContext<TCamera>> RotateUp<TCamera>(this IEnumerable<AnimationContext<TCamera>> cameraTCtx, float angle, Func<TCamera, bool> predicate, float time) where TCamera : Camera
     {
@@ -641,7 +641,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <param name="cameraTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     /// <param name="angle">The angle to rotate by.</param>
     /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
-    /// <param name="time">The time by which this transformation should be completed by.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
     /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
     public static IEnumerable<AnimationContext<TCamera>> RotateDown<TCamera>(this IEnumerable<AnimationContext<TCamera>> cameraTCtx, float angle, Func<TCamera, bool> predicate, float time) where TCamera : Camera
     {
@@ -657,7 +657,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <param name="cameraTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     /// <param name="angle">The angle to rotate by.</param>
     /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
-    /// <param name="time">The time by which this transformation should be completed by.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
     /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
     public static IEnumerable<AnimationContext<TCamera>> RotateLeft<TCamera>(this IEnumerable<AnimationContext<TCamera>> cameraTCtx, float angle, Func<TCamera, bool> predicate, float time) where TCamera : Camera
     {
@@ -673,7 +673,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <param name="cameraTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     /// <param name="angle">The angle to rotate by.</param>
     /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
-    /// <param name="time">The time by which this transformation should be completed by.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
     /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
     public static IEnumerable<AnimationContext<TCamera>> RotateRight<TCamera>(this IEnumerable<AnimationContext<TCamera>> cameraTCtx, float angle, Func<TCamera, bool> predicate, float time) where TCamera : Camera
     {
@@ -689,7 +689,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <param name="cameraTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     /// <param name="angle">The angle to roll by.</param>
     /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
-    /// <param name="time">The time by which this transformation should be completed by.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
     /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
     public static IEnumerable<AnimationContext<TCamera>> RollLeft<TCamera>(this IEnumerable<AnimationContext<TCamera>> cameraTCtx, float angle, Func<TCamera, bool> predicate, float time) where TCamera : Camera
     {
@@ -705,7 +705,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <param name="cameraTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     /// <param name="angle">The angle to roll by.</param>
     /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
-    /// <param name="time">The time by which this transformation should be completed by.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
     /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
     public static IEnumerable<AnimationContext<TCamera>> RollRight<TCamera>(this IEnumerable<AnimationContext<TCamera>> cameraTCtx, float angle, Func<TCamera, bool> predicate, float time) where TCamera : Camera
     {

@@ -1,6 +1,8 @@
-﻿namespace Imagenic2.Core.Entities.Animation;
+﻿using System.Runtime.CompilerServices;
 
-public static class TransformableEntityAnimationExtensions
+namespace Imagenic2.Core.Entities.Animation;
+
+public static partial class TransformableEntityAnimationExtensions
 {
     #region Transform
 
@@ -8,10 +10,10 @@ public static class TransformableEntityAnimationExtensions
     /// 
     /// </summary>
     /// <typeparam name="TTransformableEntity"></typeparam>
-    /// <param name="transformableTCtx"></param>
+    /// <param name="transformableTCtx">The context for this <see cref="Animation"/>.</param>
     /// <param name="transformation"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
+    /// <param name="time">The time which this transformation should be completed by.</param>
+    /// <returns>The context for this <see cref="Animation"/>.</returns>
     public static AnimationContext<TTransformableEntity> Transform<TTransformableEntity>(this AnimationContext<TTransformableEntity> transformableTCtx, Action<TTransformableEntity> transformation, float time) where TTransformableEntity : TransformableEntity
     {
         ThrowIfNull(transformableTCtx);
@@ -31,18 +33,14 @@ public static class TransformableEntityAnimationExtensions
     /// 
     /// </summary>
     /// <typeparam name="TTransformableEntity"></typeparam>
-    /// <param name="transformableTCtx"></param>
+    /// <param name="transformableTCtx">The context for this <see cref="Animation"/>.</param>
     /// <param name="transformation"></param>
-    /// <param name="predicate"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
+    /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
+    /// <returns>The context for this <see cref="Animation"/>.</returns>
     public static AnimationContext<TTransformableEntity> Transform<TTransformableEntity>(this AnimationContext<TTransformableEntity> transformableTCtx, Action<TTransformableEntity> transformation, Func<TTransformableEntity, bool> predicate, float time) where TTransformableEntity : TransformableEntity
     {
-        if (predicate(transformableTCtx.TransformableEntity))
-        {
-            transformableTCtx.Transform(transformation, time);
-        }
-        return transformableTCtx;
+        return predicate(transformableTCtx.TransformableEntity) ? transformableTCtx.Transform(transformation, time) : transformableTCtx;
     }
 
     #endregion
@@ -53,20 +51,18 @@ public static class TransformableEntityAnimationExtensions
     /// 
     /// </summary>
     /// <typeparam name="TTransformableEntity"></typeparam>
-    /// <param name="transformableTCtx"></param>
+    /// <param name="transformableTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     /// <param name="transformation"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContextIEnumerable<TTransformableEntity> Transform<TTransformableEntity>(this AnimationContextIEnumerable<TTransformableEntity> transformableTCtx, Action<TTransformableEntity> transformation, float time) where TTransformableEntity : TransformableEntity
+    /// <param name="time">The time which this transformation should be completed by.</param>
+    /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
+    public static IEnumerable<AnimationContext<TTransformableEntity>> Transform<TTransformableEntity>(this IEnumerable<AnimationContext<TTransformableEntity>> transformableTCtx, Action<TTransformableEntity> transformation, float time) where TTransformableEntity : TransformableEntity
     {
         ThrowIfNull(transformableTCtx);
 
-        foreach (AnimationContext<TTransformableEntity> tCtx in transformableTCtx.TransformationContexts)
+        foreach (AnimationContext<TTransformableEntity> tCtx in transformableTCtx)
         {
-            tCtx.Transform(transformation, time);
+            yield return tCtx.Transform(transformation, time);
         }
-
-        return transformableTCtx;
     }
 
     #endregion
@@ -77,21 +73,20 @@ public static class TransformableEntityAnimationExtensions
     /// 
     /// </summary>
     /// <typeparam name="TTransformableEntity"></typeparam>
-    /// <param name="transformableTCtx"></param>
+    /// <param name="transformableTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     /// <param name="transformation"></param>
-    /// <param name="predicate"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContextIEnumerable<TTransformableEntity> Transform<TTransformableEntity>(this AnimationContextIEnumerable<TTransformableEntity> transformableTCtx, Action<TTransformableEntity> transformation, Func<TTransformableEntity, bool> predicate, float time) where TTransformableEntity : TransformableEntity
+    /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
+    /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
+    public static IEnumerable<AnimationContext<TTransformableEntity>> Transform<TTransformableEntity>(this IEnumerable<AnimationContext<TTransformableEntity>> transformableTCtx, Action<TTransformableEntity> transformation, Func<TTransformableEntity, bool> predicate, float time) where TTransformableEntity : TransformableEntity
     {
-        foreach (AnimationContext<TTransformableEntity> tCtx in transformableTCtx.TransformationContexts)
+        foreach (AnimationContext<TTransformableEntity> tCtx in transformableTCtx)
         {
             if (predicate(tCtx.TransformableEntity))
             {
-                tCtx.Transform(transformation, time);
+                yield return tCtx.Transform(transformation, time);
             }
         }
-        return transformableTCtx;
     }
 
     #endregion

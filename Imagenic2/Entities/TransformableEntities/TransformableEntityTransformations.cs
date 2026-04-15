@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace Imagenic2.Core.Entities;
 
@@ -73,11 +74,8 @@ public static partial class TransformableEntityTransformations
         [DisallowNull] Func<TTransformableEntity, bool> predicate) where TTransformableEntity : TransformableEntity
     {
         ThrowIfNull(transformableEntity, transformation, predicate);
-        if (predicate(transformableEntity))
-        {
-            transformation(transformableEntity);
-        }
-        return transformableEntity;
+
+        return predicate(transformableEntity) ? transformableEntity.Transform(transformation) : transformableEntity;
     }
 
     #endregion
@@ -114,8 +112,7 @@ public static partial class TransformableEntityTransformations
 
         foreach (TTransformableEntity transformableEntity in transformableEntities)
         {
-            transformation(transformableEntity);
-            yield return transformableEntity;
+            yield return transformableEntity.Transform(transformation);
         }
     }
 
@@ -154,11 +151,37 @@ public static partial class TransformableEntityTransformations
         ThrowIfNull(transformableEntities, transformation, predicate);
         foreach (TTransformableEntity transformableEntity in transformableEntities)
         {
-            if (predicate(transformableEntity))
-            {
-                transformation(transformableEntity);
-            }
-            yield return transformableEntity;
+            yield return transformableEntity.Transform(transformation, predicate);
+        }
+    }
+
+    #endregion
+
+    #region IAsyncEnumerable Transform
+
+    public static async IAsyncEnumerable<TTransformableEntity> Transform<TTransformableEntity>(this IAsyncEnumerable<TTransformableEntity> transformableEntities, Action<TTransformableEntity> transformation, [EnumeratorCancellation] CancellationToken cancellationToken = default) where TTransformableEntity : TransformableEntity
+    {
+        ThrowIfNull(transformableEntities);
+
+        await foreach (TTransformableEntity transformableEntity in transformableEntities)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            yield return transformableEntity.Transform(transformation);
+        }
+    }
+
+    #endregion
+
+    #region IAsyncEnumerable Transform with predicate
+
+    public static async IAsyncEnumerable<TTransformableEntity> Transform<TTransformableEntity>(this IAsyncEnumerable<TTransformableEntity> transformableEntities, Action<TTransformableEntity> transformation, Func<TTransformableEntity, bool> predicate, [EnumeratorCancellation] CancellationToken cancellationToken = default) where TTransformableEntity : TransformableEntity
+    {
+        ThrowIfNull(transformableEntities);
+
+        await foreach (TTransformableEntity transformableEntity in transformableEntities)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            yield return transformableEntity.Transform(transformation, predicate);
         }
     }
 

@@ -2,7 +2,7 @@
 
 namespace Imagenic2.Core.Entities.Animation;
 
-public static class TranslatableEntityAnimationExtensions
+public static partial class TransformableEntityAnimationExtensions
 {
     #region Translate
 
@@ -10,54 +10,54 @@ public static class TranslatableEntityAnimationExtensions
     /// 
     /// </summary>
     /// <typeparam name="TTranslatableEntity"></typeparam>
-    /// <param name="translatableTCtx"></param>
+    /// <param name="translatableTCtx">The context for this <see cref="Animation"/>.</param>
+    /// <param name="distance"></param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
+    /// <returns>The context for this <see cref="Animation"/>.</returns>
+    public static AnimationContext<TTranslatableEntity> TranslateX<TTranslatableEntity>(this AnimationContext<TTranslatableEntity> translatableTCtx, float distance, float time) where TTranslatableEntity : TranslatableEntity
+    {
+        Vector3D displacement = new Vector3D(distance, 0, 0);
+        return translatableTCtx.Translate(displacement, time);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TTranslatableEntity"></typeparam>
+    /// <param name="translatableTCtx">The context for this <see cref="Animation"/>.</param>
+    /// <param name="distance"></param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
+    /// <returns>The context for this <see cref="Animation"/>.</returns>
+    public static AnimationContext<TTranslatableEntity> TranslateY<TTranslatableEntity>(this AnimationContext<TTranslatableEntity> translatableTCtx, float distance, float time) where TTranslatableEntity : TranslatableEntity
+    {
+        Vector3D displacement = new Vector3D(0, distance, 0);
+        return translatableTCtx.Translate(displacement, time);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TTranslatableEntity"></typeparam>
+    /// <param name="translatableTCtx">The context for this <see cref="Animation"/>.</param>
+    /// <param name="distance"></param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
+    /// <returns>The context for this <see cref="Animation"/>.</returns>
+    public static AnimationContext<TTranslatableEntity> TranslateZ<TTranslatableEntity>(this AnimationContext<TTranslatableEntity> translatableTCtx, float distance, float time) where TTranslatableEntity : TranslatableEntity
+    {
+        Vector3D displacement = new Vector3D(0, 0, distance);
+        return translatableTCtx.Translate(displacement, time);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TTranslatableEntity"></typeparam>
+    /// <param name="translatableTCtx">The context for this <see cref="Animation"/>.</param>
     /// <param name="distanceX"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContext<TTranslatableEntity> TranslateX<TTranslatableEntity>(this AnimationContext<TTranslatableEntity> translatableTCtx, float distanceX, float time) where TTranslatableEntity : TranslatableEntity
-    {
-        Vector3D displacement = new Vector3D(distanceX, 0, 0);
-        return translatableTCtx.Translate(displacement, time);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TTranslatableEntity"></typeparam>
-    /// <param name="translatableTCtx"></param>
-    /// <param name="distanceY"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContext<TTranslatableEntity> TranslateY<TTranslatableEntity>(this AnimationContext<TTranslatableEntity> translatableTCtx, float distanceY, float time) where TTranslatableEntity : TranslatableEntity
-    {
-        Vector3D displacement = new Vector3D(0, distanceY, 0);
-        return translatableTCtx.Translate(displacement, time);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TTranslatableEntity"></typeparam>
-    /// <param name="translatableTCtx"></param>
-    /// <param name="distanceZ"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContext<TTranslatableEntity> TranslateZ<TTranslatableEntity>(this AnimationContext<TTranslatableEntity> translatableTCtx, float distanceZ, float time) where TTranslatableEntity : TranslatableEntity
-    {
-        Vector3D displacement = new Vector3D(0, 0, distanceZ);
-        return translatableTCtx.Translate(displacement, time);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TTranslatableEntity"></typeparam>
-    /// <param name="translatableTCtx"></param>
-    /// <param name="distanceX"></param>
     /// <param name="distanceY"></param>
     /// <param name="distanceZ"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
+    /// <param name="time">The time which this transformation should be completed by.</param>
+    /// <returns>The context for this <see cref="Animation"/>.</returns>
     public static AnimationContext<TTranslatableEntity> Translate<TTranslatableEntity>(this AnimationContext<TTranslatableEntity> translatableTCtx, float distanceX, float distanceY, float distanceZ, float time) where TTranslatableEntity : TranslatableEntity
     {
         Vector3D displacement = new Vector3D(distanceX, distanceY, distanceZ);
@@ -68,10 +68,10 @@ public static class TranslatableEntityAnimationExtensions
     /// 
     /// </summary>
     /// <typeparam name="TTranslatableEntity"></typeparam>
-    /// <param name="translatableTCtx"></param>
+    /// <param name="translatableTCtx">The context for this <see cref="Animation"/>.</param>
     /// <param name="displacement"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
+    /// <param name="time">The time which this transformation should be completed by.</param>
+    /// <returns>The context for this <see cref="Animation"/>.</returns>
     public static AnimationContext<TTranslatableEntity> Translate<TTranslatableEntity>(this AnimationContext<TTranslatableEntity> translatableTCtx, Vector3D displacement, float time) where TTranslatableEntity : TranslatableEntity
     {
         ThrowIfNull(translatableTCtx);
@@ -98,58 +98,58 @@ public static class TranslatableEntityAnimationExtensions
     /// 
     /// </summary>
     /// <typeparam name="TTranslatableEntity"></typeparam>
-    /// <param name="translatableTCtx"></param>
+    /// <param name="translatableTCtx">The context for this <see cref="Animation"/>.</param>
+    /// <param name="distance"></param>
+    /// <param name="predicate"></param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
+    /// <returns>The context for this <see cref="Animation"/>.</returns>
+    public static AnimationContext<TTranslatableEntity> TranslateX<TTranslatableEntity>(this AnimationContext<TTranslatableEntity> translatableTCtx, float distance, Func<TTranslatableEntity, bool> predicate, float time) where TTranslatableEntity : TranslatableEntity
+    {
+        Vector3D displacement = new Vector3D(distance, 0, 0);
+        return translatableTCtx.Translate(displacement, predicate, time);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TTranslatableEntity"></typeparam>
+    /// <param name="translatableTCtx">The context for this <see cref="Animation"/>.</param>
+    /// <param name="distance"></param>
+    /// <param name="predicate"></param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
+    /// <returns>The context for this <see cref="Animation"/>.</returns>
+    public static AnimationContext<TTranslatableEntity> TranslateY<TTranslatableEntity>(this AnimationContext<TTranslatableEntity> translatableTCtx, float distance, Func<TTranslatableEntity, bool> predicate, float time) where TTranslatableEntity : TranslatableEntity
+    {
+        Vector3D displacement = new Vector3D(0, distance, 0);
+        return translatableTCtx.Translate(displacement, predicate, time);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TTranslatableEntity"></typeparam>
+    /// <param name="translatableTCtx">The context for this <see cref="Animation"/>.</param>
+    /// <param name="distance"></param>
+    /// <param name="predicate"></param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
+    /// <returns>The context for this <see cref="Animation"/>.</returns>
+    public static AnimationContext<TTranslatableEntity> TranslateZ<TTranslatableEntity>(this AnimationContext<TTranslatableEntity> translatableTCtx, float distance, Func<TTranslatableEntity, bool> predicate, float time) where TTranslatableEntity : TranslatableEntity
+    {
+        Vector3D displacement = new Vector3D(0, 0, distance);
+        return translatableTCtx.Translate(displacement, predicate, time);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TTranslatableEntity"></typeparam>
+    /// <param name="translatableTCtx">The context for this <see cref="Animation"/>.</param>
     /// <param name="distanceX"></param>
-    /// <param name="predicate"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContext<TTranslatableEntity> TranslateX<TTranslatableEntity>(this AnimationContext<TTranslatableEntity> translatableTCtx, float distanceX, Func<TTranslatableEntity, bool> predicate, float time) where TTranslatableEntity : TranslatableEntity
-    {
-        Vector3D displacement = new Vector3D(distanceX, 0, 0);
-        return translatableTCtx.Translate(displacement, predicate, time);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TTranslatableEntity"></typeparam>
-    /// <param name="translatableTCtx"></param>
     /// <param name="distanceY"></param>
-    /// <param name="predicate"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContext<TTranslatableEntity> TranslateY<TTranslatableEntity>(this AnimationContext<TTranslatableEntity> translatableTCtx, float distanceY, Func<TTranslatableEntity, bool> predicate, float time) where TTranslatableEntity : TranslatableEntity
-    {
-        Vector3D displacement = new Vector3D(0, distanceY, 0);
-        return translatableTCtx.Translate(displacement, predicate, time);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TTranslatableEntity"></typeparam>
-    /// <param name="translatableTCtx"></param>
     /// <param name="distanceZ"></param>
     /// <param name="predicate"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContext<TTranslatableEntity> TranslateZ<TTranslatableEntity>(this AnimationContext<TTranslatableEntity> translatableTCtx, float distanceZ, Func<TTranslatableEntity, bool> predicate, float time) where TTranslatableEntity : TranslatableEntity
-    {
-        Vector3D displacement = new Vector3D(0, 0, distanceZ);
-        return translatableTCtx.Translate(displacement, predicate, time);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TTranslatableEntity"></typeparam>
-    /// <param name="translatableTCtx"></param>
-    /// <param name="distanceX"></param>
-    /// <param name="distanceY"></param>
-    /// <param name="distanceZ"></param>
-    /// <param name="predicate"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
+    /// <param name="time">The time which this transformation should be completed by.</param>
+    /// <returns>The context for this <see cref="Animation"/>.</returns>
     public static AnimationContext<TTranslatableEntity> Translate<TTranslatableEntity>(this AnimationContext<TTranslatableEntity> translatableTCtx, float distanceX, float distanceY, float distanceZ, Func<TTranslatableEntity, bool> predicate, float time) where TTranslatableEntity : TranslatableEntity
     {
         Vector3D displacement = new Vector3D(distanceX, distanceY, distanceZ);
@@ -160,18 +160,14 @@ public static class TranslatableEntityAnimationExtensions
     /// 
     /// </summary>
     /// <typeparam name="TTranslatableEntity"></typeparam>
-    /// <param name="translatableTCtx"></param>
+    /// <param name="translatableTCtx">The context for this <see cref="Animation"/>.</param>
     /// <param name="displacement"></param>
     /// <param name="predicate"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
+    /// <param name="time">The time which this transformation should be completed by.</param>
+    /// <returns>The context for this <see cref="Animation"/>.</returns>
     public static AnimationContext<TTranslatableEntity> Translate<TTranslatableEntity>(this AnimationContext<TTranslatableEntity> translatableTCtx, Vector3D displacement, Func<TTranslatableEntity, bool> predicate, float time) where TTranslatableEntity : TranslatableEntity
     {
-        if (predicate(translatableTCtx.TransformableEntity))
-        {
-            translatableTCtx.Translate(displacement, time);
-        }
-        return translatableTCtx;
+        return predicate(translatableTCtx.TransformableEntity) ? translatableTCtx.Translate(displacement, time) : translatableTCtx;
     }
 
     #endregion
@@ -182,55 +178,69 @@ public static class TranslatableEntityAnimationExtensions
     /// 
     /// </summary>
     /// <typeparam name="TTranslatableEntity"></typeparam>
-    /// <param name="translatableTCtx"></param>
+    /// <param name="translatableTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
+    /// <param name="distance"></param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
+    /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
+    public static IEnumerable<AnimationContext<TTranslatableEntity>> TranslateX<TTranslatableEntity>(
+        this IEnumerable<AnimationContext<TTranslatableEntity>> translatableTCtx,
+        float distance,
+        float time) where TTranslatableEntity : TranslatableEntity
+    {
+        Vector3D displacement = new Vector3D(distance, 0, 0);
+        return translatableTCtx.Translate(displacement, time);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TTranslatableEntity"></typeparam>
+    /// <param name="translatableTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
+    /// <param name="distance"></param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
+    /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
+    public static IEnumerable<AnimationContext<TTranslatableEntity>> TranslateY<TTranslatableEntity>(
+        this IEnumerable<AnimationContext<TTranslatableEntity>> translatableTCtx,
+        float distance,
+        float time) where TTranslatableEntity : TranslatableEntity
+    {
+        Vector3D displacement = new Vector3D(0, distance, 0);
+        return translatableTCtx.Translate(displacement, time);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TTranslatableEntity"></typeparam>
+    /// <param name="translatableTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
+    /// <param name="distance"></param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
+    /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
+    public static IEnumerable<AnimationContext<TTranslatableEntity>> TranslateZ<TTranslatableEntity>(
+        this IEnumerable<AnimationContext<TTranslatableEntity>> translatableTCtx,
+        float distance,
+        float time) where TTranslatableEntity : TranslatableEntity
+    {
+        Vector3D displacement = new Vector3D(0, 0, distance);
+        return translatableTCtx.Translate(displacement, time);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TTranslatableEntity"></typeparam>
+    /// <param name="translatableTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     /// <param name="distanceX"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContextIEnumerable<TTranslatableEntity> TranslateX<TTranslatableEntity>(this AnimationContextIEnumerable<TTranslatableEntity> translatableTCtx, float distanceX, float time) where TTranslatableEntity : TranslatableEntity
-    {
-        Vector3D displacement = new Vector3D(distanceX, 0, 0);
-        return translatableTCtx.Translate(displacement, time);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TTranslatableEntity"></typeparam>
-    /// <param name="translatableTCtx"></param>
-    /// <param name="distanceY"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContextIEnumerable<TTranslatableEntity> TranslateY<TTranslatableEntity>(this AnimationContextIEnumerable<TTranslatableEntity> translatableTCtx, float distanceY, float time) where TTranslatableEntity : TranslatableEntity
-    {
-        Vector3D displacement = new Vector3D(0, distanceY, 0);
-        return translatableTCtx.Translate(displacement, time);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TTranslatableEntity"></typeparam>
-    /// <param name="translatableTCtx"></param>
-    /// <param name="distanceZ"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContextIEnumerable<TTranslatableEntity> TranslateZ<TTranslatableEntity>(this AnimationContextIEnumerable<TTranslatableEntity> translatableTCtx, float distanceZ, float time) where TTranslatableEntity : TranslatableEntity
-    {
-        Vector3D displacement = new Vector3D(0, 0, distanceZ);
-        return translatableTCtx.Translate(displacement, time);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TTranslatableEntity"></typeparam>
-    /// <param name="translatableTCtx"></param>
-    /// <param name="distanceX"></param>
     /// <param name="distanceY"></param>
     /// <param name="distanceZ"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContextIEnumerable<TTranslatableEntity> Translate<TTranslatableEntity>(this AnimationContextIEnumerable<TTranslatableEntity> translatableTCtx, float distanceX, float distanceY, float distanceZ, float time) where TTranslatableEntity : TranslatableEntity
+    /// <param name="time">The time which this transformation should be completed by.</param>
+    /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
+    public static IEnumerable<AnimationContext<TTranslatableEntity>> Translate<TTranslatableEntity>(
+        this IEnumerable<AnimationContext<TTranslatableEntity>> translatableTCtx,
+        float distanceX,
+        float distanceY,
+        float distanceZ,
+        float time) where TTranslatableEntity : TranslatableEntity
     {
         Vector3D displacement = new Vector3D(distanceX, distanceY, distanceZ);
         return translatableTCtx.Translate(displacement, time);
@@ -240,20 +250,21 @@ public static class TranslatableEntityAnimationExtensions
     /// 
     /// </summary>
     /// <typeparam name="TTranslatableEntity"></typeparam>
-    /// <param name="translatableTCtx"></param>
+    /// <param name="translatableTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     /// <param name="displacement"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContextIEnumerable<TTranslatableEntity> Translate<TTranslatableEntity>(this AnimationContextIEnumerable<TTranslatableEntity> translatableTCtx, Vector3D displacement, float time) where TTranslatableEntity : TranslatableEntity
+    /// <param name="time">The time which this transformation should be completed by.</param>
+    /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
+    public static IEnumerable<AnimationContext<TTranslatableEntity>> Translate<TTranslatableEntity>(
+        this IEnumerable<AnimationContext<TTranslatableEntity>> translatableTCtx,
+        Vector3D displacement,
+        float time) where TTranslatableEntity : TranslatableEntity
     {
         ThrowIfNull(translatableTCtx);
 
-        foreach (AnimationContext<TTranslatableEntity> tCtx in translatableTCtx.TransformationContexts)
+        foreach (AnimationContext<TTranslatableEntity> tCtx in translatableTCtx)
         {
-            tCtx.Translate(displacement, time);
+            yield return tCtx.Translate(displacement, time);
         }
-
-        return translatableTCtx;
     }
 
     #endregion
@@ -264,59 +275,77 @@ public static class TranslatableEntityAnimationExtensions
     /// 
     /// </summary>
     /// <typeparam name="TTranslatableEntity"></typeparam>
-    /// <param name="translatableTCtx"></param>
+    /// <param name="translatableTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
+    /// <param name="distance"></param>
+    /// <param name="predicate"></param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
+    /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
+    public static IEnumerable<AnimationContext<TTranslatableEntity>> TranslateX<TTranslatableEntity>(
+        this IEnumerable<AnimationContext<TTranslatableEntity>> translatableTCtx,
+        float distance,
+        Func<TTranslatableEntity, bool> predicate,
+        float time) where TTranslatableEntity : TranslatableEntity
+    {
+        Vector3D displacement = new Vector3D(distance, 0, 0);
+        return translatableTCtx.Translate(displacement, predicate, time);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TTranslatableEntity"></typeparam>
+    /// <param name="translatableTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
+    /// <param name="distance"></param>
+    /// <param name="predicate"></param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
+    /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
+    public static IEnumerable<AnimationContext<TTranslatableEntity>> TranslateY<TTranslatableEntity>(
+        this IEnumerable<AnimationContext<TTranslatableEntity>> translatableTCtx,
+        float distance,
+        Func<TTranslatableEntity, bool> predicate,
+        float time) where TTranslatableEntity : TranslatableEntity
+    {
+        Vector3D displacement = new Vector3D(0, distance, 0);
+        return translatableTCtx.Translate(displacement, predicate, time);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TTranslatableEntity"></typeparam>
+    /// <param name="translatableTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
+    /// <param name="distance"></param>
+    /// <param name="predicate"></param>
+    /// <param name="time">The time which this transformation should be completed by.</param>
+    /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
+    public static IEnumerable<AnimationContext<TTranslatableEntity>> TranslateZ<TTranslatableEntity>(
+        this IEnumerable<AnimationContext<TTranslatableEntity>> translatableTCtx,
+        float distance,
+        Func<TTranslatableEntity, bool> predicate,
+        float time) where TTranslatableEntity : TranslatableEntity
+    {
+        Vector3D displacement = new Vector3D(0, 0, distance);
+        return translatableTCtx.Translate(displacement, predicate, time);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TTranslatableEntity"></typeparam>
+    /// <param name="translatableTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     /// <param name="distanceX"></param>
-    /// <param name="predicate"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContextIEnumerable<TTranslatableEntity> TranslateX<TTranslatableEntity>(this AnimationContextIEnumerable<TTranslatableEntity> translatableTCtx, float distanceX, Func<TTranslatableEntity, bool> predicate, float time) where TTranslatableEntity : TranslatableEntity
-    {
-        Vector3D displacement = new Vector3D(distanceX, 0, 0);
-        return translatableTCtx.Translate(displacement, predicate, time);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TTranslatableEntity"></typeparam>
-    /// <param name="translatableTCtx"></param>
     /// <param name="distanceY"></param>
-    /// <param name="predicate"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContextIEnumerable<TTranslatableEntity> TranslateY<TTranslatableEntity>(this AnimationContextIEnumerable<TTranslatableEntity> translatableTCtx, float distanceY, Func<TTranslatableEntity, bool> predicate, float time) where TTranslatableEntity : TranslatableEntity
-    {
-        Vector3D displacement = new Vector3D(0, distanceY, 0);
-        return translatableTCtx.Translate(displacement, predicate, time);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TTranslatableEntity"></typeparam>
-    /// <param name="translatableTCtx"></param>
     /// <param name="distanceZ"></param>
     /// <param name="predicate"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContextIEnumerable<TTranslatableEntity> TranslateZ<TTranslatableEntity>(this AnimationContextIEnumerable<TTranslatableEntity> translatableTCtx, float distanceZ, Func<TTranslatableEntity, bool> predicate, float time) where TTranslatableEntity : TranslatableEntity
-    {
-        Vector3D displacement = new Vector3D(0, 0, distanceZ);
-        return translatableTCtx.Translate(displacement, predicate, time);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TTranslatableEntity"></typeparam>
-    /// <param name="translatableTCtx"></param>
-    /// <param name="distanceX"></param>
-    /// <param name="distanceY"></param>
-    /// <param name="distanceZ"></param>
-    /// <param name="predicate"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContextIEnumerable<TTranslatableEntity> Translate<TTranslatableEntity>(this AnimationContextIEnumerable<TTranslatableEntity> translatableTCtx, float distanceX, float distanceY, float distanceZ, Func<TTranslatableEntity, bool> predicate, float time) where TTranslatableEntity : TranslatableEntity
+    /// <param name="time">The time which this transformation should be completed by.</param>
+    /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
+    public static IEnumerable<AnimationContext<TTranslatableEntity>> Translate<TTranslatableEntity>(
+        this IEnumerable<AnimationContext<TTranslatableEntity>> translatableTCtx,
+        float distanceX,
+        float distanceY,
+        float distanceZ,
+        Func<TTranslatableEntity, bool> predicate,
+        float time) where TTranslatableEntity : TranslatableEntity
     {
         Vector3D displacement = new Vector3D(distanceX, distanceY, distanceZ);
         return translatableTCtx.Translate(displacement, predicate, time);
@@ -326,21 +355,21 @@ public static class TranslatableEntityAnimationExtensions
     /// 
     /// </summary>
     /// <typeparam name="TTranslatableEntity"></typeparam>
-    /// <param name="translatableTCtx"></param>
+    /// <param name="translatableTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     /// <param name="displacement"></param>
     /// <param name="predicate"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContextIEnumerable<TTranslatableEntity> Translate<TTranslatableEntity>(this AnimationContextIEnumerable<TTranslatableEntity> translatableTCtx, Vector3D displacement, Func<TTranslatableEntity, bool> predicate, float time) where TTranslatableEntity : TranslatableEntity
+    /// <param name="time">The time which this transformation should be completed by.</param>
+    /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
+    public static IEnumerable<AnimationContext<TTranslatableEntity>> Translate<TTranslatableEntity>(
+        this IEnumerable<AnimationContext<TTranslatableEntity>> translatableTCtx,
+        Vector3D displacement,
+        Func<TTranslatableEntity, bool> predicate,
+        float time) where TTranslatableEntity : TranslatableEntity
     {
-        foreach (AnimationContext<TTranslatableEntity> tCtx in translatableTCtx.TransformationContexts)
+        foreach (AnimationContext<TTranslatableEntity> tCtx in translatableTCtx)
         {
-            if (predicate(tCtx.TransformableEntity))
-            {
-                tCtx.Translate(displacement, time);
-            }
+            yield return predicate(tCtx.TransformableEntity) ? tCtx.Translate(displacement, predicate, time) : tCtx;
         }
-        return translatableTCtx;
     }
 
     #endregion

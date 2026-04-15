@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Imagenic2.Core.Entities;
 
-public static class OrientatedEntityTransformations
+public static partial class TransformableEntityTransformations
 {
     #region Orientate
 
