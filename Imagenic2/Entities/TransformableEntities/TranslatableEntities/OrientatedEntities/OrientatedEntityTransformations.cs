@@ -523,7 +523,7 @@ public static partial class TransformableEntityTransformations
         await foreach (TOrientatedEntity orientatedEntity in orientatedEntities)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            yield return orientatedEntity.LookAt(translatableEntity);
+            yield return orientatedEntity.LookAt(translatableEntity, predicate);
         }
     }
 
