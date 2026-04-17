@@ -80,12 +80,11 @@ public static partial class TransformableEntityAnimationExtensions
     /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
     public static IEnumerable<AnimationContext<TTransformableEntity>> Transform<TTransformableEntity>(this IEnumerable<AnimationContext<TTransformableEntity>> transformableTCtx, Action<TTransformableEntity> transformation, Func<TTransformableEntity, bool> predicate, float time) where TTransformableEntity : TransformableEntity
     {
+        ThrowIfNull(transformableTCtx);
+
         foreach (AnimationContext<TTransformableEntity> tCtx in transformableTCtx)
         {
-            if (predicate(tCtx.TransformableEntity))
-            {
-                yield return tCtx.Transform(transformation, time);
-            }
+            yield return tCtx.Transform(transformation, predicate, time);
         }
     }
 

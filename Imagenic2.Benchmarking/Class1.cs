@@ -5,7 +5,7 @@ using Imagenic2.Core.Images;
 using Imagenic2.Core.Maths;
 using Imagenic2.Core.Maths.Vectors;
 using Imagenic2.Core.Renderers;
-using Imagenic2.Core.Renderers.Rasterising;
+using Imagenic2.Core.Renderers.RayTracing;
 
 namespace Imagenic2.Benchmarking;
 
@@ -21,18 +21,19 @@ public class RenderTest
 {
     private Cube cube;
     private OrthogonalCamera renderCamera;
-    private Rasteriser<Bitmap> renderer;
+    private RayTracer<Bitmap> renderer;
 
     public RenderTest()
     {
         cube = new Cube(Vector3D.Zero, Orientation.OrientationXY, 10);
         renderCamera = new OrthogonalCamera(new Vector3D(0, 0, -100), Orientation.OrientationZY, 100, 100, 1, 750);
-        renderer = new Rasteriser<Bitmap>(new RenderingOptions(renderCamera).AddToRender(cube));
+        renderer = new RayTracer<Bitmap>(new RenderingOptions(renderCamera).AddToRender(cube));
     }
 
     [Benchmark]
-    public void Render()
+    public async Task<Bitmap> Render()
     {
-        Bitmap bitmap = Task.Run(async () => await renderer.RenderAsync()).Result;
+        Bitmap bitmap = await renderer.RenderAsync();
+        return bitmap;
     }
 }

@@ -85,7 +85,7 @@ public static partial class TransformableEntityTransformations
     /// <returns>This <see cref="Camera"/>.</returns>
     public static TCamera RotateUp<TCamera>([DisallowNull] this TCamera camera, float angle) where TCamera : Camera
     {
-        return camera.Rotate(camera.WorldOrientation.DirectionRight, -angle);
+        return camera.Rotate(camera.WorldOrientation.DirectionRight, angle);
 
         //InvokeRenderEvent(RenderUpdate.NewRender);
     }
@@ -97,7 +97,7 @@ public static partial class TransformableEntityTransformations
     /// <returns>This <see cref="Camera"/>.</returns>
     public static TCamera RotateDown<TCamera>([DisallowNull] this TCamera camera, float angle) where TCamera : Camera
     {
-        return camera.Rotate(camera.WorldOrientation.DirectionRight, angle);
+        return camera.Rotate(camera.WorldOrientation.DirectionRight, -angle);
 
         //InvokeRenderEvent(RenderUpdate.NewRender);
     }
@@ -109,7 +109,7 @@ public static partial class TransformableEntityTransformations
     /// <returns>This <see cref="Camera"/>.</returns>
     public static TCamera RotateLeft<TCamera>([DisallowNull] this TCamera camera, float angle) where TCamera : Camera
     {
-        return camera.Rotate(camera.WorldOrientation.DirectionUp, -angle);
+        return camera.Rotate(camera.WorldOrientation.DirectionUp, angle);
 
         //InvokeRenderEvent(RenderUpdate.NewRender);
     }
@@ -121,7 +121,7 @@ public static partial class TransformableEntityTransformations
     /// <returns>This <see cref="Camera"/>.</returns>
     public static TCamera RotateRight<TCamera>([DisallowNull] this TCamera camera, float angle) where TCamera : Camera
     {
-        return camera.Rotate(camera.WorldOrientation.DirectionUp, angle);
+        return camera.Rotate(camera.WorldOrientation.DirectionUp, -angle);
 
         //InvokeRenderEvent(RenderUpdate.NewRender);
     }
@@ -133,7 +133,7 @@ public static partial class TransformableEntityTransformations
     /// <returns>This <see cref="Camera"/>.</returns>
     public static TCamera RollLeft<TCamera>([DisallowNull] this TCamera camera, float angle) where TCamera : Camera
     {
-        return camera.Rotate(camera.WorldOrientation.DirectionForward, angle);
+        return camera.Rotate(camera.WorldOrientation.DirectionForward, -angle);
 
         //InvokeRenderEvent(RenderUpdate.NewRender);
     }
@@ -145,7 +145,7 @@ public static partial class TransformableEntityTransformations
     /// <returns>This <see cref="Camera"/>.</returns>
     public static TCamera RollRight<TCamera>([DisallowNull] this TCamera camera, float angle) where TCamera : Camera
     {
-        return camera.Rotate(camera.WorldOrientation.DirectionForward, -angle);
+        return camera.Rotate(camera.WorldOrientation.DirectionForward, angle);
 
         //InvokeRenderEvent(RenderUpdate.NewRender);
     }

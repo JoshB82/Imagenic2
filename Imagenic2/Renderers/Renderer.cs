@@ -37,7 +37,7 @@ public abstract class Renderer<TImage> where TImage : Images.Image, IFactory<TIm
             ThrowIfNull(value);
             if (value == renderingOptions) return;
 
-            renderingOptions.RenderAlteringPropertyChanged -= OnRenderingAlteringPropertyChanged;
+            renderingOptions?.RenderAlteringPropertyChanged -= OnRenderingAlteringPropertyChanged;
             renderingOptions = value;
             renderingOptions.RenderAlteringPropertyChanged += OnRenderingAlteringPropertyChanged;
 
