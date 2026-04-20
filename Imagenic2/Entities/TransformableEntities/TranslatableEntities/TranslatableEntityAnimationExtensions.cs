@@ -91,7 +91,7 @@ public static partial class TransformableEntityAnimationExtensions
                 translatableTCtx.TranslationKeyFrameAnimation.KeyFrames.Add(startingKeyFrame);
             }
 
-            Vector3D latestWorldOrigin = translatableTCtx.TranslationKeyFrameAnimation.KeyFrames[^1].value;
+            Vector3D latestWorldOrigin = translatableTCtx.TranslationKeyFrameAnimation.KeyFrames[^1].Value;
             KeyFrame<Vector3D> newKeyFrame = new KeyFrame<Vector3D>(time, latestWorldOrigin + displacement);
             translatableTCtx.TranslationKeyFrameAnimation.KeyFrames.Add(newKeyFrame);
 
@@ -175,7 +175,23 @@ public static partial class TransformableEntityAnimationExtensions
         /// <returns>The context for this <see cref="Animation"/>.</returns>
         public AnimationContext<TTranslatableEntity> Translate(Vector3D displacement, [DisallowNull] Func<TTranslatableEntity, bool> predicate, float time)
         {
-            return predicate(translatableTCtx.TransformableEntity) ? translatableTCtx.Translate(displacement, time) : translatableTCtx;
+            ThrowIfNull(translatableTCtx);
+
+            // predicate(translatableTCtx.TransformableEntity)
+
+            if (translatableTCtx.TranslationKeyFrameAnimation is null)
+            {
+                translatableTCtx.TranslationKeyFrameAnimation = new KeyFrameAnimation<Vector3D>(new List<KeyFrame<Vector3D>>(), v => translatableTCtx.TransformableEntity.WorldOrigin = v, MathsHelper.Lerp);
+                Vector3D lastKeyFrameValue = translatableTCtx.TranslationKeyFrameAnimation.KeyFrames[^1].Value;
+                KeyFrame<Vector3D> startingKeyFrame = new KeyFrame<Vector3D>(translatableTCtx.StartTime, translatableTCtx.TransformableEntity.WorldOrigin) { predicate = predicate};
+                translatableTCtx.TranslationKeyFrameAnimation.KeyFrames.Add(startingKeyFrame);
+            }
+
+            Vector3D latestWorldOrigin = translatableTCtx.TranslationKeyFrameAnimation.KeyFrames[^1].Value;
+            KeyFrame<Vector3D> newKeyFrame = new KeyFrame<Vector3D>(time, latestWorldOrigin + displacement);
+            translatableTCtx.TranslationKeyFrameAnimation.KeyFrames.Add(newKeyFrame);
+
+            return translatableTCtx;
         }
 
         #endregion

@@ -40,6 +40,8 @@ public sealed class AnimationContext<TTransformableEntity> : AnimationContextBas
     internal InstantaneousAnimation<TTransformableEntity>? TransformationAnimation { get; set; }
     internal KeyFrameAnimation<Vector3D>? TranslationKeyFrameAnimation { get; set; }
 
+    //internal KeyFrameFuncAnimation<Vector3D>? TranslationKeyFrameFuncAnimation { get; set; }
+
     #endregion
 
     #region Constructors
@@ -244,7 +246,7 @@ public sealed class AnimationContextNode : AnimationContextBase
             }
 
             transformationContext.OrientationKeyFrameAnimation = orientationKeyFrameAnimation;
-            Quaternion latestQuaternion = orientationKeyFrameAnimation.KeyFrames[^1].value;
+            Quaternion latestQuaternion = orientationKeyFrameAnimation.KeyFrames[^1].Value;
             Quaternion newQuaternion = q * latestQuaternion;
             KeyFrame<Quaternion> newKeyFrame = new KeyFrame<Quaternion>(time, newQuaternion);
             orientationKeyFrameAnimation.KeyFrames.Add(newKeyFrame);
@@ -311,7 +313,7 @@ public sealed class AnimationContextNode : AnimationContextBase
             }
 
             transformationContext.ScalingKeyFrameAnimation = scalingKeyFrameAnimation;
-            Vector3D latestScaling = scalingKeyFrameAnimation.KeyFrames[^1].value;
+            Vector3D latestScaling = scalingKeyFrameAnimation.KeyFrames[^1].Value;
             KeyFrame<Vector3D> newKeyFrame = new KeyFrame<Vector3D>(time, new Vector3D(latestScaling.x * scaleFactor.x, latestScaling.y * scaleFactor.y, latestScaling.z * scaleFactor.z));
             scalingKeyFrameAnimation.KeyFrames.Add(newKeyFrame);
         }
@@ -403,7 +405,7 @@ public sealed class AnimationContextNode : AnimationContextBase
             }
 
             transformationContext.TranslationKeyFrameAnimation = translationKeyFrameAnimation;
-            Vector3D latestWorldOrigin = translationKeyFrameAnimation.KeyFrames[^1].value;
+            Vector3D latestWorldOrigin = translationKeyFrameAnimation.KeyFrames[^1].Value;
             KeyFrame<Vector3D> newKeyFrame = new KeyFrame<Vector3D>(time, latestWorldOrigin + displacement);
             translationKeyFrameAnimation.KeyFrames.Add(newKeyFrame);
         }

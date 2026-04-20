@@ -33,9 +33,9 @@ public sealed class InstantaneousAnimation<TTransformableEntity> : IAnimation wh
     {
         foreach (KeyFrame<Action<TTransformableEntity>> keyFrame in KeyFrames)
         {
-            if (keyFrame.time.ApproxEquals(time))
+            if (keyFrame.Time.ApproxEquals(time))
             {
-                keyFrame.value(TransformableEntity);
+                keyFrame.Value(TransformableEntity);
                 return;
             }
         }

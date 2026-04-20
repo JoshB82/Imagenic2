@@ -83,7 +83,7 @@ public static class PhysicalEntityAnimationExtensions
             physicalTCtx.ScalingKeyFrameAnimation.KeyFrames.Add(startingKeyFrame);
         }
 
-        Vector3D latestScaling = physicalTCtx.ScalingKeyFrameAnimation.KeyFrames[^1].value;
+        Vector3D latestScaling = physicalTCtx.ScalingKeyFrameAnimation.KeyFrames[^1].Value;
         KeyFrame<Vector3D> newKeyFrame = new KeyFrame<Vector3D>(time, new Vector3D(latestScaling.x * scaleFactor.x, latestScaling.y * scaleFactor.y, latestScaling.z * scaleFactor.z));
         physicalTCtx.ScalingKeyFrameAnimation.KeyFrames.Add(newKeyFrame);
 

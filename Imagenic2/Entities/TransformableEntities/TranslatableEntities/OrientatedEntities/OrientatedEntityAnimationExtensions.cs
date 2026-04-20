@@ -68,7 +68,7 @@ public static partial class TransformableEntityAnimationExtensions
                 orientatedTCtx.OrientationKeyFrameAnimation.KeyFrames.Add(startingKeyFrame);
             }
 
-            Quaternion latestQuaternion = orientatedTCtx.OrientationKeyFrameAnimation.KeyFrames[^1].value;
+            Quaternion latestQuaternion = orientatedTCtx.OrientationKeyFrameAnimation.KeyFrames[^1].Value;
             Quaternion newQuaternion = q * latestQuaternion;
             KeyFrame<Quaternion> newKeyFrame = new KeyFrame<Quaternion>(time, newQuaternion);
             orientatedTCtx.OrientationKeyFrameAnimation.KeyFrames.Add(newKeyFrame);

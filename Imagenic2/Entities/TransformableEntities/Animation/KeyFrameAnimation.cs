@@ -1,6 +1,6 @@
 ﻿namespace Imagenic2.Core.Entities.Animation;
 
-public sealed class KeyFrameAnimation<TValue> : IAnimation
+public class KeyFrameAnimation<TValue> : IAnimation
 {
     #region Fields and Properties
 
@@ -31,21 +31,21 @@ public sealed class KeyFrameAnimation<TValue> : IAnimation
         return new KeyFrameAnimation<TValue>(KeyFrames.ToList(), SetProperty, Interpolator);
     }
 
-    public TValue Evaluate(float time)
+    public virtual TValue Evaluate(float time)
     {
         for (int i = 0; i < KeyFrames.Count - 1; i++)
         {
             KeyFrame<TValue> a = KeyFrames[i];
             KeyFrame<TValue> b = KeyFrames[i + 1];
 
-            if (time >= a.time && time <= b.time)
+            if (time >= a.Time && time <= b.Time)
             {
-                float t = (time - a.time) / (b.time - a.time);
-                return Interpolator(a.value, b.value, t);
+                float t = (time - a.Time) / (b.Time - a.Time);
+                return Interpolator(a.Value, b.Value, t);
             }
         }
 
-        return KeyFrames[^1].value;
+        return KeyFrames[^1].Value;
     }
 
     public void Apply(float time)
