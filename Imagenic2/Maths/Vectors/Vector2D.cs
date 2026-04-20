@@ -3,6 +3,9 @@ using System.Numerics;
 
 namespace Imagenic2.Core.Maths.Vectors;
 
+/// <summary>
+/// Encapsulates a two-dimensional vector.
+/// </summary>
 public struct Vector2D : IApproximatelyEquatable<Vector2D>,
                          IEqualityOperators<Vector2D, Vector2D, bool>,
                          IAdditionOperators<Vector2D, Vector2D, Vector2D>,

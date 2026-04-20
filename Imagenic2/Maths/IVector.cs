@@ -1,6 +1,8 @@
-﻿namespace Imagenic2.Core.Maths;
+﻿using System.Numerics;
 
-public interface IVector<TSelf>
+namespace Imagenic2.Core.Maths;
+
+public interface IVector<TSelf>/* : IAdditionOperators<TSelf, TSelf, TSelf> where TSelf : IAdditionOperators<TSelf, TSelf, TSelf>*/
 {
     static abstract float Dot(TSelf v1, TSelf v2);
     static abstract float Magnitude(TSelf v);

@@ -3,6 +3,9 @@ using System.Numerics;
 
 namespace Imagenic2.Core.Maths;
 
+/// <summary>
+/// Encapsulates a quaternion.
+/// </summary>
 public struct Quaternion : IApproximatelyEquatable<Quaternion>,
                            IAdditionOperators<Quaternion, Quaternion, Quaternion>,
                            ISubtractionOperators<Quaternion, Quaternion, Quaternion>,
