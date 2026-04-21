@@ -9,14 +9,34 @@ public static class AnimationExtensions
         return new AnimationContext<TTransformableEntity>(transformableEntity, time);
     }
 
-    public static AnimationContextIEnumerable<TTransformableEntity> Start<TTransformableEntity>(this IEnumerable<TTransformableEntity> transformableEntities, float time = 0) where TTransformableEntity : TransformableEntity
+    public static IEnumerable<AnimationContext<TTransformableEntity>> Start<TTransformableEntity>(this IEnumerable<TTransformableEntity> transformableEntities, float time = 0) where TTransformableEntity : TransformableEntity
     {
-        return new AnimationContextIEnumerable<TTransformableEntity>(transformableEntities, time);
+        foreach (TTransformableEntity transformableEntity in transformableEntities)
+        {
+            yield return new AnimationContext<TTransformableEntity>(transformableEntity, time);
+        }
     }
 
-    public static async Task<AnimationContextIEnumerable<TTransformableEntity>> Start<TTransformableEntity>(this IAsyncEnumerable<TTransformableEntity> transformableEntities, float time = 0) where TTransformableEntity : TransformableEntity
+    public static async IAsyncEnumerable<AnimationContext<TTransformableEntity>> Start<TTransformableEntity>(this IAsyncEnumerable<TTransformableEntity> transformableEntities, float time = 0) where TTransformableEntity : TransformableEntity
     {
-        return await AnimationContextIEnumerable<TTransformableEntity>.Create(transformableEntities, time);
+        await foreach (TTransformableEntity transformableEntity in transformableEntities)
+        {
+            yield return new AnimationContext<TTransformableEntity>(transformableEntity, time);
+        }
+    }
+
+    #endregion
+
+    #region End
+
+    public static Animation End<TTransformableEntity>(this IEnumerable<AnimationContext<TTransformableEntity>> tCtxs) where TTransformableEntity : TransformableEntity
+    {
+        foreach (AnimationContext<TTransformableEntity> transformationContext in tCtxs)
+        {
+            transformationContext.AssembleTransformation();
+        }
+
+        return new Animation(tCtxs.Select(t => t.Transformation));
     }
 
     #endregion

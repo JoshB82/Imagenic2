@@ -3,52 +3,29 @@ using Imagenic2.Core.Utilities;
 
 namespace Imagenic2.Core.Entities.Animation;
 
-public abstract class AnimationContextBase
+public sealed class AnimationContext<TTransformableEntity> where TTransformableEntity : TransformableEntity
 {
     #region Fields and Properties
 
     public float StartTime { get; set; }
-    internal Transformation Transformation { get; set; }
-
-    #endregion
-
-    #region Constructors
-
-    protected AnimationContextBase(float startTime)
-    {
-        StartTime = startTime;
-        Transformation = new Transformation(new List<IAnimation>());
-    }
-
-    #endregion
-
-    #region Methods
-
-    public abstract Animation End();
-
-    #endregion
-}
-
-public sealed class AnimationContext<TTransformableEntity> : AnimationContextBase where TTransformableEntity : TransformableEntity
-{
-    #region Fields and Properties
+    internal Transformation<TTransformableEntity> Transformation { get; set; }
 
     public TTransformableEntity TransformableEntity { get; set; }
     
-    internal KeyFrameAnimation<Quaternion>? OrientationKeyFrameAnimation { get; set; }
-    internal KeyFrameAnimation<Vector3D>? ScalingKeyFrameAnimation { get; set; }
+    internal KeyFrameAnimation<TTransformableEntity, Quaternion>? OrientationKeyFrameAnimation { get; set; }
+    internal KeyFrameAnimation<TTransformableEntity, Vector3D>? ScalingKeyFrameAnimation { get; set; }
     internal InstantaneousAnimation<TTransformableEntity>? TransformationAnimation { get; set; }
-    internal KeyFrameAnimation<Vector3D>? TranslationKeyFrameAnimation { get; set; }
-
-    //internal KeyFrameFuncAnimation<Vector3D>? TranslationKeyFrameFuncAnimation { get; set; }
+    internal KeyFrameAnimation<TTransformableEntity, Vector3D>? TranslationKeyFrameAnimation { get; set; }
 
     #endregion
 
     #region Constructors
 
-    public AnimationContext(TTransformableEntity transformableEntity, float startTime) : base(startTime)
+    public AnimationContext(TTransformableEntity transformableEntity, float startTime)
     {
+        StartTime = startTime;
         TransformableEntity = transformableEntity;
+        Transformation = new Transformation<TTransformableEntity>(new List<IAnimation<TTransformableEntity>>(), transformableEntity);
     }
 
     #endregion
@@ -75,11 +52,11 @@ public sealed class AnimationContext<TTransformableEntity> : AnimationContextBas
         }
     }
 
-    public override Animation End()
+    public Animation End()
     {
         AssembleTransformation();
 
-        return new Animation(Transformation);
+        return new Animation((ITransformation)Transformation);
     }
 
     #endregion
@@ -135,19 +112,10 @@ public sealed class AnimationContextIEnumerable<TTransformableEntity> : Animatio
     #endregion
 }
 
-public static class AnimationExtensions2
-{
 
-    public static Animation End<TTransformableEntity>(this IEnumerable<AnimationContext<TTransformableEntity>> tCtxs) where TTransformableEntity : TransformableEntity
-    {
-        foreach (AnimationContext<TTransformableEntity> transformationContext in tCtxs)
-        {
-            transformationContext.AssembleTransformation();
-        }
 
-        return new Animation(tCtxs.Select(t => t.Transformation));
-    }
-}
+    
+
 
 
 public sealed class AnimationContextNode : AnimationContextBase

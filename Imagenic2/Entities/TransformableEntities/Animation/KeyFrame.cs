@@ -1,6 +1,6 @@
 ﻿namespace Imagenic2.Core.Entities.Animation;
 
-public struct KeyFrame<TValue> : IKeyFrame<TValue>
+public struct KeyFrame<TValue>
 {
     #region Fields and Properties
 
@@ -23,33 +23,39 @@ public struct KeyFrame<TValue> : IKeyFrame<TValue>
     #endregion
 }
 
-public struct ConditionalKeyFrame<TTransformableEntity, TValue> : IKeyFrame<TValue> where TTransformableEntity : TransformableEntity
+public class Instruction<TTransformableEntity, TOutput> where TTransformableEntity : TransformableEntity
 {
     #region Fields and Properties
 
     public float Time { get; set; }
-    public TValue Value { get; set; }
-    public Func<TTransformableEntity, bool> Predicate { get; set; }
+
+    public Func<TTransformableEntity, TOutput> Func { get; set; }
+    public Func<TTransformableEntity, bool>? Predicate { get; set; }
+    public TOutput PredicateFailValue { get; set; }
+    public bool Resolved { get; set; }
 
     #endregion
 
     #region Constructors
 
-    public ConditionalKeyFrame(float time, TValue value, Func<TTransformableEntity, bool> predicate)
+    public Instruction(float time, Func<TTransformableEntity, TOutput> func, TOutput predicateFailValue, Func<TTransformableEntity, bool>? predicate = null)
     {
         ThrowIfNonpositive(time);
-        ThrowIfNull(value, predicate);
 
         Time = time;
-        Value = value;
+        Func = func;
         Predicate = predicate;
+        PredicateFailValue = predicateFailValue;
     }
 
     #endregion
-}
 
-public interface IKeyFrame<TValue>
-{
-    public float Time { get; set; }
-    public TValue Value { get; set; }
+    #region Methods
+
+    public TOutput Resolve(TTransformableEntity transformableEntity)
+    {
+        return Predicate is not null && Predicate(transformableEntity) ? Func(transformableEntity) : PredicateFailValue;
+    }
+
+    #endregion
 }

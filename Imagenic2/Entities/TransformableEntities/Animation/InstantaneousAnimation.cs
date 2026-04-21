@@ -1,21 +1,19 @@
 ﻿namespace Imagenic2.Core.Entities.Animation;
 
-public sealed class InstantaneousAnimation<TTransformableEntity> : IAnimation where TTransformableEntity : TransformableEntity
+public sealed class InstantaneousAnimation<TTransformableEntity> : IAnimation<TTransformableEntity> where TTransformableEntity : TransformableEntity
 {
     #region Fields and Properties
 
-    public TTransformableEntity TransformableEntity { get; set; }
     public List<KeyFrame<Action<TTransformableEntity>>> KeyFrames { get; set; }
 
     #endregion
 
     #region Constructors
 
-    public InstantaneousAnimation(TTransformableEntity transformableEntity, List<KeyFrame<Action<TTransformableEntity>>> keyFrames)
+    public InstantaneousAnimation(List<KeyFrame<Action<TTransformableEntity>>> keyFrames)
     {
-        ThrowIfNull(transformableEntity, keyFrames);
+        ThrowIfNull(keyFrames);
 
-        TransformableEntity = transformableEntity;
         KeyFrames = keyFrames;
     }
 
@@ -26,16 +24,16 @@ public sealed class InstantaneousAnimation<TTransformableEntity> : IAnimation wh
     public InstantaneousAnimation<TTransformableEntity> ShallowCopy() => (InstantaneousAnimation<TTransformableEntity>)MemberwiseClone();
     public InstantaneousAnimation<TTransformableEntity> DeepCopy()
     {
-        return new InstantaneousAnimation<TTransformableEntity>((TTransformableEntity)(TransformableEntity.DeepCopy()), KeyFrames.ToList());
+        return new InstantaneousAnimation<TTransformableEntity>(KeyFrames.ToList());
     }
 
-    public void Apply(float time)
+    public void Apply(TTransformableEntity transformableEntity, float time)
     {
         foreach (KeyFrame<Action<TTransformableEntity>> keyFrame in KeyFrames)
         {
             if (keyFrame.Time.ApproxEquals(time))
             {
-                keyFrame.Value(TransformableEntity);
+                keyFrame.Value(transformableEntity);
                 return;
             }
         }

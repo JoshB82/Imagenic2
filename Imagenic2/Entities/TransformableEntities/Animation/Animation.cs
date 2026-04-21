@@ -4,7 +4,7 @@ public sealed class Animation
 {
     #region Fields and Properties
 
-    private readonly List<Transformation> transformations;
+    private readonly List<ITransformation> transformations;
 
     private int durationSeconds;
     public int DurationSeconds
@@ -44,7 +44,7 @@ public sealed class Animation
 
     #region Constructors
 
-    public Animation(params IEnumerable<Transformation> transformations)
+    public Animation(params IEnumerable<ITransformation> transformations)
     {
         this.transformations = transformations.ToList();
     }
@@ -55,7 +55,7 @@ public sealed class Animation
 
     public void Apply(float time)
     {
-        foreach (Transformation transformation in transformations)
+        foreach (ITransformation transformation in transformations)
         {
             transformation.Apply(time);
         }

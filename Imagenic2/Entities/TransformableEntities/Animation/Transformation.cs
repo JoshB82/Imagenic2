@@ -1,18 +1,20 @@
 ﻿namespace Imagenic2.Core.Entities.Animation;
 
-public class Transformation
+public sealed class Transformation<TTransformableEntity> : ITransformation where TTransformableEntity : TransformableEntity
 {
     #region Fields and Properties
 
-    public List<IAnimation> KeyFrameAnimations { get; set; }
+    public List<IAnimation<TTransformableEntity>> KeyFrameAnimations { get; set; }
+    public TTransformableEntity TransformableEntity { get; set; }
 
     #endregion
 
     #region Constructors
 
-    public Transformation(List<IAnimation> keyFrameAnimations)
+    public Transformation(List<IAnimation<TTransformableEntity>> keyFrameAnimations, TTransformableEntity transformableEntity)
     {
         KeyFrameAnimations = keyFrameAnimations;
+        TransformableEntity = transformableEntity;
     }
 
     #endregion
@@ -21,11 +23,16 @@ public class Transformation
 
     public void Apply(float time)
     {
-        foreach (IAnimation animation in KeyFrameAnimations)
+        foreach (IAnimation<TTransformableEntity> animation in KeyFrameAnimations)
         {
-            animation.Apply(time);
+            animation.Apply(TransformableEntity, time);
         }
     }
 
     #endregion
+}
+
+public interface ITransformation
+{
+    public void Apply(float time);
 }

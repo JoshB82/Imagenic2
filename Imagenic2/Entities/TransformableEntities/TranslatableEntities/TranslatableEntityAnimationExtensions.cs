@@ -86,14 +86,16 @@ public static partial class TransformableEntityAnimationExtensions
 
             if (translatableTCtx.TranslationKeyFrameAnimation is null)
             {
-                translatableTCtx.TranslationKeyFrameAnimation = new KeyFrameAnimation<Vector3D>(new List<KeyFrame<Vector3D>>(), v => translatableTCtx.TransformableEntity.WorldOrigin = v, MathsHelper.Lerp);
-                KeyFrame<Vector3D> startingKeyFrame = new KeyFrame<Vector3D>(translatableTCtx.StartTime, translatableTCtx.TransformableEntity.WorldOrigin);
-                translatableTCtx.TranslationKeyFrameAnimation.KeyFrames.Add(startingKeyFrame);
+                translatableTCtx.TranslationKeyFrameAnimation = new KeyFrameAnimation<TTranslatableEntity, Vector3D>(new List<KeyFrame<Vector3D>>(), v => translatableTCtx.TransformableEntity.WorldOrigin = v, MathsHelper.Lerp);
             }
 
-            Vector3D latestWorldOrigin = translatableTCtx.TranslationKeyFrameAnimation.KeyFrames[^1].Value;
-            KeyFrame<Vector3D> newKeyFrame = new KeyFrame<Vector3D>(time, latestWorldOrigin + displacement);
-            translatableTCtx.TranslationKeyFrameAnimation.KeyFrames.Add(newKeyFrame);
+            Instruction<TTranslatableEntity, Vector3D> instruction = new(
+                time: time,
+                func: t => t.WorldOrigin + displacement,
+                predicateFailValue: translatableTCtx.TransformableEntity.WorldOrigin,
+                predicate: null);
+
+            translatableTCtx.TranslationKeyFrameAnimation.Instructions.Add(instruction);
 
             return translatableTCtx;
         }
@@ -175,21 +177,21 @@ public static partial class TransformableEntityAnimationExtensions
         /// <returns>The context for this <see cref="Animation"/>.</returns>
         public AnimationContext<TTranslatableEntity> Translate(Vector3D displacement, [DisallowNull] Func<TTranslatableEntity, bool> predicate, float time)
         {
-            ThrowIfNull(translatableTCtx);
-
-            // predicate(translatableTCtx.TransformableEntity)
+            ThrowIfNull(translatableTCtx, predicate);
 
             if (translatableTCtx.TranslationKeyFrameAnimation is null)
             {
-                translatableTCtx.TranslationKeyFrameAnimation = new KeyFrameAnimation<Vector3D>(new List<KeyFrame<Vector3D>>(), v => translatableTCtx.TransformableEntity.WorldOrigin = v, MathsHelper.Lerp);
-                Vector3D lastKeyFrameValue = translatableTCtx.TranslationKeyFrameAnimation.KeyFrames[^1].Value;
-                KeyFrame<Vector3D> startingKeyFrame = new KeyFrame<Vector3D>(translatableTCtx.StartTime, translatableTCtx.TransformableEntity.WorldOrigin) { predicate = predicate};
-                translatableTCtx.TranslationKeyFrameAnimation.KeyFrames.Add(startingKeyFrame);
+                translatableTCtx.TranslationKeyFrameAnimation = new KeyFrameAnimation<TTranslatableEntity, Vector3D>(new List<KeyFrame<Vector3D>>(), v => translatableTCtx.TransformableEntity.WorldOrigin = v, MathsHelper.Lerp);
             }
 
-            Vector3D latestWorldOrigin = translatableTCtx.TranslationKeyFrameAnimation.KeyFrames[^1].Value;
-            KeyFrame<Vector3D> newKeyFrame = new KeyFrame<Vector3D>(time, latestWorldOrigin + displacement);
-            translatableTCtx.TranslationKeyFrameAnimation.KeyFrames.Add(newKeyFrame);
+            Instruction<TTranslatableEntity, Vector3D> instruction = new(
+                time: time,
+                func: t => t.WorldOrigin + displacement,
+                predicateFailValue: translatableTCtx.TransformableEntity.WorldOrigin,
+                predicate: predicate);
+                
+
+            translatableTCtx.TranslationKeyFrameAnimation.Instructions.Add(instruction);
 
             return translatableTCtx;
         }
