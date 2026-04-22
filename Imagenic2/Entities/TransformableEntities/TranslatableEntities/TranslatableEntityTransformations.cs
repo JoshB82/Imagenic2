@@ -177,7 +177,7 @@ public static partial class TransformableEntityTransformations
         /// <typeparam name="TTranslatableEntity">The type of the object being translated.</typeparam>
         /// <param name="translatableEntity"></param>
         /// <param name="distance"></param>
-        /// <param name="predicate"></param>
+        /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <returns></returns>
         public TTranslatableEntity TranslateX(float distance, [DisallowNull] Func<TTranslatableEntity, bool> predicate)
         {
@@ -191,7 +191,7 @@ public static partial class TransformableEntityTransformations
         /// <typeparam name="TTranslatableEntity">The type of the object being translated.</typeparam>
         /// <param name="translatableEntity"></param>
         /// <param name="distance"></param>
-        /// <param name="predicate"></param>
+        /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <returns></returns>
         public TTranslatableEntity TranslateY(float distance, [DisallowNull] Func<TTranslatableEntity, bool> predicate)
         {
@@ -205,7 +205,7 @@ public static partial class TransformableEntityTransformations
         /// <typeparam name="TTranslatableEntity">The type of the object being translated.</typeparam>
         /// <param name="translatableEntity"></param>
         /// <param name="distance"></param>
-        /// <param name="predicate"></param>
+        /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <returns></returns>
         public TTranslatableEntity TranslateZ(float distance, [DisallowNull] Func<TTranslatableEntity, bool> predicate)
         {
@@ -221,7 +221,7 @@ public static partial class TransformableEntityTransformations
         /// <param name="distanceX"></param>
         /// <param name="distanceY"></param>
         /// <param name="distanceZ"></param>
-        /// <param name="predicate"></param>
+        /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <returns></returns>
         public TTranslatableEntity Translate(float distanceX, float distanceY, float distanceZ, [DisallowNull] Func<TTranslatableEntity, bool> predicate)
         {
@@ -235,7 +235,7 @@ public static partial class TransformableEntityTransformations
         /// <typeparam name="TTranslatableEntity">The type of the object being translated.</typeparam>
         /// <param name="translatableEntity"></param>
         /// <param name="displacement"></param>
-        /// <param name="predicate"></param>
+        /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <returns></returns>
         public TTranslatableEntity Translate(Vector3D displacement, [DisallowNull] Func<TTranslatableEntity, bool> predicate)
         {
@@ -422,7 +422,7 @@ public static partial class TransformableEntityTransformations
         /// <typeparam name="TTranslatableEntity"></typeparam>
         /// <param name="translatableEntities"></param>
         /// <param name="distance"></param>
-        /// <param name="predicate"></param>
+        /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <returns></returns>
         public IEnumerable<TTranslatableEntity> TranslateX(float distance, [DisallowNull] Func<TTranslatableEntity, bool> predicate)
         {
@@ -438,7 +438,7 @@ public static partial class TransformableEntityTransformations
         /// <typeparam name="TTranslatableEntity"></typeparam>
         /// <param name="translatableEntities"></param>
         /// <param name="distance"></param>
-        /// <param name="predicate"></param>
+        /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <returns></returns>
         public IEnumerable<TTranslatableEntity> TranslateY(float distance, [DisallowNull] Func<TTranslatableEntity, bool> predicate)
         {
@@ -454,7 +454,7 @@ public static partial class TransformableEntityTransformations
         /// <typeparam name="TTranslatableEntity"></typeparam>
         /// <param name="translatableEntities"></param>
         /// <param name="distance"></param>
-        /// <param name="predicate"></param>
+        /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <returns></returns>
         public IEnumerable<TTranslatableEntity> TranslateZ(float distance, [DisallowNull] Func<TTranslatableEntity, bool> predicate)
         {
@@ -472,7 +472,7 @@ public static partial class TransformableEntityTransformations
         /// <param name="distanceX"></param>
         /// <param name="distanceY"></param>
         /// <param name="distanceZ"></param>
-        /// <param name="predicate"></param>
+        /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <returns></returns>
         public IEnumerable<TTranslatableEntity> Translate(float distanceX, float distanceY, float distanceZ, [DisallowNull] Func<TTranslatableEntity, bool> predicate)
         {
@@ -488,7 +488,7 @@ public static partial class TransformableEntityTransformations
         /// <typeparam name="TTranslatableEntity"></typeparam>
         /// <param name="translatableEntities"></param>
         /// <param name="displacement"></param>
-        /// <param name="predicate"></param>
+        /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <returns></returns>
         public IEnumerable<TTranslatableEntity> Translate(
             Vector3D displacement,
@@ -516,6 +516,12 @@ public static partial class TransformableEntityTransformations
     {
         #region IAsyncEnumerable<TTranslatableEntity>
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="distance"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public async IAsyncEnumerable<TTranslatableEntity> TranslateX(float distance, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             ThrowIfNull(translatableEntities);
@@ -526,6 +532,12 @@ public static partial class TransformableEntityTransformations
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="distance"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public async IAsyncEnumerable<TTranslatableEntity> TranslateY(float distance, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             ThrowIfNull(translatableEntities);
@@ -536,6 +548,12 @@ public static partial class TransformableEntityTransformations
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="distance"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public async IAsyncEnumerable<TTranslatableEntity> TranslateZ(float distance, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             ThrowIfNull(translatableEntities);
@@ -546,6 +564,14 @@ public static partial class TransformableEntityTransformations
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="distanceX"></param>
+        /// <param name="distanceY"></param>
+        /// <param name="distanceZ"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public async IAsyncEnumerable<TTranslatableEntity> Translate(float distanceX, float distanceY, float distanceZ, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             ThrowIfNull(translatableEntities);
@@ -556,6 +582,12 @@ public static partial class TransformableEntityTransformations
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="displacement"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public async IAsyncEnumerable<TTranslatableEntity> Translate(Vector3D displacement, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             ThrowIfNull(translatableEntities);
@@ -575,7 +607,7 @@ public static partial class TransformableEntityTransformations
         /// <typeparam name="TTranslatableEntity"></typeparam>
         /// <param name="translatableEntities"></param>
         /// <param name="distance"></param>
-        /// <param name="predicate"></param>
+        /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public async IAsyncEnumerable<TTranslatableEntity> TranslateX(
@@ -597,7 +629,7 @@ public static partial class TransformableEntityTransformations
         /// <typeparam name="TTranslatableEntity"></typeparam>
         /// <param name="translatableEntities"></param>
         /// <param name="distance"></param>
-        /// <param name="predicate"></param>
+        /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public async IAsyncEnumerable<TTranslatableEntity> TranslateY(
@@ -619,7 +651,7 @@ public static partial class TransformableEntityTransformations
         /// <typeparam name="TTranslatableEntity"></typeparam>
         /// <param name="translatableEntities"></param>
         /// <param name="distance"></param>
-        /// <param name="predicate"></param>
+        /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public async IAsyncEnumerable<TTranslatableEntity> TranslateZ(
@@ -644,7 +676,7 @@ public static partial class TransformableEntityTransformations
         /// <param name="distanceX"></param>
         /// <param name="distanceY"></param>
         /// <param name="distanceZ"></param>
-        /// <param name="predicate"></param>
+        /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public async IAsyncEnumerable<TTranslatableEntity> Translate(
@@ -669,7 +701,7 @@ public static partial class TransformableEntityTransformations
         /// <typeparam name="TTranslatableEntity"></typeparam>
         /// <param name="translatableEntities"></param>
         /// <param name="displacement"></param>
-        /// <param name="predicate"></param>
+        /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public async IAsyncEnumerable<TTranslatableEntity> Translate(

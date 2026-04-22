@@ -83,7 +83,7 @@ public static partial class TransformableEntityTransformations
         {
             ThrowIfNull(transformableEntity, transformation, predicate);
 
-            return predicate(transformableEntity) ? transformableEntity.Transform(transformation) : transformableEntity;
+            return transformableEntity.Transform(t => { if (predicate(transformableEntity)) transformation(t); });
         }
 
         #endregion

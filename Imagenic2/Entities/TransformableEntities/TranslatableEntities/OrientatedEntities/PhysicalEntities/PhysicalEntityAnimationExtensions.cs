@@ -1,347 +1,335 @@
 ﻿using Imagenic2.Core.Maths.Transformations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Imagenic2.Core.Entities.Animation;
 
-public static class PhysicalEntityAnimationExtensions
+public static partial class TransformableEntityAnimationExtensions
 {
-    #region Scale
+    // AnimationContext<TPhysicalEntity>
 
     /// <summary>
     /// 
     /// </summary>
     /// <typeparam name="TPhysicalEntity"></typeparam>
-    /// <param name="physicalTCtx"></param>
-    /// <param name="scaleFactorX"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContext<TPhysicalEntity> ScaleX<TPhysicalEntity>(this AnimationContext<TPhysicalEntity> physicalTCtx, float scaleFactorX, float time) where TPhysicalEntity : PhysicalEntity
+    /// <param name="physicalTCtx">The context for this <see cref="Animation"/>.</param>
+    extension<TPhysicalEntity>([DisallowNull] AnimationContext<TPhysicalEntity> physicalTCtx) where TPhysicalEntity : PhysicalEntity
     {
-        Vector3D scaleFactor = new Vector3D(scaleFactorX, 1, 1);
-        return physicalTCtx.Scale(scaleFactor, time);
-    }
+        #region Scale
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TPhysicalEntity"></typeparam>
-    /// <param name="physicalTCtx"></param>
-    /// <param name="scaleFactorY"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContext<TPhysicalEntity> ScaleY<TPhysicalEntity>(this AnimationContext<TPhysicalEntity> physicalTCtx, float scaleFactorY, float time) where TPhysicalEntity : PhysicalEntity
-    {
-        Vector3D scaleFactor = new Vector3D(1, scaleFactorY, 1);
-        return physicalTCtx.Scale(scaleFactor, time);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TPhysicalEntity"></typeparam>
-    /// <param name="physicalTCtx"></param>
-    /// <param name="scaleFactorZ"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContext<TPhysicalEntity> ScaleZ<TPhysicalEntity>(this AnimationContext<TPhysicalEntity> physicalTCtx, float scaleFactorZ, float time) where TPhysicalEntity : PhysicalEntity
-    {
-        Vector3D scaleFactor = new Vector3D(1, 1, scaleFactorZ);
-        return physicalTCtx.Scale(scaleFactor, time);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TPhysicalEntity"></typeparam>
-    /// <param name="physicalTCtx"></param>
-    /// <param name="scaleFactorX"></param>
-    /// <param name="scaleFactorY"></param>
-    /// <param name="scaleFactorZ"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContext<TPhysicalEntity> Scale<TPhysicalEntity>(this AnimationContext<TPhysicalEntity> physicalTCtx, float scaleFactorX, float scaleFactorY, float scaleFactorZ, float time) where TPhysicalEntity : PhysicalEntity
-    {
-        Vector3D scaleFactor = new Vector3D(scaleFactorX, scaleFactorY, scaleFactorZ);
-        return physicalTCtx.Scale(scaleFactor, time);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TPhysicalEntity"></typeparam>
-    /// <param name="physicalTCtx"></param>
-    /// <param name="scaleFactor"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContext<TPhysicalEntity> Scale<TPhysicalEntity>(this AnimationContext<TPhysicalEntity> physicalTCtx, Vector3D scaleFactor, float time) where TPhysicalEntity : PhysicalEntity
-    {
-        ThrowIfNull(physicalTCtx);
-
-        if (physicalTCtx.ScalingKeyFrameAnimation is null)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="scaleFactor">The factor to scale by.</param>
+        /// <param name="time">The time which this transformation should be completed by.</param>
+        /// <returns></returns>
+        public AnimationContext<TPhysicalEntity> ScaleX(float scaleFactor, float time)
         {
-            physicalTCtx.ScalingKeyFrameAnimation = new KeyFrameAnimation<Vector3D>(new List<KeyFrame<Vector3D>>(), v => physicalTCtx.TransformableEntity.Scaling = v, MathsHelper.Lerp);
-            KeyFrame<Vector3D> startingKeyFrame = new KeyFrame<Vector3D>(physicalTCtx.StartTime, physicalTCtx.TransformableEntity.Scaling);
-            physicalTCtx.ScalingKeyFrameAnimation.KeyFrames.Add(startingKeyFrame);
+            Vector3D scaling = new Vector3D(scaleFactor, 1, 1);
+            return physicalTCtx.Scale(scaling, time);
         }
 
-        Vector3D latestScaling = physicalTCtx.ScalingKeyFrameAnimation.KeyFrames[^1].Value;
-        KeyFrame<Vector3D> newKeyFrame = new KeyFrame<Vector3D>(time, new Vector3D(latestScaling.x * scaleFactor.x, latestScaling.y * scaleFactor.y, latestScaling.z * scaleFactor.z));
-        physicalTCtx.ScalingKeyFrameAnimation.KeyFrames.Add(newKeyFrame);
-
-        return physicalTCtx;
-    }
-
-    #endregion
-
-    #region Scale with predicate
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TPhysicalEntity"></typeparam>
-    /// <param name="physicalTCtx"></param>
-    /// <param name="scaleFactorX"></param>
-    /// <param name="predicate"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContext<TPhysicalEntity> ScaleX<TPhysicalEntity>(this AnimationContext<TPhysicalEntity> physicalTCtx, float scaleFactorX, Func<TPhysicalEntity, bool> predicate, float time) where TPhysicalEntity : PhysicalEntity
-    {
-        Vector3D scaleFactor = new Vector3D(scaleFactorX, 1, 1);
-        return physicalTCtx.Scale(scaleFactor, predicate, time);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TPhysicalEntity"></typeparam>
-    /// <param name="physicalTCtx"></param>
-    /// <param name="scaleFactorY"></param>
-    /// <param name="predicate"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContext<TPhysicalEntity> ScaleY<TPhysicalEntity>(this AnimationContext<TPhysicalEntity> physicalTCtx, float scaleFactorY, Func<TPhysicalEntity, bool> predicate, float time) where TPhysicalEntity : PhysicalEntity
-    {
-        Vector3D scaleFactor = new Vector3D(1, scaleFactorY, 1);
-        return physicalTCtx.Scale(scaleFactor, predicate, time);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TPhysicalEntity"></typeparam>
-    /// <param name="physicalTCtx"></param>
-    /// <param name="scaleFactorZ"></param>
-    /// <param name="predicate"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContext<TPhysicalEntity> ScaleZ<TPhysicalEntity>(this AnimationContext<TPhysicalEntity> physicalTCtx, float scaleFactorZ, Func<TPhysicalEntity, bool> predicate, float time) where TPhysicalEntity : PhysicalEntity
-    {
-        Vector3D scaleFactor = new Vector3D(1, 1, scaleFactorZ);
-        return physicalTCtx.Scale(scaleFactor, predicate, time);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TPhysicalEntity"></typeparam>
-    /// <param name="physicalTCtx"></param>
-    /// <param name="scaleFactorX"></param>
-    /// <param name="scaleFactorY"></param>
-    /// <param name="scaleFactorZ"></param>
-    /// <param name="predicate"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContext<TPhysicalEntity> Scale<TPhysicalEntity>(this AnimationContext<TPhysicalEntity> physicalTCtx, float scaleFactorX, float scaleFactorY, float scaleFactorZ, Func<TPhysicalEntity, bool> predicate, float time) where TPhysicalEntity : PhysicalEntity
-    {
-        Vector3D scaleFactor = new Vector3D(scaleFactorX, scaleFactorY, scaleFactorZ);
-        return physicalTCtx.Scale(scaleFactor, predicate, time);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TPhysicalEntity"></typeparam>
-    /// <param name="physicalTCtx"></param>
-    /// <param name="scaleFactor"></param>
-    /// <param name="predicate"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContext<TPhysicalEntity> Scale<TPhysicalEntity>(this AnimationContext<TPhysicalEntity> physicalTCtx, Vector3D scaleFactor, Func<TPhysicalEntity, bool> predicate, float time) where TPhysicalEntity : PhysicalEntity
-    {
-        if (predicate(physicalTCtx.TransformableEntity))
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="scaleFactor">The factor to scale by.</param>
+        /// <param name="time">The time which this transformation should be completed by.</param>
+        /// <returns></returns>
+        public AnimationContext<TPhysicalEntity> ScaleY(float scaleFactor, float time)
         {
-            physicalTCtx.Scale(scaleFactor, time);
-        }
-        return physicalTCtx;
-    }
-
-    #endregion
-
-    #region IEnumerable Scale
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TPhysicalEntity"></typeparam>
-    /// <param name="physicalTCtx"></param>
-    /// <param name="scaleFactorX"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContextIEnumerable<TPhysicalEntity> ScaleX<TPhysicalEntity>(this AnimationContextIEnumerable<TPhysicalEntity> physicalTCtx, float scaleFactorX, float time) where TPhysicalEntity : PhysicalEntity
-    {
-        Vector3D scaleFactor = new Vector3D(scaleFactorX, 1, 1);
-        return physicalTCtx.Scale(scaleFactor, time);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TPhysicalEntity"></typeparam>
-    /// <param name="physicalTCtx"></param>
-    /// <param name="scaleFactorY"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContextIEnumerable<TPhysicalEntity> ScaleY<TPhysicalEntity>(this AnimationContextIEnumerable<TPhysicalEntity> physicalTCtx, float scaleFactorY, float time) where TPhysicalEntity : PhysicalEntity
-    {
-        Vector3D scaleFactor = new Vector3D(1, scaleFactorY, 1);
-        return physicalTCtx.Scale(scaleFactor, time);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TPhysicalEntity"></typeparam>
-    /// <param name="physicalTCtx"></param>
-    /// <param name="scaleFactorZ"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContextIEnumerable<TPhysicalEntity> ScaleZ<TPhysicalEntity>(this AnimationContextIEnumerable<TPhysicalEntity> physicalTCtx, float scaleFactorZ, float time) where TPhysicalEntity : PhysicalEntity
-    {
-        Vector3D scaleFactor = new Vector3D(1, 1, scaleFactorZ);
-        return physicalTCtx.Scale(scaleFactor, time);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TPhysicalEntity"></typeparam>
-    /// <param name="physicalTCtx"></param>
-    /// <param name="scaleFactorX"></param>
-    /// <param name="scaleFactorY"></param>
-    /// <param name="scaleFactorZ"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContextIEnumerable<TPhysicalEntity> Scale<TPhysicalEntity>(this AnimationContextIEnumerable<TPhysicalEntity> physicalTCtx, float scaleFactorX, float scaleFactorY, float scaleFactorZ, float time) where TPhysicalEntity : PhysicalEntity
-    {
-        Vector3D scaleFactor = new Vector3D(scaleFactorX, scaleFactorY, scaleFactorZ);
-        return physicalTCtx.Scale(scaleFactor, time);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TPhysicalEntity"></typeparam>
-    /// <param name="physicalTCtx"></param>
-    /// <param name="scaleFactor"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContextIEnumerable<TPhysicalEntity> Scale<TPhysicalEntity>(this AnimationContextIEnumerable<TPhysicalEntity> physicalTCtx, Vector3D scaleFactor, float time) where TPhysicalEntity : PhysicalEntity
-    {
-        ThrowIfNull(physicalTCtx);
-
-        foreach (AnimationContext<TPhysicalEntity> tCtx in physicalTCtx.TransformationContexts)
-        {
-            tCtx.Scale(scaleFactor, time);
+            Vector3D scaling = new Vector3D(1, scaleFactor, 1);
+            return physicalTCtx.Scale(scaling, time);
         }
 
-        return physicalTCtx;
-    }
-
-    #endregion
-
-    #region IEnumerable Scale with predicate
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TPhysicalEntity"></typeparam>
-    /// <param name="physicalTCtx"></param>
-    /// <param name="scaleFactorX"></param>
-    /// <param name="predicate"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContextIEnumerable<TPhysicalEntity> ScaleX<TPhysicalEntity>(this AnimationContextIEnumerable<TPhysicalEntity> physicalTCtx, float scaleFactorX, Func<TPhysicalEntity, bool> predicate, float time) where TPhysicalEntity : PhysicalEntity
-    {
-        Vector3D scaleFactor = new Vector3D(scaleFactorX, 1, 1);
-        return physicalTCtx.Scale(scaleFactor, predicate, time);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TPhysicalEntity"></typeparam>
-    /// <param name="physicalTCtx"></param>
-    /// <param name="scaleFactorY"></param>
-    /// <param name="predicate"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContextIEnumerable<TPhysicalEntity> ScaleY<TPhysicalEntity>(this AnimationContextIEnumerable<TPhysicalEntity> physicalTCtx, float scaleFactorY, Func<TPhysicalEntity, bool> predicate, float time) where TPhysicalEntity : PhysicalEntity
-    {
-        Vector3D scaleFactor = new Vector3D(1, scaleFactorY, 1);
-        return physicalTCtx.Scale(scaleFactor, predicate, time);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TPhysicalEntity"></typeparam>
-    /// <param name="physicalTCtx"></param>
-    /// <param name="scaleFactorZ"></param>
-    /// <param name="predicate"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContextIEnumerable<TPhysicalEntity> ScaleZ<TPhysicalEntity>(this AnimationContextIEnumerable<TPhysicalEntity> physicalTCtx, float scaleFactorZ, Func<TPhysicalEntity, bool> predicate, float time) where TPhysicalEntity : PhysicalEntity
-    {
-        Vector3D scaleFactor = new Vector3D(1, 1, scaleFactorZ);
-        return physicalTCtx.Scale(scaleFactor, predicate, time);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TPhysicalEntity"></typeparam>
-    /// <param name="physicalTCtx"></param>
-    /// <param name="scaleFactorX"></param>
-    /// <param name="scaleFactorY"></param>
-    /// <param name="scaleFactorZ"></param>
-    /// <param name="predicate"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContextIEnumerable<TPhysicalEntity> Scale<TPhysicalEntity>(this AnimationContextIEnumerable<TPhysicalEntity> physicalTCtx, float scaleFactorX, float scaleFactorY, float scaleFactorZ, Func<TPhysicalEntity, bool> predicate, float time) where TPhysicalEntity : PhysicalEntity
-    {
-        Vector3D scaleFactor = new Vector3D(scaleFactorX, scaleFactorY, scaleFactorZ);
-        return physicalTCtx.Scale(scaleFactor, predicate, time);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TPhysicalEntity"></typeparam>
-    /// <param name="physicalTCtx"></param>
-    /// <param name="scaleFactor"></param>
-    /// <param name="predicate"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    public static AnimationContextIEnumerable<TPhysicalEntity> Scale<TPhysicalEntity>(this AnimationContextIEnumerable<TPhysicalEntity> physicalTCtx, Vector3D scaleFactor, Func<TPhysicalEntity, bool> predicate, float time) where TPhysicalEntity : PhysicalEntity
-    {
-        foreach (AnimationContext<TPhysicalEntity> tCtx in physicalTCtx.TransformationContexts)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="scaleFactor">The factor to scale by.</param>
+        /// <param name="time">The time which this transformation should be completed by.</param>
+        /// <returns></returns>
+        public AnimationContext<TPhysicalEntity> ScaleZ(float scaleFactor, float time)
         {
-            if (predicate(tCtx.TransformableEntity))
+            Vector3D scaling = new Vector3D(1, 1, scaleFactor);
+            return physicalTCtx.Scale(scaling, time);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="scaleFactorX"></param>
+        /// <param name="scaleFactorY"></param>
+        /// <param name="scaleFactorZ"></param>
+        /// <param name="time">The time which this transformation should be completed by.</param>
+        /// <returns></returns>
+        public AnimationContext<TPhysicalEntity> Scale(float scaleFactorX, float scaleFactorY, float scaleFactorZ, float time)
+        {
+            Vector3D scaling = new Vector3D(scaleFactorX, scaleFactorY, scaleFactorZ);
+            return physicalTCtx.Scale(scaling, time);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="scaleFactor">The factor to scale by.</param>
+        /// <param name="time">The time which this transformation should be completed by.</param>
+        /// <returns></returns>
+        public AnimationContext<TPhysicalEntity> Scale(Vector3D scaleFactor, float time)
+        {
+            ThrowIfNull(physicalTCtx);
+            ThrowIfNotFinite(time);
+
+            physicalTCtx.ScalingKeyFrameAnimation ??= new KeyFrameAnimation<TPhysicalEntity, Vector3D>(new List<KeyFrame<Vector3D>>(), v => physicalTCtx.TransformableEntity.Scaling = v, MathsHelper.Lerp);
+
+            Instruction<TPhysicalEntity, Vector3D> instruction = new(
+                time: time,
+                func: t => new Vector3D(t.Scaling.x * scaleFactor.x, t.Scaling.y * scaleFactor.y, t.Scaling.z * scaleFactor.z),
+                predicateFailValue: physicalTCtx.TransformableEntity.Scaling,
+                predicate: null
+            );
+
+            physicalTCtx.ScalingKeyFrameAnimation.Instructions.Add(instruction);
+
+            return physicalTCtx;
+        }
+
+        #endregion
+
+        #region Scale with predicate
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="scaleFactor">The factor to scale by.</param>
+        /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
+        /// <param name="time">The time which this transformation should be completed by.</param>
+        /// <returns></returns>
+        public AnimationContext<TPhysicalEntity> ScaleX(float scaleFactor, [DisallowNull] Func<TPhysicalEntity, bool> predicate, float time)
+        {
+            Vector3D scaling = new Vector3D(scaleFactor, 1, 1);
+            return physicalTCtx.Scale(scaling, predicate, time);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="scaleFactor">The factor to scale by.</param>
+        /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
+        /// <param name="time">The time which this transformation should be completed by.</param>
+        /// <returns></returns>
+        public AnimationContext<TPhysicalEntity> ScaleY(float scaleFactor, [DisallowNull] Func<TPhysicalEntity, bool> predicate, float time)
+        {
+            Vector3D scaling = new Vector3D(1, scaleFactor, 1);
+            return physicalTCtx.Scale(scaling, predicate, time);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="scaleFactor">The factor to scale by.</param>
+        /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
+        /// <param name="time">The time which this transformation should be completed by.</param>
+        /// <returns></returns>
+        public AnimationContext<TPhysicalEntity> ScaleZ(float scaleFactor, [DisallowNull] Func<TPhysicalEntity, bool> predicate, float time)
+        {
+            Vector3D scaling = new Vector3D(1, 1, scaleFactor);
+            return physicalTCtx.Scale(scaling, predicate, time);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="scaleFactorX">The factor to scale by in the x-direction.</param>
+        /// <param name="scaleFactorY">The factor to scale by in the y-direction.</param>
+        /// <param name="scaleFactorZ">The factor to scale by in the z-direction.</param>
+        /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
+        /// <param name="time">The time which this transformation should be completed by.</param>
+        /// <returns></returns>
+        public AnimationContext<TPhysicalEntity> Scale(float scaleFactorX, float scaleFactorY, float scaleFactorZ, [DisallowNull] Func<TPhysicalEntity, bool> predicate, float time)
+        {
+            Vector3D scaling = new Vector3D(scaleFactorX, scaleFactorY, scaleFactorZ);
+            return physicalTCtx.Scale(scaling, predicate, time);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="scaleFactor">The factor to scale by.</param>
+        /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
+        /// <param name="time">The time which this transformation should be completed by.</param>
+        /// <returns></returns>
+        public AnimationContext<TPhysicalEntity> Scale(Vector3D scaleFactor, [DisallowNull] Func<TPhysicalEntity, bool> predicate, float time)
+        {
+            ThrowIfNull(physicalTCtx, predicate);
+            ThrowIfNotFinite(time);
+
+            physicalTCtx.ScalingKeyFrameAnimation ??= new KeyFrameAnimation<TPhysicalEntity, Vector3D>(new List<KeyFrame<Vector3D>>(), v => physicalTCtx.TransformableEntity.Scaling = v, MathsHelper.Lerp);
+
+            Instruction<TPhysicalEntity, Vector3D> instruction = new(
+                time: time,
+                func: t => new Vector3D(t.Scaling.x * scaleFactor.x, t.Scaling.y * scaleFactor.y, t.Scaling.z * scaleFactor.z),
+                predicateFailValue: physicalTCtx.TransformableEntity.Scaling,
+                predicate: predicate
+            );
+
+            physicalTCtx.ScalingKeyFrameAnimation.Instructions.Add(instruction);
+
+            return physicalTCtx;
+        }
+
+        #endregion
+    }
+
+    // IEnumerable<AnimationContext<TPhysicalEntity>>
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TPhysicalEntity"></typeparam>
+    /// <param name="physicalTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
+    extension<TPhysicalEntity>([DisallowNull] IEnumerable<AnimationContext<TPhysicalEntity>> physicalTCtx) where TPhysicalEntity : PhysicalEntity
+    {
+        #region IEnumerable Scale
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="scaleFactor">The factor to scale by.</param>
+        /// <param name="time">The time which this transformation should be completed by.</param>
+        /// <returns></returns>
+        public IEnumerable<AnimationContext<TPhysicalEntity>> ScaleX(float scaleFactor, float time)
+        {
+            Vector3D scaling = new Vector3D(scaleFactor, 1, 1);
+            return physicalTCtx.Scale(scaling, time);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="scaleFactor">The factor to scale by.</param>
+        /// <param name="time">The time which this transformation should be completed by.</param>
+        /// <returns></returns>
+        public IEnumerable<AnimationContext<TPhysicalEntity>> ScaleY(float scaleFactor, float time)
+        {
+            Vector3D scaling = new Vector3D(1, scaleFactor, 1);
+            return physicalTCtx.Scale(scaling, time);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="scaleFactor">The factor to scale by.</param>
+        /// <param name="time">The time which this transformation should be completed by.</param>
+        /// <returns></returns>
+        public IEnumerable<AnimationContext<TPhysicalEntity>> ScaleZ(float scaleFactor, float time)
+        {
+            Vector3D scaling = new Vector3D(1, 1, scaleFactor);
+            return physicalTCtx.Scale(scaling, time);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="scaleFactorX">The factor to scale by in the x-direction.</param>
+        /// <param name="scaleFactorY">The factor to scale by in the y-direction.</param>
+        /// <param name="scaleFactorZ">The factor to scale by in the z-direction.</param>
+        /// <param name="time">The time which this transformation should be completed by.</param>
+        /// <returns></returns>
+        public IEnumerable<AnimationContext<TPhysicalEntity>> Scale(float scaleFactorX, float scaleFactorY, float scaleFactorZ, float time)
+        {
+            Vector3D scaleFactor = new Vector3D(scaleFactorX, scaleFactorY, scaleFactorZ);
+            return physicalTCtx.Scale(scaleFactor, time);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="scaleFactor">The factor to scale by.</param>
+        /// <param name="time">The time which this transformation should be completed by.</param>
+        /// <returns></returns>
+        public IEnumerable<AnimationContext<TPhysicalEntity>> Scale(Vector3D scaleFactor, float time)
+        {
+            ThrowIfNull(physicalTCtx);
+
+            foreach (AnimationContext<TPhysicalEntity> tCtx in physicalTCtx)
             {
-                tCtx.Scale(scaleFactor, time);
+                yield return tCtx.Scale(scaleFactor, time);
             }
         }
-        return physicalTCtx;
-    }
 
-    #endregion
+        #endregion
+
+        #region IEnumerable Scale with predicate
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="scaleFactor">The factor to scale by.</param>
+        /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
+        /// <param name="time">The time which this transformation should be completed by.</param>
+        /// <returns></returns>
+        public IEnumerable<AnimationContext<TPhysicalEntity>> ScaleX(float scaleFactor, [DisallowNull] Func<TPhysicalEntity, bool> predicate, float time)
+        {
+            Vector3D scaling = new Vector3D(scaleFactor, 1, 1);
+            return physicalTCtx.Scale(scaling, predicate, time);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="scaleFactor">The factor to scale by.</param>
+        /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
+        /// <param name="time">The time which this transformation should be completed by.</param>
+        /// <returns></returns>
+        public IEnumerable<AnimationContext<TPhysicalEntity>> ScaleY(float scaleFactor, [DisallowNull] Func<TPhysicalEntity, bool> predicate, float time)
+        {
+            Vector3D scaling = new Vector3D(1, scaleFactor, 1);
+            return physicalTCtx.Scale(scaling, predicate, time);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="scaleFactor">The factor to scale by.</param>
+        /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
+        /// <param name="time">The time which this transformation should be completed by.</param>
+        /// <returns></returns>
+        public IEnumerable<AnimationContext<TPhysicalEntity>> ScaleZ(float scaleFactor, [DisallowNull] Func<TPhysicalEntity, bool> predicate, float time)
+        {
+            Vector3D scaling = new Vector3D(1, 1, scaleFactor);
+            return physicalTCtx.Scale(scaling, predicate, time);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="scaleFactorX">The factor to scale by in the x-direction.</param>
+        /// <param name="scaleFactorY">The factor to scale by in the y-direction.</param>
+        /// <param name="scaleFactorZ">The factor to scale by in the z-direction.</param>
+        /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
+        /// <param name="time">The time which this transformation should be completed by.</param>
+        /// <returns></returns>
+        public IEnumerable<AnimationContext<TPhysicalEntity>> Scale(float scaleFactorX, float scaleFactorY, float scaleFactorZ, [DisallowNull] Func<TPhysicalEntity, bool> predicate, float time)
+        {
+            Vector3D scaleFactor = new Vector3D(scaleFactorX, scaleFactorY, scaleFactorZ);
+            return physicalTCtx.Scale(scaleFactor, predicate, time);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="scaleFactor">The factor to scale by.</param>
+        /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
+        /// <param name="time">The time which this transformation should be completed by.</param>
+        /// <returns></returns>
+        public IEnumerable<AnimationContext<TPhysicalEntity>> Scale(Vector3D scaleFactor, [DisallowNull] Func<TPhysicalEntity, bool> predicate, float time)
+        {
+            ThrowIfNull(physicalTCtx);
+
+            foreach (AnimationContext<TPhysicalEntity> tCtx in physicalTCtx)
+            {
+                yield return tCtx.Scale(scaleFactor, predicate, time);
+            }
+        }
+
+        #endregion
+    }
 }

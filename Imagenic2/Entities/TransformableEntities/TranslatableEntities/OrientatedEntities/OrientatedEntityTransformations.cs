@@ -112,7 +112,7 @@ public static partial class TransformableEntityTransformations
         /// <typeparam name="TOrientatedEntity"></typeparam>
         /// <param name="orientatedEntity"></param>
         /// <param name="orientation"></param>
-        /// <param name="predicate"></param>
+        /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <returns></returns>
         public TOrientatedEntity Orientate(
             Orientation orientation,
@@ -131,7 +131,7 @@ public static partial class TransformableEntityTransformations
         /// <typeparam name="TOrientatedEntity"></typeparam>
         /// <param name="orientatedEntity"></param>
         /// <param name="q"></param>
-        /// <param name="predicate"></param>
+        /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <returns></returns>
         public TOrientatedEntity Rotate(
             Quaternion q,
@@ -147,7 +147,7 @@ public static partial class TransformableEntityTransformations
         /// <param name="orientatedEntity"></param>
         /// <param name="axis"></param>
         /// <param name="angle"></param>
-        /// <param name="predicate"></param>
+        /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <returns></returns>
         public TOrientatedEntity Rotate(
             Vector3D axis,
@@ -167,7 +167,7 @@ public static partial class TransformableEntityTransformations
         /// <typeparam name="TOrientatedEntity"></typeparam>
         /// <param name="orientatedEntity"></param>
         /// <param name="translatableEntity"></param>
-        /// <param name="predicate"></param>
+        /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <returns></returns>
         public TOrientatedEntity LookAt(
             [DisallowNull] TranslatableEntity translatableEntity,
@@ -183,7 +183,7 @@ public static partial class TransformableEntityTransformations
 
     extension<TOrientatedEntity>([DisallowNull] IEnumerable<TOrientatedEntity> orientatedEntities) where TOrientatedEntity : OrientatedEntity
     {
-        #region IEnumerable Orientate
+        #region Orientate
 
         /// <summary>
         /// Orientates each element of a <typeparamref name="TOrientatedEntity"/> sequence to the specified <see cref="Orientation"/>.
@@ -219,7 +219,7 @@ public static partial class TransformableEntityTransformations
 
         #endregion
 
-        #region IEnumerable Rotate
+        #region Rotate
 
         /// <summary>
         /// 
@@ -256,7 +256,7 @@ public static partial class TransformableEntityTransformations
 
         #endregion
 
-        #region IEnumerable Look At
+        #region Look At
 
         /// <summary>
         /// 
@@ -277,7 +277,7 @@ public static partial class TransformableEntityTransformations
 
         #endregion
 
-        #region IEnumerable Orientate with predicate
+        #region Orientate with predicate
 
         /// <summary>
         /// Orientates each element of a <typeparamref name="TOrientatedEntity"/> sequence that satisfies a specified predicate to the specified <see cref="Orientation"/>.
@@ -315,7 +315,7 @@ public static partial class TransformableEntityTransformations
 
         #endregion
 
-        #region IEnumerable Rotate with predicate
+        #region Rotate with predicate
 
         /// <summary>
         /// 
@@ -341,7 +341,7 @@ public static partial class TransformableEntityTransformations
         /// <param name="orientatedEntities"></param>
         /// <param name="axis"></param>
         /// <param name="angle"></param>
-        /// <param name="predicate"></param>
+        /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <returns></returns>
         public IEnumerable<TOrientatedEntity> Rotate(
             Vector3D axis,
@@ -358,7 +358,7 @@ public static partial class TransformableEntityTransformations
 
         #endregion
 
-        #region IEnumerable Look At with predicate
+        #region Look At with predicate
 
         /// <summary>
         /// 
@@ -366,7 +366,7 @@ public static partial class TransformableEntityTransformations
         /// <typeparam name="TOrientatedEntity"></typeparam>
         /// <param name="orientatedEntities"></param>
         /// <param name="translatableEntity"></param>
-        /// <param name="predicate"></param>
+        /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <returns></returns>
         public IEnumerable<TOrientatedEntity> LookAt(
             [DisallowNull] TranslatableEntity translatableEntity,
@@ -387,7 +387,7 @@ public static partial class TransformableEntityTransformations
 
     extension<TOrientatedEntity>([DisallowNull] IAsyncEnumerable<TOrientatedEntity> orientatedEntities) where TOrientatedEntity : OrientatedEntity
     {
-        #region IAsyncEnumerable Orientate
+        #region Orientate
 
         /// <summary>
         /// 
@@ -408,7 +408,7 @@ public static partial class TransformableEntityTransformations
 
         #endregion
 
-        #region IAsyncEnumerable Rotate
+        #region Rotate
 
         /// <summary>
         /// 
@@ -449,7 +449,7 @@ public static partial class TransformableEntityTransformations
 
         #endregion
 
-        #region IAsyncEnumerable Look At
+        #region Look At
 
         /// <summary>
         /// 
@@ -474,7 +474,7 @@ public static partial class TransformableEntityTransformations
 
         #endregion
 
-        #region IAsyncEnumerable Orientate with predicate
+        #region Orientate with predicate
 
         /// <summary>
         /// 
@@ -482,7 +482,7 @@ public static partial class TransformableEntityTransformations
         /// <typeparam name="TOrientatedEntity"></typeparam>
         /// <param name="orientatedEntities"></param>
         /// <param name="orientation"></param>
-        /// <param name="predicate"></param>
+        /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public async IAsyncEnumerable<TOrientatedEntity> Orientate(
@@ -501,7 +501,7 @@ public static partial class TransformableEntityTransformations
 
         #endregion
 
-        #region IAsyncEnumerable Rotate with predicate
+        #region Rotate with predicate
 
         /// <summary>
         /// 
@@ -509,7 +509,7 @@ public static partial class TransformableEntityTransformations
         /// <typeparam name="TOrientatedEntity"></typeparam>
         /// <param name="orientatedEntities"></param>
         /// <param name="q"></param>
-        /// <param name="predicate"></param>
+        /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public async IAsyncEnumerable<TOrientatedEntity> Rotate(
@@ -533,7 +533,7 @@ public static partial class TransformableEntityTransformations
         /// <param name="orientatedEntities"></param>
         /// <param name="axis"></param>
         /// <param name="angle"></param>
-        /// <param name="predicate"></param>
+        /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public async IAsyncEnumerable<TOrientatedEntity> Rotate(
@@ -553,7 +553,7 @@ public static partial class TransformableEntityTransformations
 
         #endregion
 
-        #region IAsyncEnumerable Look At with predicate
+        #region Look At with predicate
 
         /// <summary>
         /// 
@@ -561,7 +561,7 @@ public static partial class TransformableEntityTransformations
         /// <typeparam name="TOrientatedEntity"></typeparam>
         /// <param name="orientatedEntities"></param>
         /// <param name="translatableEntity"></param>
-        /// <param name="predicate"></param>
+        /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public async IAsyncEnumerable<TOrientatedEntity> LookAt(

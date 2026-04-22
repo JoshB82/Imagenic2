@@ -18,9 +18,7 @@ public static partial class TransformableEntityAnimationExtensions
         /// <summary>
         /// Applies a transformation.
         /// </summary>
-        /// <typeparam name="TTransformableEntity"></typeparam>
-        /// <param name="transformableTCtx"></param>
-        /// <param name="transformation"></param>
+        /// <param name="transformation">The transformation to apply.</param>
         /// <param name="time">The time which this transformation should be completed by.</param>
         /// <returns>The context for this <see cref="Animation"/>.</returns>
         public AnimationContext<TTransformableEntity> Transform(
@@ -30,7 +28,7 @@ public static partial class TransformableEntityAnimationExtensions
             ThrowIfNull(transformableTCtx, transformation);
             ThrowIfNotFinite(time);
 
-            transformableTCtx.TransformationAnimation ??= new InstantaneousAnimation<TTransformableEntity>(transformableTCtx.TransformableEntity, new List<KeyFrame<Action<TTransformableEntity>>>());
+            transformableTCtx.TransformationAnimation ??= new InstantaneousAnimation<TTransformableEntity>(new List<KeyFrame<Action<TTransformableEntity>>>());
             KeyFrame<Action<TTransformableEntity>> newKeyFrame = new KeyFrame<Action<TTransformableEntity>>(time, transformation);
             transformableTCtx.TransformationAnimation.KeyFrames.Add(newKeyFrame);
 
@@ -44,9 +42,7 @@ public static partial class TransformableEntityAnimationExtensions
         /// <summary>
         /// Applies a transformation subject to a predicate.
         /// </summary>
-        /// <typeparam name="TTransformableEntity"></typeparam>
-        /// <param name="transformableTCtx">The context for this <see cref="Animation"/>.</param>
-        /// <param name="transformation"></param>
+        /// <param name="transformation">The transformation to apply.</param>
         /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <param name="time">The time which this transformation should be completed by.</param>
         /// <returns>The context for this <see cref="Animation"/>.</returns>
@@ -76,11 +72,9 @@ public static partial class TransformableEntityAnimationExtensions
         #region IEnumerable Transform
 
         /// <summary>
-        /// 
+        /// Transforms each element of a <typeparamref name="TTransformableEntity"/> sequence.
         /// </summary>
-        /// <typeparam name="TTransformableEntity"></typeparam>
-        /// <param name="transformableTCtx"></param>
-        /// <param name="transformation"></param>
+        /// <param name="transformation">The transformation to apply.</param>
         /// <param name="time">The time which this transformation should be completed by.</param>
         /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
         public IEnumerable<AnimationContext<TTransformableEntity>> Transform(
@@ -101,11 +95,9 @@ public static partial class TransformableEntityAnimationExtensions
         #region IEnumerable Transform with predicate
 
         /// <summary>
-        /// 
+        /// Transforms each element of a <typeparamref name="TTransformableEntity"/> sequence subject to a specified predicate.
         /// </summary>
-        /// <typeparam name="TTransformableEntity"></typeparam>
-        /// <param name="transformableTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
-        /// <param name="transformation"></param>
+        /// <param name="transformation">The transformation to apply.</param>
         /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <param name="time">The time which this transformation should be completed by.</param>
         /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>

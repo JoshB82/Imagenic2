@@ -54,7 +54,7 @@ public class Instruction<TTransformableEntity, TOutput> where TTransformableEnti
 
     public TOutput Resolve(TTransformableEntity transformableEntity)
     {
-        return Predicate is not null && Predicate(transformableEntity) ? Func(transformableEntity) : PredicateFailValue;
+        return Predicate is null || Predicate(transformableEntity) ? Func(transformableEntity) : PredicateFailValue;
     }
 
     #endregion
