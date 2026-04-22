@@ -11,7 +11,7 @@ public static partial class TransformableEntityTransformations
     /// 
     /// </summary>
     /// <typeparam name="TCamera"></typeparam>
-    /// <param name="camera"></param>
+    /// <param name="camera">The <see cref="Camera"/> being transformed.</param>
     extension<TCamera>([DisallowNull] TCamera camera) where TCamera : Camera
     {
         #region Pan
@@ -19,7 +19,6 @@ public static partial class TransformableEntityTransformations
         /// <summary>
         /// Pans the camera in the forward direction (relative to the camera).
         /// </summary>
-        /// <param name="camera">The <see cref="Camera"/> being panned.</param>
         /// <param name="distance">The distance to pan by.</param>
         /// <returns>This <see cref="Camera"/>.</returns>
         public TCamera PanForward(float distance)
@@ -30,7 +29,6 @@ public static partial class TransformableEntityTransformations
         /// <summary>
         /// Pans the camera in the left direction (relative to the camera).
         /// </summary>
-        /// <param name="camera">The <see cref="Camera"/> being panned.</param>
         /// <param name="distance">The distance to pan by.</param>
         /// <returns>This <see cref="Camera"/>.</returns>
         public TCamera PanLeft(float distance)
@@ -41,7 +39,6 @@ public static partial class TransformableEntityTransformations
         /// <summary>
         /// Pans the camera in the right direction (relative to the camera).
         /// </summary>
-        /// <param name="camera">The <see cref="Camera"/> being panned.</param>
         /// <param name="distance">The distance to pan by.</param>
         /// <returns>This <see cref="Camera"/>.</returns>
         public TCamera PanRight(float distance)
@@ -52,7 +49,6 @@ public static partial class TransformableEntityTransformations
         /// <summary>
         /// Pans the camera in the backward direction (relative to the camera).
         /// </summary>
-        /// <param name="camera">The <see cref="Camera"/> being panned.</param>
         /// <param name="distance">The distance to pan by.</param>
         /// <returns>This <see cref="Camera"/>.</returns>
         public TCamera PanBackward(float distance)
@@ -63,7 +59,6 @@ public static partial class TransformableEntityTransformations
         /// <summary>
         /// Pans the camera in the up direction (relative to the camera).
         /// </summary>
-        /// <param name="camera">The <see cref="Camera"/> being panned.</param>
         /// <param name="distance">The distance to pan by.</param>
         /// <returns>This <see cref="Camera"/>.</returns>
         public TCamera PanUp(float distance)
@@ -74,7 +69,6 @@ public static partial class TransformableEntityTransformations
         /// <summary>
         /// Pans the camera in the down direction (relative to the camera).
         /// </summary>
-        /// <param name="camera">The <see cref="Camera"/> being panned.</param>
         /// <param name="distance">The distance to pan by.</param>
         /// <returns>This <see cref="Camera"/>.</returns>
         public TCamera PanDown(float distance)
@@ -90,7 +84,6 @@ public static partial class TransformableEntityTransformations
         /// <summary>
         /// Rotates the <see cref="Camera"/> in the up direction (relative to the camera).
         /// </summary>
-        /// <param name="camera">The <see cref="Camera"/> being rotated.</param>
         /// <param name="angle">The angle to rotate by.</param>
         /// <returns>This <see cref="Camera"/>.</returns>
         public TCamera RotateUp(float angle)
@@ -102,7 +95,6 @@ public static partial class TransformableEntityTransformations
         /// <summary>
         /// Rotates the <see cref="Camera"/> in the down direction (relative to the camera).
         /// </summary>
-        /// <param name="camera">The <see cref="Camera"/> being rotated.</param>
         /// <param name="angle">The angle to rotate by.</param>
         /// <returns>This <see cref="Camera"/>.</returns>
         public TCamera RotateDown(float angle)
@@ -114,7 +106,6 @@ public static partial class TransformableEntityTransformations
         /// <summary>
         /// Rotates the <see cref="Camera"/> in the left direction (relative to the camera).
         /// </summary>
-        /// <param name="camera">The <see cref="Camera"/> being rotated.</param>
         /// <param name="angle">The angle to rotate by.</param>
         /// <returns>This <see cref="Camera"/>.</returns>
         public TCamera RotateLeft(float angle)
@@ -126,7 +117,6 @@ public static partial class TransformableEntityTransformations
         /// <summary>
         /// Rotates the <see cref="Camera"/> in the right direction (relative to the camera).
         /// </summary>
-        /// <param name="camera">The <see cref="Camera"/> being rotated.</param>
         /// <param name="angle">The angle to rotate by.</param>
         /// <returns>This <see cref="Camera"/>.</returns>
         public TCamera RotateRight(float angle)
@@ -138,7 +128,6 @@ public static partial class TransformableEntityTransformations
         /// <summary>
         /// Rolls the <see cref="Camera"/> in the left direction (relative to the camera).
         /// </summary>
-        /// <param name="camera">The <see cref="Camera"/> being rolled.</param>
         /// <param name="angle">The angle to roll by.</param>
         /// <returns>This <see cref="Camera"/>.</returns>
         public TCamera RollLeft(float angle)
@@ -150,7 +139,6 @@ public static partial class TransformableEntityTransformations
         /// <summary>
         /// Rolls the <see cref="Camera"/> in the right direction (relative to the camera).
         /// </summary>
-        /// <param name="camera">The <see cref="Camera"/> being rolled.</param>
         /// <param name="angle">The angle to roll by.</param>
         /// <returns>This <see cref="Camera"/>.</returns>
         public TCamera RollRight(float angle)
@@ -168,11 +156,10 @@ public static partial class TransformableEntityTransformations
         /// Pans the camera in the forward direction (relative to the camera) subject to a specified predicate.
         /// </summary>
         /// <typeparam name="TCamera">The type of the <see cref="Camera"/> being panned.</typeparam>
-        /// <param name="camera">The <see cref="Camera"/> being panned.</param>
         /// <param name="distance">The distance to pan by.</param>
         /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <returns>This <see cref="Camera"/>.</returns>
-        public TCamera PanForward(float distance, Func<TCamera, bool> predicate)
+        public TCamera PanForward(float distance, [DisallowNull] Func<TCamera, bool> predicate)
         {
             return predicate(camera) ? camera.PanForward(distance) : camera;
         }
@@ -180,11 +167,10 @@ public static partial class TransformableEntityTransformations
         /// Pans the camera in the left direction (relative to the camera) subject to a specified predicate.
         /// </summary>
         /// <typeparam name="TCamera">The type of the <see cref="Camera"/> being panned.</typeparam>
-        /// <param name="camera">The <see cref="Camera"/> being panned.</param>
         /// <param name="distance">The distance to pan by.</param>
         /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <returns>This <see cref="Camera"/>.</returns>
-        public TCamera PanLeft(float distance, Func<TCamera, bool> predicate)
+        public TCamera PanLeft(float distance, [DisallowNull] Func<TCamera, bool> predicate)
         {
             return predicate(camera) ? camera.PanLeft(distance) : camera;
         }
@@ -192,11 +178,10 @@ public static partial class TransformableEntityTransformations
         /// Pans the camera in the right direction (relative to the camera) subject to a specified predicate.
         /// </summary>
         /// <typeparam name="TCamera">The type of the <see cref="Camera"/> being panned.</typeparam>
-        /// <param name="camera">The <see cref="Camera"/> being panned.</param>
         /// <param name="distance">The distance to pan by.</param>
         /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <returns>This <see cref="Camera"/>.</returns>
-        public TCamera PanRight(float distance, Func<TCamera, bool> predicate)
+        public TCamera PanRight(float distance, [DisallowNull] Func<TCamera, bool> predicate)
         {
             return predicate(camera) ? camera.PanRight(distance) : camera;
         }
@@ -204,11 +189,10 @@ public static partial class TransformableEntityTransformations
         /// Pans the camera in the backward direction (relative to the camera) subject to a specified predicate.
         /// </summary>
         /// <typeparam name="TCamera">The type of the <see cref="Camera"/> being panned.</typeparam>
-        /// <param name="camera">The <see cref="Camera"/> being panned.</param>
         /// <param name="distance">The distance to pan by.</param>
         /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <returns>This <see cref="Camera"/>.</returns>
-        public TCamera PanBackward(float distance, Func<TCamera, bool> predicate)
+        public TCamera PanBackward(float distance, [DisallowNull] Func<TCamera, bool> predicate)
         {
             return predicate(camera) ? camera.PanBackward(distance) : camera;
         }
@@ -216,11 +200,10 @@ public static partial class TransformableEntityTransformations
         /// Pans the camera in the up direction (relative to the camera) subject to a specified predicate.
         /// </summary>
         /// <typeparam name="TCamera">The type of the <see cref="Camera"/> being panned.</typeparam>
-        /// <param name="camera">The <see cref="Camera"/> being panned.</param>
         /// <param name="distance">The distance to pan by.</param>
         /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <returns>This <see cref="Camera"/>.</returns>
-        public TCamera PanUp(float distance, Func<TCamera, bool> predicate)
+        public TCamera PanUp(float distance, [DisallowNull] Func<TCamera, bool> predicate)
         {
             return predicate(camera) ? camera.PanUp(distance) : camera;
         }
@@ -228,11 +211,10 @@ public static partial class TransformableEntityTransformations
         /// Pans the camera in the down direction (relative to the camera) subject to a specified predicate.
         /// </summary>
         /// <typeparam name="TCamera">The type of the <see cref="Camera"/> being panned.</typeparam>
-        /// <param name="camera">The <see cref="Camera"/> being panned.</param>
         /// <param name="distance">The distance to pan by.</param>
         /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <returns>This <see cref="Camera"/>.</returns>
-        public TCamera PanDown(float distance, Func<TCamera, bool> predicate)
+        public TCamera PanDown(float distance, [DisallowNull] Func<TCamera, bool> predicate)
         {
             return predicate(camera) ? camera.PanDown(distance) : camera;
         }
@@ -245,11 +227,10 @@ public static partial class TransformableEntityTransformations
         /// Rotates the <see cref="Camera"/> in the up direction (relative to the camera) subject to a specified predicate.
         /// </summary>
         /// <typeparam name="TCamera">The type of the <see cref="Camera"/> being rotated.</typeparam>
-        /// <param name="camera">The <see cref="Camera"/> being rotated.</param>
         /// <param name="angle">The angle to rotate by.</param>
         /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <returns>This <see cref="Camera"/>.</returns>
-        public TCamera RotateUp(float angle, Func<TCamera, bool> predicate)
+        public TCamera RotateUp(float angle, [DisallowNull] Func<TCamera, bool> predicate)
         {
             return predicate(camera) ? camera.RotateUp(angle) : camera;
         }
@@ -257,11 +238,10 @@ public static partial class TransformableEntityTransformations
         /// Rotates the <see cref="Camera"/> in the down direction (relative to the camera) subject to a specified predicate.
         /// </summary>
         /// <typeparam name="TCamera">The type of the <see cref="Camera"/> being rotated.</typeparam>
-        /// <param name="camera">The <see cref="Camera"/> being rotated.</param>
         /// <param name="angle">The angle to rotate by.</param>
         /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <returns>This <see cref="Camera"/>.</returns>
-        public TCamera RotateDown(float angle, Func<TCamera, bool> predicate)
+        public TCamera RotateDown(float angle, [DisallowNull] Func<TCamera, bool> predicate)
         {
             return predicate(camera) ? camera.RotateDown(angle) : camera;
         }
@@ -269,11 +249,10 @@ public static partial class TransformableEntityTransformations
         /// Rotates the <see cref="Camera"/> in the left direction (relative to the camera) subject to a specified predicate.
         /// </summary>
         /// <typeparam name="TCamera">The type of the <see cref="Camera"/> being rotated.</typeparam>
-        /// <param name="camera">The <see cref="Camera"/> being rotated.</param>
         /// <param name="angle">The angle to rotate by.</param>
         /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <returns>This <see cref="Camera"/>.</returns>
-        public TCamera RotateLeft(float angle, Func<TCamera, bool> predicate)
+        public TCamera RotateLeft(float angle, [DisallowNull] Func<TCamera, bool> predicate)
         {
             return predicate(camera) ? camera.RotateLeft(angle) : camera;
         }
@@ -281,11 +260,10 @@ public static partial class TransformableEntityTransformations
         /// Rotates the <see cref="Camera"/> in the right direction (relative to the camera) subject to a specified predicate.
         /// </summary>
         /// <typeparam name="TCamera">The type of the <see cref="Camera"/> being rotated.</typeparam>
-        /// <param name="camera">The <see cref="Camera"/> being rotated.</param>
         /// <param name="angle">The angle to rotate by.</param>
         /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <returns>This <see cref="Camera"/>.</returns>
-        public TCamera RotateRight(float angle, Func<TCamera, bool> predicate)
+        public TCamera RotateRight(float angle, [DisallowNull] Func<TCamera, bool> predicate)
         {
             return predicate(camera) ? camera.RotateRight(angle) : camera;
         }
@@ -293,11 +271,10 @@ public static partial class TransformableEntityTransformations
         /// Rolls the <see cref="Camera"/> in the left direction (relative to the camera) subject to a specified predicate.
         /// </summary>
         /// <typeparam name="TCamera">The type of the <see cref="Camera"/> being rolled.</typeparam>
-        /// <param name="camera">The <see cref="Camera"/> being rolled.</param>
         /// <param name="angle">The angle to roll by.</param>
         /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <returns>This <see cref="Camera"/>.</returns>
-        public TCamera RollLeft(float angle, Func<TCamera, bool> predicate)
+        public TCamera RollLeft(float angle, [DisallowNull] Func<TCamera, bool> predicate)
         {
             return predicate(camera) ? camera.RollLeft(angle) : camera;
         }
@@ -305,17 +282,15 @@ public static partial class TransformableEntityTransformations
         /// Rolls the <see cref="Camera"/> in the right direction (relative to the camera) subject to a specified predicate.
         /// </summary>
         /// <typeparam name="TCamera">The type of the <see cref="Camera"/> being rolled.</typeparam>
-        /// <param name="camera">The <see cref="Camera"/> being rolled.</param>
         /// <param name="angle">The angle to roll by.</param>
         /// <param name="predicate">The predicate that needs to be satisfied in order for this transformation to occur.</param>
         /// <returns>This <see cref="Camera"/>.</returns>
-        public TCamera RollRight(float angle, Func<TCamera, bool> predicate)
+        public TCamera RollRight(float angle, [DisallowNull] Func<TCamera, bool> predicate)
         {
             return predicate(camera) ? camera.RollRight(angle) : camera;
         }
 
         #endregion
-
     }
 
     // IEnumerable<TCamera>

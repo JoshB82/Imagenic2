@@ -9,17 +9,16 @@ public static partial class TransformableEntityAnimationExtensions
     /// 
     /// </summary>
     /// <typeparam name="TTranslatableEntity"></typeparam>
-    /// <param name="translatableTCtx"></param>
+    /// <param name="translatableTCtx">The context for this <see cref="Animation"/>.</param>
     extension<TTranslatableEntity>([DisallowNull] AnimationContext<TTranslatableEntity> translatableTCtx) where TTranslatableEntity : TranslatableEntity
     {
         #region Translate
 
         /// <summary>
-        /// 
+        /// Translates a <typeparamref name="TTranslatableEntity"/> in the x-direction.
         /// </summary>
         /// <typeparam name="TTranslatableEntity"></typeparam>
-        /// <param name="translatableTCtx">The context for this <see cref="Animation"/>.</param>
-        /// <param name="distance"></param>
+        /// <param name="distance">The distance to translate by.</param>
         /// <param name="time">The time which this transformation should be completed by.</param>
         /// <returns>The context for this <see cref="Animation"/>.</returns>
         public AnimationContext<TTranslatableEntity> TranslateX(float distance, float time)
@@ -29,11 +28,10 @@ public static partial class TransformableEntityAnimationExtensions
         }
 
         /// <summary>
-        /// 
+        /// Translates a <typeparamref name="TTranslatableEntity"/> in the y-direction.
         /// </summary>
         /// <typeparam name="TTranslatableEntity"></typeparam>
-        /// <param name="translatableTCtx">The context for this <see cref="Animation"/>.</param>
-        /// <param name="distance"></param>
+        /// <param name="distance">The distance to translate by.</param>
         /// <param name="time">The time which this transformation should be completed by.</param>
         /// <returns>The context for this <see cref="Animation"/>.</returns>
         public AnimationContext<TTranslatableEntity> TranslateY(float distance, float time)
@@ -43,11 +41,10 @@ public static partial class TransformableEntityAnimationExtensions
         }
 
         /// <summary>
-        /// 
+        /// Translates a <typeparamref name="TTranslatableEntity"/> in the z-direction.
         /// </summary>
         /// <typeparam name="TTranslatableEntity"></typeparam>
-        /// <param name="translatableTCtx">The context for this <see cref="Animation"/>.</param>
-        /// <param name="distance"></param>
+        /// <param name="distance">The distance to translate by.</param>
         /// <param name="time">The time which this transformation should be completed by.</param>
         /// <returns>The context for this <see cref="Animation"/>.</returns>
         public AnimationContext<TTranslatableEntity> TranslateZ(float distance, float time)
@@ -57,13 +54,12 @@ public static partial class TransformableEntityAnimationExtensions
         }
 
         /// <summary>
-        /// 
+        /// Translates a <typeparamref name="TTranslatableEntity"/> in the x, y and z-directions.
         /// </summary>
         /// <typeparam name="TTranslatableEntity"></typeparam>
-        /// <param name="translatableTCtx">The context for this <see cref="Animation"/>.</param>
-        /// <param name="distanceX"></param>
-        /// <param name="distanceY"></param>
-        /// <param name="distanceZ"></param>
+        /// <param name="distanceX">The distance to translate by in the x-direction.</param>
+        /// <param name="distanceY">The distance to translate by in the y-direction.</param>
+        /// <param name="distanceZ">The distance to translate by in the z-direction.</param>
         /// <param name="time">The time which this transformation should be completed by.</param>
         /// <returns>The context for this <see cref="Animation"/>.</returns>
         public AnimationContext<TTranslatableEntity> Translate(float distanceX, float distanceY, float distanceZ, float time)
@@ -73,16 +69,16 @@ public static partial class TransformableEntityAnimationExtensions
         }
 
         /// <summary>
-        /// 
+        /// Translates a <typeparamref name="TTranslatableEntity"/>.
         /// </summary>
         /// <typeparam name="TTranslatableEntity"></typeparam>
-        /// <param name="translatableTCtx">The context for this <see cref="Animation"/>.</param>
-        /// <param name="displacement"></param>
+        /// <param name="displacement">The displacement to translate by.</param>
         /// <param name="time">The time which this transformation should be completed by.</param>
         /// <returns>The context for this <see cref="Animation"/>.</returns>
         public AnimationContext<TTranslatableEntity> Translate(Vector3D displacement, float time)
         {
             ThrowIfNull(translatableTCtx);
+            ThrowIfNotFinite(time);
 
             if (translatableTCtx.TranslationKeyFrameAnimation is null)
             {
@@ -105,11 +101,10 @@ public static partial class TransformableEntityAnimationExtensions
         #region Translate with predicate
 
         /// <summary>
-        /// 
+        /// Translates a <typeparamref name="TTranslatableEntity"/> in the x-direction subject to a specified predicate.
         /// </summary>
         /// <typeparam name="TTranslatableEntity"></typeparam>
-        /// <param name="translatableTCtx">The context for this <see cref="Animation"/>.</param>
-        /// <param name="distance"></param>
+        /// <param name="distance">The distance to translate by.</param>
         /// <param name="predicate"></param>
         /// <param name="time">The time which this transformation should be completed by.</param>
         /// <returns>The context for this <see cref="Animation"/>.</returns>
@@ -120,11 +115,10 @@ public static partial class TransformableEntityAnimationExtensions
         }
 
         /// <summary>
-        /// 
+        /// Translates a <typeparamref name="TTranslatableEntity"/> in the y-direction subject to a specified predicate.
         /// </summary>
         /// <typeparam name="TTranslatableEntity"></typeparam>
-        /// <param name="translatableTCtx">The context for this <see cref="Animation"/>.</param>
-        /// <param name="distance"></param>
+        /// <param name="distance">The distance to translate by.</param>
         /// <param name="predicate"></param>
         /// <param name="time">The time which this transformation should be completed by.</param>
         /// <returns>The context for this <see cref="Animation"/>.</returns>
@@ -135,11 +129,10 @@ public static partial class TransformableEntityAnimationExtensions
         }
 
         /// <summary>
-        /// 
+        /// Translates a <typeparamref name="TTranslatableEntity"/> in the z-direction subject to a specified predicate.
         /// </summary>
         /// <typeparam name="TTranslatableEntity"></typeparam>
-        /// <param name="translatableTCtx">The context for this <see cref="Animation"/>.</param>
-        /// <param name="distance"></param>
+        /// <param name="distance">The distance to translate by.</param>
         /// <param name="predicate"></param>
         /// <param name="time">The time which this transformation should be completed by.</param>
         /// <returns>The context for this <see cref="Animation"/>.</returns>
@@ -150,13 +143,12 @@ public static partial class TransformableEntityAnimationExtensions
         }
 
         /// <summary>
-        /// 
+        /// Translates a <typeparamref name="TTranslatableEntity"/> in the x, y and z-directions subject to a specified predicate.
         /// </summary>
         /// <typeparam name="TTranslatableEntity"></typeparam>
-        /// <param name="translatableTCtx">The context for this <see cref="Animation"/>.</param>
-        /// <param name="distanceX"></param>
-        /// <param name="distanceY"></param>
-        /// <param name="distanceZ"></param>
+        /// <param name="distanceX">The distance to translate by in the x-direction.</param>
+        /// <param name="distanceY">The distance to translate by in the y-direction.</param>
+        /// <param name="distanceZ">The distance to translate by in the z-direction.</param>
         /// <param name="predicate"></param>
         /// <param name="time">The time which this transformation should be completed by.</param>
         /// <returns>The context for this <see cref="Animation"/>.</returns>
@@ -167,11 +159,10 @@ public static partial class TransformableEntityAnimationExtensions
         }
 
         /// <summary>
-        /// 
+        /// Translates a <typeparamref name="TTranslatableEntity"/> subject to a specified predicate.
         /// </summary>
         /// <typeparam name="TTranslatableEntity"></typeparam>
-        /// <param name="translatableTCtx">The context for this <see cref="Animation"/>.</param>
-        /// <param name="displacement"></param>
+        /// <param name="displacement">The displacement to translate by.</param>
         /// <param name="predicate"></param>
         /// <param name="time">The time which this transformation should be completed by.</param>
         /// <returns>The context for this <see cref="Animation"/>.</returns>
@@ -203,7 +194,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// 
     /// </summary>
     /// <typeparam name="TTranslatableEntity"></typeparam>
-    /// <param name="translatableTCtx"></param>
+    /// <param name="translatableTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     extension<TTranslatableEntity>([DisallowNull] IEnumerable<AnimationContext<TTranslatableEntity>> translatableTCtx) where TTranslatableEntity : TranslatableEntity
     {
         #region IEnumerable Translate
@@ -212,7 +203,6 @@ public static partial class TransformableEntityAnimationExtensions
         /// 
         /// </summary>
         /// <typeparam name="TTranslatableEntity"></typeparam>
-        /// <param name="translatableTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
         /// <param name="distance"></param>
         /// <param name="time">The time which this transformation should be completed by.</param>
         /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
@@ -228,7 +218,6 @@ public static partial class TransformableEntityAnimationExtensions
         /// 
         /// </summary>
         /// <typeparam name="TTranslatableEntity"></typeparam>
-        /// <param name="translatableTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
         /// <param name="distance"></param>
         /// <param name="time">The time which this transformation should be completed by.</param>
         /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
@@ -244,7 +233,6 @@ public static partial class TransformableEntityAnimationExtensions
         /// 
         /// </summary>
         /// <typeparam name="TTranslatableEntity"></typeparam>
-        /// <param name="translatableTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
         /// <param name="distance"></param>
         /// <param name="time">The time which this transformation should be completed by.</param>
         /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
@@ -260,7 +248,6 @@ public static partial class TransformableEntityAnimationExtensions
         /// 
         /// </summary>
         /// <typeparam name="TTranslatableEntity"></typeparam>
-        /// <param name="translatableTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
         /// <param name="distanceX"></param>
         /// <param name="distanceY"></param>
         /// <param name="distanceZ"></param>
@@ -280,7 +267,6 @@ public static partial class TransformableEntityAnimationExtensions
         /// 
         /// </summary>
         /// <typeparam name="TTranslatableEntity"></typeparam>
-        /// <param name="translatableTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
         /// <param name="displacement"></param>
         /// <param name="time">The time which this transformation should be completed by.</param>
         /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
@@ -304,7 +290,6 @@ public static partial class TransformableEntityAnimationExtensions
         /// 
         /// </summary>
         /// <typeparam name="TTranslatableEntity"></typeparam>
-        /// <param name="translatableTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
         /// <param name="distance"></param>
         /// <param name="predicate"></param>
         /// <param name="time">The time which this transformation should be completed by.</param>
@@ -322,7 +307,6 @@ public static partial class TransformableEntityAnimationExtensions
         /// 
         /// </summary>
         /// <typeparam name="TTranslatableEntity"></typeparam>
-        /// <param name="translatableTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
         /// <param name="distance"></param>
         /// <param name="predicate"></param>
         /// <param name="time">The time which this transformation should be completed by.</param>
@@ -340,7 +324,6 @@ public static partial class TransformableEntityAnimationExtensions
         /// 
         /// </summary>
         /// <typeparam name="TTranslatableEntity"></typeparam>
-        /// <param name="translatableTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
         /// <param name="distance"></param>
         /// <param name="predicate"></param>
         /// <param name="time">The time which this transformation should be completed by.</param>
@@ -358,7 +341,6 @@ public static partial class TransformableEntityAnimationExtensions
         /// 
         /// </summary>
         /// <typeparam name="TTranslatableEntity"></typeparam>
-        /// <param name="translatableTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
         /// <param name="distanceX"></param>
         /// <param name="distanceY"></param>
         /// <param name="distanceZ"></param>
@@ -380,7 +362,6 @@ public static partial class TransformableEntityAnimationExtensions
         /// 
         /// </summary>
         /// <typeparam name="TTranslatableEntity"></typeparam>
-        /// <param name="translatableTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
         /// <param name="displacement"></param>
         /// <param name="predicate"></param>
         /// <param name="time">The time which this transformation should be completed by.</param>
