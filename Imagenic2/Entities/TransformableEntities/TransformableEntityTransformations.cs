@@ -91,9 +91,14 @@ public static partial class TransformableEntityTransformations
 
     // IEnumerable<TTransformableEntity>
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TTransformableEntity"></typeparam>
+    /// <param name="transformableEntities"></param>
     extension<TTransformableEntity>([DisallowNull] IEnumerable<TTransformableEntity> transformableEntities) where TTransformableEntity : TransformableEntity
     {
-        #region IEnumerable Transform
+        #region Transform
 
         /// <summary>
         /// Transforms each element of a <typeparamref name="TTransformableEntity"/> sequence.
@@ -130,7 +135,7 @@ public static partial class TransformableEntityTransformations
 
         #endregion
 
-        #region IEnumerable Transform with predicate
+        #region Transform with predicate
 
         /// <summary>
         /// Transforms each element of a <typeparamref name="TTransformableEntity"/> sequence that satisfies a specified predicate.
@@ -172,9 +177,14 @@ public static partial class TransformableEntityTransformations
 
     // IAsyncEnumerable<TTransformableEntity>
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TTransformableEntity"></typeparam>
+    /// <param name="transformableEntities"></param>
     extension<TTransformableEntity>(IAsyncEnumerable<TTransformableEntity> transformableEntities) where TTransformableEntity : TransformableEntity
     {
-        #region IAsyncEnumerable Transform
+        #region Transform
 
         /// <summary>
         /// 
@@ -197,7 +207,7 @@ public static partial class TransformableEntityTransformations
 
         #endregion
 
-        #region IAsyncEnumerable Transform with predicate
+        #region Transform with predicate
 
         /// <summary>
         /// 

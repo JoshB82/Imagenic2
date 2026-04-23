@@ -69,7 +69,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <param name="transformableTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     extension<TTransformableEntity>([DisallowNull] IEnumerable<AnimationContext<TTransformableEntity>> transformableTCtx) where TTransformableEntity : TransformableEntity
     {
-        #region IEnumerable Transform
+        #region Transform
 
         /// <summary>
         /// Transforms each element of a <typeparamref name="TTransformableEntity"/> sequence.
@@ -92,7 +92,7 @@ public static partial class TransformableEntityAnimationExtensions
 
         #endregion
 
-        #region IEnumerable Transform with predicate
+        #region Transform with predicate
 
         /// <summary>
         /// Transforms each element of a <typeparamref name="TTransformableEntity"/> sequence subject to a specified predicate.

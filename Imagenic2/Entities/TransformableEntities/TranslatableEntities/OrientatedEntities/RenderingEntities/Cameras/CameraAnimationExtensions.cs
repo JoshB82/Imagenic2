@@ -346,7 +346,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <param name="cameraTCtx"></param>
     extension<TCamera>([DisallowNull] IEnumerable<AnimationContext<TCamera>> cameraTCtx) where TCamera : Camera
     {
-        #region IEnumerable Pan
+        #region Pan
 
         /// <summary>
         /// Pans each element of the <see cref="Camera"/> sequence in the forward direction (relative to the camera).
@@ -441,7 +441,7 @@ public static partial class TransformableEntityAnimationExtensions
 
         #endregion
 
-        #region IEnumerable Rotate, Roll
+        #region Rotate, Roll
 
         /// <summary>
         /// Rotates the <see cref="Camera"/> in the up direction (relative to the camera).
@@ -536,7 +536,7 @@ public static partial class TransformableEntityAnimationExtensions
 
         #endregion
 
-        #region IEnumerable Pan with predicate
+        #region Pan with predicate
 
         /// <summary>
         /// Pans each element of the <see cref="Camera"/> sequence in the forward direction (relative to the camera) subject to a specified predicate.
@@ -637,7 +637,7 @@ public static partial class TransformableEntityAnimationExtensions
 
         #endregion
 
-        #region IEnumerable Rotate, Roll with predicate
+        #region Rotate, Roll with predicate
 
         /// <summary>
         /// Rotates the <see cref="Camera"/> in the up direction (relative to the camera) subject to a specified predicate.

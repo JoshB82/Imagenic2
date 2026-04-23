@@ -302,7 +302,7 @@ public static partial class TransformableEntityTransformations
     /// <param name="cameras"></param>
     extension<TCamera>([DisallowNull] IEnumerable<TCamera> cameras) where TCamera : Camera
     {
-        #region IEnumerable Pan
+        #region Pan
 
         /// <summary>
         /// 
@@ -391,7 +391,7 @@ public static partial class TransformableEntityTransformations
 
         #endregion
 
-        #region IEnumerable Rotate, Roll
+        #region Rotate, Roll
 
         /// <summary>
         /// Rotates each element of the <see cref="Camera"/> sequence in the up direction (relative to the camera).
@@ -480,7 +480,7 @@ public static partial class TransformableEntityTransformations
 
         #endregion
 
-        #region IEnumerable Pan with predicate
+        #region Pan with predicate
 
         /// <summary>
         /// Pans each element of the <see cref="Camera"/> sequence in the forward direction (relative to the camera) subject to a specified predicate.
@@ -575,7 +575,7 @@ public static partial class TransformableEntityTransformations
 
         #endregion
 
-        #region IEnumerable Rotate, Roll with predicate
+        #region Rotate, Roll with predicate
 
         /// <summary>
         /// Rotates the <see cref="Camera"/> in the up direction (relative to the camera) subject to a specified predicate.

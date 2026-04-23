@@ -187,7 +187,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <param name="physicalTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     extension<TPhysicalEntity>([DisallowNull] IEnumerable<AnimationContext<TPhysicalEntity>> physicalTCtx) where TPhysicalEntity : PhysicalEntity
     {
-        #region IEnumerable Scale
+        #region Scale
 
         /// <summary>
         /// 
@@ -257,7 +257,7 @@ public static partial class TransformableEntityAnimationExtensions
 
         #endregion
 
-        #region IEnumerable Scale with predicate
+        #region Scale with predicate
 
         /// <summary>
         /// 

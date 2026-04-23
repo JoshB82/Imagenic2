@@ -31,7 +31,7 @@ public static partial class TransformableEntityAnimationExtensions
 
             if (orientatedTCtx.OrientationKeyFrameAnimation is null)
             {
-                orientatedTCtx.OrientationKeyFrameAnimation = new KeyFrameAnimation<Quaternion>(new List<KeyFrame<Quaternion>>(), v => orientatedTCtx.TransformableEntity.WorldOrientation.Rotate(v), MathsHelper.Lerp);
+                orientatedTCtx.OrientationKeyFrameAnimation = new KeyFrameAnimation<TOrientatedEntity, Quaternion>(new List<KeyFrame<Quaternion>>(), v => orientatedTCtx.TransformableEntity.WorldOrientation.Rotate(v), MathsHelper.Lerp);
                 Quaternion startingQuaternion = MathsHelper.QuaternionRotateBetweenOrientations(Orientation.ModelOrientation, orientatedTCtx.TransformableEntity.WorldOrientation);
                 KeyFrame<Quaternion> startingKeyFrame = new KeyFrame<Quaternion>(orientatedTCtx.StartTime, startingQuaternion);
                 orientatedTCtx.OrientationKeyFrameAnimation.KeyFrames.Add(startingKeyFrame);
@@ -62,7 +62,7 @@ public static partial class TransformableEntityAnimationExtensions
 
             if (orientatedTCtx.OrientationKeyFrameAnimation is null)
             {
-                orientatedTCtx.OrientationKeyFrameAnimation = new KeyFrameAnimation<Quaternion>(new List<KeyFrame<Quaternion>>(), v => orientatedTCtx.TransformableEntity.WorldOrientation.Rotate(v), MathsHelper.Lerp);
+                orientatedTCtx.OrientationKeyFrameAnimation = new KeyFrameAnimation<TOrientatedEntity, Quaternion>(new List<KeyFrame<Quaternion>>(), v => orientatedTCtx.TransformableEntity.WorldOrientation.Rotate(v), MathsHelper.Lerp);
                 Quaternion startingQuaternion = MathsHelper.QuaternionRotateBetweenOrientations(Orientation.ModelOrientation, orientatedTCtx.TransformableEntity.WorldOrientation);
                 KeyFrame<Quaternion> startingKeyFrame = new KeyFrame<Quaternion>(orientatedTCtx.StartTime, startingQuaternion);
                 orientatedTCtx.OrientationKeyFrameAnimation.KeyFrames.Add(startingKeyFrame);
@@ -208,7 +208,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <param name="orientatedTCtx"></param>
     extension<TOrientatedEntity>([DisallowNull] IEnumerable<AnimationContext<TOrientatedEntity>> orientatedTCtx) where TOrientatedEntity : OrientatedEntity
     {
-        #region IEnumerable Orientate
+        #region Orientate
 
         /// <summary>
         /// 
@@ -230,7 +230,7 @@ public static partial class TransformableEntityAnimationExtensions
 
         #endregion
 
-        #region IEnumerable Rotate
+        #region Rotate
 
         /// <summary>
         /// 
@@ -271,7 +271,7 @@ public static partial class TransformableEntityAnimationExtensions
 
         #endregion
 
-        #region IEnumerable Look At
+        #region Look At
 
         /// <summary>
         /// 
@@ -293,7 +293,7 @@ public static partial class TransformableEntityAnimationExtensions
 
         #endregion
 
-        #region IEnumerable Orientate with predicate
+        #region Orientate with predicate
 
         /// <summary>
         /// 
@@ -317,7 +317,7 @@ public static partial class TransformableEntityAnimationExtensions
 
         #endregion
 
-        #region IEnumerable Rotate with predicate
+        #region Rotate with predicate
 
         /// <summary>
         /// 
@@ -363,7 +363,7 @@ public static partial class TransformableEntityAnimationExtensions
 
         #endregion
 
-        #region IEnumerable Look At with predicate
+        #region Look At with predicate
 
         /// <summary>
         /// 

@@ -80,10 +80,7 @@ public static partial class TransformableEntityAnimationExtensions
             ThrowIfNull(translatableTCtx);
             ThrowIfNotFinite(time);
 
-            if (translatableTCtx.TranslationKeyFrameAnimation is null)
-            {
-                translatableTCtx.TranslationKeyFrameAnimation = new KeyFrameAnimation<TTranslatableEntity, Vector3D>(new List<KeyFrame<Vector3D>>(), v => translatableTCtx.TransformableEntity.WorldOrigin = v, MathsHelper.Lerp);
-            }
+            translatableTCtx.TranslationKeyFrameAnimation ??= new KeyFrameAnimation<TTranslatableEntity, Vector3D>(new List<KeyFrame<Vector3D>>(), v => translatableTCtx.TransformableEntity.WorldOrigin = v, MathsHelper.Lerp);
 
             Instruction<TTranslatableEntity, Vector3D> instruction = new(
                 time: time,
@@ -197,7 +194,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <param name="translatableTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     extension<TTranslatableEntity>([DisallowNull] IEnumerable<AnimationContext<TTranslatableEntity>> translatableTCtx) where TTranslatableEntity : TranslatableEntity
     {
-        #region IEnumerable Translate
+        #region Translate
 
         /// <summary>
         /// 
@@ -284,7 +281,7 @@ public static partial class TransformableEntityAnimationExtensions
 
         #endregion
 
-        #region IEnumerable Translate with predicate
+        #region Translate with predicate
 
         /// <summary>
         /// 

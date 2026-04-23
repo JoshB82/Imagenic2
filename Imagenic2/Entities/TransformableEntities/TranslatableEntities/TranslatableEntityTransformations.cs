@@ -14,7 +14,7 @@ public static partial class TransformableEntityTransformations
     /// <param name="translatableEntity"></param>
     extension<TTranslatableEntity>([DisallowNull] TTranslatableEntity translatableEntity) where TTranslatableEntity : TranslatableEntity
     {
-        #region TTranslatableEntity
+        #region Translate
 
         /// <summary>
         /// Translates a <typeparamref name="TTranslatableEntity"/> by the specified distance in the x-direction.
@@ -261,7 +261,7 @@ public static partial class TransformableEntityTransformations
     /// <param name="translatableEntities"></param>
     extension<TTranslatableEntity>([DisallowNull] IEnumerable<TTranslatableEntity> translatableEntities) where TTranslatableEntity : TranslatableEntity
     {
-        #region IEnumerable<TTranslatableEntity>
+        #region Translate
 
         /// <summary>
         /// Translates each element of a <typeparamref name="TTranslatableEntity"/> sequence by the specified distance in the x-direction.
@@ -414,7 +414,7 @@ public static partial class TransformableEntityTransformations
 
         #endregion
 
-        #region IEnumerable<TTranslatableEntity> with predicate
+        #region Translate with predicate
 
         /// <summary>
         /// 
@@ -514,7 +514,7 @@ public static partial class TransformableEntityTransformations
     /// <param name="translatableEntities"></param>
     extension<TTranslatableEntity>([DisallowNull] IAsyncEnumerable<TTranslatableEntity> translatableEntities) where TTranslatableEntity : TranslatableEntity
     {
-        #region IAsyncEnumerable<TTranslatableEntity>
+        #region Translate
 
         /// <summary>
         /// 
@@ -599,7 +599,7 @@ public static partial class TransformableEntityTransformations
 
         #endregion
 
-        #region IAsyncEnumerable<TTranslatableEntity> with predicate
+        #region Translate with predicate
 
         /// <summary>
         /// 
