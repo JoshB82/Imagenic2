@@ -8,7 +8,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <summary>
     /// 
     /// </summary>
-    /// <typeparam name="TTranslatableEntity"></typeparam>
+    /// <typeparam name="TTranslatableEntity">The type of the <see cref="TranslatableEntity"/> being transformed.</typeparam>
     /// <param name="translatableTCtx">The context for this <see cref="Animation"/>.</param>
     extension<TTranslatableEntity>([DisallowNull] AnimationContext<TTranslatableEntity> translatableTCtx) where TTranslatableEntity : TranslatableEntity
     {
@@ -100,7 +100,6 @@ public static partial class TransformableEntityAnimationExtensions
         /// <summary>
         /// Translates a <typeparamref name="TTranslatableEntity"/> in the x-direction subject to a specified predicate.
         /// </summary>
-        /// <typeparam name="TTranslatableEntity"></typeparam>
         /// <param name="distance">The distance to translate by.</param>
         /// <param name="predicate"></param>
         /// <param name="time">The time which this transformation should be completed by.</param>
@@ -114,7 +113,6 @@ public static partial class TransformableEntityAnimationExtensions
         /// <summary>
         /// Translates a <typeparamref name="TTranslatableEntity"/> in the y-direction subject to a specified predicate.
         /// </summary>
-        /// <typeparam name="TTranslatableEntity"></typeparam>
         /// <param name="distance">The distance to translate by.</param>
         /// <param name="predicate"></param>
         /// <param name="time">The time which this transformation should be completed by.</param>
@@ -128,7 +126,6 @@ public static partial class TransformableEntityAnimationExtensions
         /// <summary>
         /// Translates a <typeparamref name="TTranslatableEntity"/> in the z-direction subject to a specified predicate.
         /// </summary>
-        /// <typeparam name="TTranslatableEntity"></typeparam>
         /// <param name="distance">The distance to translate by.</param>
         /// <param name="predicate"></param>
         /// <param name="time">The time which this transformation should be completed by.</param>
@@ -142,7 +139,6 @@ public static partial class TransformableEntityAnimationExtensions
         /// <summary>
         /// Translates a <typeparamref name="TTranslatableEntity"/> in the x, y and z-directions subject to a specified predicate.
         /// </summary>
-        /// <typeparam name="TTranslatableEntity"></typeparam>
         /// <param name="distanceX">The distance to translate by in the x-direction.</param>
         /// <param name="distanceY">The distance to translate by in the y-direction.</param>
         /// <param name="distanceZ">The distance to translate by in the z-direction.</param>
@@ -158,7 +154,6 @@ public static partial class TransformableEntityAnimationExtensions
         /// <summary>
         /// Translates a <typeparamref name="TTranslatableEntity"/> subject to a specified predicate.
         /// </summary>
-        /// <typeparam name="TTranslatableEntity"></typeparam>
         /// <param name="displacement">The displacement to translate by.</param>
         /// <param name="predicate"></param>
         /// <param name="time">The time which this transformation should be completed by.</param>
@@ -167,10 +162,7 @@ public static partial class TransformableEntityAnimationExtensions
         {
             ThrowIfNull(translatableTCtx, predicate);
 
-            if (translatableTCtx.TranslationKeyFrameAnimation is null)
-            {
-                translatableTCtx.TranslationKeyFrameAnimation = new KeyFrameAnimation<TTranslatableEntity, Vector3D>(new List<KeyFrame<Vector3D>>(), v => translatableTCtx.TransformableEntity.WorldOrigin = v, MathsHelper.Lerp);
-            }
+            translatableTCtx.TranslationKeyFrameAnimation ??= new KeyFrameAnimation<TTranslatableEntity, Vector3D>(new List<KeyFrame<Vector3D>>(), v => translatableTCtx.TransformableEntity.WorldOrigin = v, MathsHelper.Lerp);
 
             Instruction<TTranslatableEntity, Vector3D> instruction = new(
                 time: time,
@@ -190,7 +182,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <summary>
     /// 
     /// </summary>
-    /// <typeparam name="TTranslatableEntity"></typeparam>
+    /// <typeparam name="TTranslatableEntity">The type of each <see cref="TranslatableEntity"/> being transformed.</typeparam>
     /// <param name="translatableTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     extension<TTranslatableEntity>([DisallowNull] IEnumerable<AnimationContext<TTranslatableEntity>> translatableTCtx) where TTranslatableEntity : TranslatableEntity
     {

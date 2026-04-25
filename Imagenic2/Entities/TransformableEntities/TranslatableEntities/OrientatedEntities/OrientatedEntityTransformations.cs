@@ -11,7 +11,7 @@ public static partial class TransformableEntityTransformations
     /// <summary>
     /// 
     /// </summary>
-    /// <typeparam name="TOrientatedEntity"></typeparam>
+    /// <typeparam name="TOrientatedEntity">The type of the <see cref="OrientatedEntity"/> being transformed.</typeparam>
     /// <param name="orientatedEntity"></param>
     extension<TOrientatedEntity>([DisallowNull] TOrientatedEntity orientatedEntity) where TOrientatedEntity : OrientatedEntity
     {
@@ -181,6 +181,11 @@ public static partial class TransformableEntityTransformations
 
     // IEnumerable<TOrientatedEntity>
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TOrientatedEntity">The type of each <see cref="OrientatedEntity"/> being transformed.</typeparam>
+    /// <param name="orientatedEntities"></param>
     extension<TOrientatedEntity>([DisallowNull] IEnumerable<TOrientatedEntity> orientatedEntities) where TOrientatedEntity : OrientatedEntity
     {
         #region Orientate
@@ -385,6 +390,11 @@ public static partial class TransformableEntityTransformations
 
     // IAsyncEnumerable<TOrientatedEntity>
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TOrientatedEntity">The type of each <see cref="OrientatedEntity"/> being transformed.</typeparam>
+    /// <param name="orientatedEntities"></param>
     extension<TOrientatedEntity>([DisallowNull] IAsyncEnumerable<TOrientatedEntity> orientatedEntities) where TOrientatedEntity : OrientatedEntity
     {
         #region Orientate

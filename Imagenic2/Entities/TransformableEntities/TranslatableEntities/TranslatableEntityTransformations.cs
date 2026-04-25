@@ -10,7 +10,7 @@ public static partial class TransformableEntityTransformations
     /// <summary>
     /// 
     /// </summary>
-    /// <typeparam name="TTranslatableEntity"></typeparam>
+    /// <typeparam name="TTranslatableEntity">The type of the <see cref="TranslatableEntity"/> being transformed.</typeparam>
     /// <param name="translatableEntity"></param>
     extension<TTranslatableEntity>([DisallowNull] TTranslatableEntity translatableEntity) where TTranslatableEntity : TranslatableEntity
     {
@@ -257,7 +257,7 @@ public static partial class TransformableEntityTransformations
     /// <summary>
     /// 
     /// </summary>
-    /// <typeparam name="TTranslatableEntity"></typeparam>
+    /// <typeparam name="TTranslatableEntity">The type of each <see cref="TranslatableEntity"/> being transformed.</typeparam>
     /// <param name="translatableEntities"></param>
     extension<TTranslatableEntity>([DisallowNull] IEnumerable<TTranslatableEntity> translatableEntities) where TTranslatableEntity : TranslatableEntity
     {
@@ -510,7 +510,7 @@ public static partial class TransformableEntityTransformations
     /// <summary>
     /// 
     /// </summary>
-    /// <typeparam name="TTranslatableEntity"></typeparam>
+    /// <typeparam name="TTranslatableEntity">The type of each <see cref="TranslatableEntity"/> being transformed.</typeparam>
     /// <param name="translatableEntities"></param>
     extension<TTranslatableEntity>([DisallowNull] IAsyncEnumerable<TTranslatableEntity> translatableEntities) where TTranslatableEntity : TranslatableEntity
     {

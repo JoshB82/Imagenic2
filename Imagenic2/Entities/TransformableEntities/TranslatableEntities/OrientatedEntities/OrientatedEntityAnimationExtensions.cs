@@ -11,7 +11,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <summary>
     /// 
     /// </summary>
-    /// <typeparam name="TOrientatedEntity"></typeparam>
+    /// <typeparam name="TOrientatedEntity">The type of the <see cref="OrientatedEntity"/> being transformed.</typeparam>
     /// <param name="orientatedTCtx"></param>
     extension<TOrientatedEntity>([DisallowNull] AnimationContext<TOrientatedEntity> orientatedTCtx) where TOrientatedEntity : OrientatedEntity
     {
@@ -204,8 +204,8 @@ public static partial class TransformableEntityAnimationExtensions
     /// <summary>
     /// 
     /// </summary>
-    /// <typeparam name="TOrientatedEntity"></typeparam>
-    /// <param name="orientatedTCtx"></param>
+    /// <typeparam name="TOrientatedEntity">The type of each <see cref="OrientatedEntity"/> being transformed.</typeparam>
+    /// <param name="orientatedTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     extension<TOrientatedEntity>([DisallowNull] IEnumerable<AnimationContext<TOrientatedEntity>> orientatedTCtx) where TOrientatedEntity : OrientatedEntity
     {
         #region Orientate
@@ -213,8 +213,6 @@ public static partial class TransformableEntityAnimationExtensions
         /// <summary>
         /// 
         /// </summary>
-        /// <typeparam name="TOrientatedEntity"></typeparam>
-        /// <param name="orientatedTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
         /// <param name="orientation"></param>
         /// <param name="time">The time which this transformation should be completed by.</param>
         /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
@@ -235,8 +233,6 @@ public static partial class TransformableEntityAnimationExtensions
         /// <summary>
         /// 
         /// </summary>
-        /// <typeparam name="TOrientatedEntity"></typeparam>
-        /// <param name="orientatedTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
         /// <param name="q"></param>
         /// <param name="time">The time which this transformation should be completed by.</param>
         /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
@@ -255,8 +251,6 @@ public static partial class TransformableEntityAnimationExtensions
         /// <summary>
         /// 
         /// </summary>
-        /// <typeparam name="TOrientatedEntity"></typeparam>
-        /// <param name="orientatedTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
         /// <param name="axis"></param>
         /// <param name="angle"></param>
         /// <param name="time">The time which this transformation should be completed by.</param>
@@ -276,8 +270,6 @@ public static partial class TransformableEntityAnimationExtensions
         /// <summary>
         /// 
         /// </summary>
-        /// <typeparam name="TOrientatedEntity"></typeparam>
-        /// <param name="orientatedTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
         /// <param name="translatableEntity"></param>
         /// <param name="time">The time which this transformation should be completed by.</param>
         /// <returns>The sequence of contexts for this <see cref="Animation"/>.</returns>
@@ -298,8 +290,6 @@ public static partial class TransformableEntityAnimationExtensions
         /// <summary>
         /// 
         /// </summary>
-        /// <typeparam name="TOrientatedEntity"></typeparam>
-        /// <param name="orientatedTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
         /// <param name="orientation"></param>
         /// <param name="predicate"></param>
         /// <param name="time">The time which this transformation should be completed by.</param>
@@ -322,8 +312,6 @@ public static partial class TransformableEntityAnimationExtensions
         /// <summary>
         /// 
         /// </summary>
-        /// <typeparam name="TOrientatedEntity"></typeparam>
-        /// <param name="orientatedTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
         /// <param name="q"></param>
         /// <param name="predicate"></param>
         /// <param name="time">The time which this transformation should be completed by.</param>
@@ -342,8 +330,6 @@ public static partial class TransformableEntityAnimationExtensions
         /// <summary>
         /// 
         /// </summary>
-        /// <typeparam name="TOrientatedEntity"></typeparam>
-        /// <param name="orientatedTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
         /// <param name="axis"></param>
         /// <param name="angle"></param>
         /// <param name="predicate"></param>
@@ -368,8 +354,6 @@ public static partial class TransformableEntityAnimationExtensions
         /// <summary>
         /// 
         /// </summary>
-        /// <typeparam name="TOrientatedEntity"></typeparam>
-        /// <param name="orientatedTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
         /// <param name="translatableEntity"></param>
         /// <param name="predicate"></param>
         /// <param name="time">The time which this transformation should be completed by.</param>
@@ -381,7 +365,7 @@ public static partial class TransformableEntityAnimationExtensions
         {
             foreach (AnimationContext<TOrientatedEntity> tCtx in orientatedTCtx)
             {
-                yield return predicate(tCtx.TransformableEntity) ? tCtx.LookAt(translatableEntity, time) : tCtx;
+                yield return tCtx.LookAt(translatableEntity, predicate, time);
             }
         }
 

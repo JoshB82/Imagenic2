@@ -12,7 +12,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <summary>
     /// 
     /// </summary>
-    /// <typeparam name="TCamera"></typeparam>
+    /// <typeparam name="TCamera">The type of the <see cref="Camera"/> being transformed.</typeparam>
     /// <param name="camera"></param>
     extension<TCamera>([DisallowNull] AnimationContext<TCamera> cameraTCtx) where TCamera : Camera
     {
@@ -342,7 +342,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <summary>
     /// 
     /// </summary>
-    /// <typeparam name="TCamera"></typeparam>
+    /// <typeparam name="TCamera">The type of each <see cref="Camera"/> being transformed.</typeparam>
     /// <param name="cameraTCtx"></param>
     extension<TCamera>([DisallowNull] IEnumerable<AnimationContext<TCamera>> cameraTCtx) where TCamera : Camera
     {

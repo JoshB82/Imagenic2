@@ -9,7 +9,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <summary>
     /// 
     /// </summary>
-    /// <typeparam name="TTransformableEntity"></typeparam>
+    /// <typeparam name="TTransformableEntity">The type of the <see cref="TransformableEntity"/> being transformed.</typeparam>
     /// <param name="transformableTCtx">The context for this <see cref="Animation"/>.</param>
     extension<TTransformableEntity>([DisallowNull] AnimationContext<TTransformableEntity> transformableTCtx) where TTransformableEntity : TransformableEntity
     {
@@ -65,7 +65,7 @@ public static partial class TransformableEntityAnimationExtensions
     /// <summary>
     /// 
     /// </summary>
-    /// <typeparam name="TTransformableEntity"></typeparam>
+    /// <typeparam name="TTransformableEntity">The type of each <see cref="TransformableEntity"/> being transformed.</typeparam>
     /// <param name="transformableTCtx">The sequence of contexts for this <see cref="Animation"/>.</param>
     extension<TTransformableEntity>([DisallowNull] IEnumerable<AnimationContext<TTransformableEntity>> transformableTCtx) where TTransformableEntity : TransformableEntity
     {

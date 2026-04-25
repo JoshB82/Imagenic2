@@ -10,7 +10,7 @@ public static partial class TransformableEntityTransformations
     /// <summary>
     /// 
     /// </summary>
-    /// <typeparam name="TCamera"></typeparam>
+    /// <typeparam name="TCamera">The type of the <see cref="Camera"/> being transformed.</typeparam>
     /// <param name="camera">The <see cref="Camera"/> being transformed.</param>
     extension<TCamera>([DisallowNull] TCamera camera) where TCamera : Camera
     {
@@ -298,7 +298,7 @@ public static partial class TransformableEntityTransformations
     /// <summary>
     /// 
     /// </summary>
-    /// <typeparam name="TCamera"></typeparam>
+    /// <typeparam name="TCamera">The type of each <see cref="Camera"/> being transformed.</typeparam>
     /// <param name="cameras"></param>
     extension<TCamera>([DisallowNull] IEnumerable<TCamera> cameras) where TCamera : Camera
     {
@@ -676,7 +676,7 @@ public static partial class TransformableEntityTransformations
     /// <summary>
     /// 
     /// </summary>
-    /// <typeparam name="TCamera"></typeparam>
+    /// <typeparam name="TCamera">The type of each <see cref="Camera"/> being transformed.</typeparam>
     /// <param name="cameras"></param>
     extension<TCamera>([DisallowNull] IAsyncEnumerable<TCamera> cameras) where TCamera : Camera
     {
