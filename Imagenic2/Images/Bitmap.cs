@@ -82,9 +82,9 @@ public class Bitmap : Image, IFactory<Bitmap>
             int yIndex = height - 1 - y;
             for (int x = 0; x < width; x++)
             {
-                rowStart[x * 3] = colourBuffer.Values[x][yIndex].B; // Blue
-                rowStart[x * 3 + 1] = colourBuffer.Values[x][yIndex].G; // Green
-                rowStart[x * 3 + 2] = colourBuffer.Values[x][yIndex].R; // Red
+                rowStart[x * 3] = colourBuffer[x, yIndex].B; // Blue
+                rowStart[x * 3 + 1] = colourBuffer[x, yIndex].G; // Green
+                rowStart[x * 3 + 2] = colourBuffer[x, yIndex].R; // Red
             }
         }
         //});
