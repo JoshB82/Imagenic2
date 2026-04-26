@@ -34,7 +34,7 @@ public class Bitmap : Image, IFactory<Bitmap>
             int yIndex = height - 1 - y;
             for (int x = 0; x < width; x++)
             {
-                ColourBuffer.Values[x][yIndex] = Color.FromArgb(rowStart[x * 3 + 2], rowStart[x * 3 + 1], rowStart[x * 3]);
+                ColourBuffer[x, yIndex] = Color.FromArgb(rowStart[x * 3 + 2], rowStart[x * 3 + 1], rowStart[x * 3]);
             }
         });
 

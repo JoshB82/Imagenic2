@@ -16,7 +16,7 @@ public sealed class Buffer2D<T>
         set
         {
             firstDimensionSize = value;
-            SetSizes(firstDimensionSize, secondDimensionSize);
+            //SetSizes(firstDimensionSize, secondDimensionSize);
         }
     }
 
@@ -26,10 +26,11 @@ public sealed class Buffer2D<T>
         set
         {
             secondDimensionSize = value;
-            SetSizes(firstDimensionSize, secondDimensionSize);
+            //SetSizes(firstDimensionSize, secondDimensionSize);
         }
     }
 
+    /*
     private void SetSizes(int firstDimensionSize, int secondDimensionSize)
     {
         Values = new T[firstDimensionSize][];
@@ -38,7 +39,17 @@ public sealed class Buffer2D<T>
             Values[i] = new T[secondDimensionSize];
         }
     }
+    */
 
+    public T?[] Values { get; private set; }
+
+    public T? this[int x, int y]
+    {
+        get => Values[x * firstDimensionSize + y];
+        set => Values[x * firstDimensionSize + y] = value;
+    }
+
+    /*
     public T?[][] Values { get; set; }
 
     internal T? this[int x, int y]
@@ -46,6 +57,7 @@ public sealed class Buffer2D<T>
         get => Values[x][y];
         set => Values[x][y] = value;
     }
+    */
 
     #endregion
 
@@ -55,7 +67,7 @@ public sealed class Buffer2D<T>
     {
         this.firstDimensionSize = firstDimensionSize;
         this.secondDimensionSize = secondDimensionSize;
-        SetSizes(firstDimensionSize, secondDimensionSize);
+        //SetSizes(firstDimensionSize, secondDimensionSize);
     }
 
     #endregion
@@ -65,19 +77,21 @@ public sealed class Buffer2D<T>
     public Buffer2D<T> DeepCopy()
     {
         Buffer2D<T> newBuffer2D = new Buffer2D<T>(firstDimensionSize, secondDimensionSize);
-        newBuffer2D.ForEach((t, i, j) => t = Values[i][j]);
+        newBuffer2D.ForEach((t, i, j) => t = this[i, j]);
         return newBuffer2D;
     }
 
     public void SetAllToValue(T? value)
     {
-        for (int i = 0; i < firstDimensionSize; i++)
+        /*for (int i = 0; i < firstDimensionSize; i++)
         {
             for (int j = 0; j < secondDimensionSize; j++)
             {
-                Values[i][j] = value;
+                this[i, j] = value;
             }
-        }
+        }*/
+
+        Values.AsSpan().Fill(value);
     }
 
     public void SetAllToDefault() => SetAllToValue(default);
@@ -88,7 +102,7 @@ public sealed class Buffer2D<T>
         {
             for (int j = 0; j < secondDimensionSize; j++)
             {
-                action(Values[i][j]);
+                action(this[i, j]);
             }
         }
     }
@@ -99,7 +113,7 @@ public sealed class Buffer2D<T>
         {
             for (int j = 0; j < secondDimensionSize; j++)
             {
-                action(Values[i][j], i, j);
+                action(this[i, j], i, j);
             }
         }
     }
@@ -108,18 +122,18 @@ public sealed class Buffer2D<T>
     {
         Parallel.For(0, firstDimensionSize * secondDimensionSize, i =>
         {
-            T? value = Values[i % firstDimensionSize][i / firstDimensionSize];
+            T? value = this[i % firstDimensionSize, i / firstDimensionSize];
             action(value);
         });
     }
 
-    public static explicit operator T[](Buffer2D<T> buffer)
-    {
-        T[] array = new T[buffer.firstDimensionSize * buffer.secondDimensionSize];
-        buffer.ForEach((t, i, j) => array[i * buffer.firstDimensionSize + j] = buffer.Values[i][j]);
-        return array;
-    }
-
+    //public static explicit operator T[](Buffer2D<T> buffer)
+    //{
+        //T[] array = new T[buffer.firstDimensionSize * buffer.secondDimensionSize];
+        //buffer.ForEach((t, i, j) => array[i * buffer.firstDimensionSize + j] = buffer.Values[i][j]);
+        //return array;
+    //}
+    
     public TImage ToImage<TImage>() where TImage : Imagenic2.Core.Images.Image, IFactory<TImage>
     {
         Buffer2D<Color> imageValues = null;
@@ -132,9 +146,9 @@ public sealed class Buffer2D<T>
             imageValues = new Buffer2D<Color>(firstDimensionSize, secondDimensionSize);
             imageValues.ForEach((colour, x, y) =>
             {
-                float value = (float)((object)(Values[x][y]));
+                float value = (float)((object)(this[x, y]));
                 int scaledDepth = value == Rasteriser<TImage>.backgroundValue ? 255 : ((value + 1) * 255 / 2).RoundToInt();
-                imageValues.Values[x][y] = Color.FromArgb(scaledDepth, scaledDepth, scaledDepth);
+                //imageValues.Values[x][y] = Color.FromArgb(scaledDepth, scaledDepth, scaledDepth);
             });
         }
         else

@@ -8,20 +8,20 @@ public partial class Rasteriser<TImage>
 {
     private void ProduceShadowMaps(Triangle triangle, Buffer2D<float> buffer, int x, int y, float z)
     {
-        if (z.ApproxLessThan(buffer.Values[x][y], 1E-4f))
+        if (z.ApproxLessThan(buffer[x, y], 1E-4f))
         {
-            buffer.Values[x][y] = z;
+            buffer[x, y] = z;
         }
     }
 
     private void OnInterpolation(Triangle triangle, Buffer2D<float> zBuffer, int x, int y, float z, Vector3D v, Vector2D t)
     {
         float vx = v.x, vy = v.y, vz = v.z;
-        if (z.ApproxLessThan(zBuffer.Values[x][y], 1E-4f))
+        if (z.ApproxLessThan(zBuffer[x, y], 1E-4f))
         {
-            zBuffer.Values[x][y] = z;
+            zBuffer[x, y] = z;
             Color pixelColour = ((SolidStyle)(triangle.FrontStyle)).Colour;
-            colourBuffer.Values[x][y] = ShadowMapCheck(pixelColour, vx, vy, vz);
+            colourBuffer[x, y] = ShadowMapCheck(pixelColour, vx, vy, vz);
         }
     }
 
@@ -30,9 +30,9 @@ public partial class Rasteriser<TImage>
         float vx = v.x, vy = v.y, vz = v.z;
         float tu = t.x, tv = t.y;
 
-        if (z.ApproxLessThan(zBuffer.Values[x][y], 1E-4f))
+        if (z.ApproxLessThan(zBuffer[x, y], 1E-4f))
         {
-            zBuffer.Values[x][y] = z;
+            zBuffer[x, y] = z;
             Color pixelColour;
             TextureStyle ts = (TextureStyle)(triangle.FrontStyle);
             Imagenic2.Core.Images.Image textureImage = ts.Image;
@@ -44,9 +44,9 @@ public partial class Rasteriser<TImage>
             else
             {
                 int mappedTu = (tu * (textureImage.Width - 1)).RoundToInt(), mappedTv = (tv * (textureImage.Height - 1)).RoundToInt();
-                pixelColour = textureImage.ColourBuffer.Values[mappedTu][mappedTv];
+                pixelColour = textureImage.ColourBuffer[mappedTu, mappedTv];
             }
-            colourBuffer.Values[x][y] = ShadowMapCheck(pixelColour, vx, vy, vz);
+            colourBuffer[x, y] = ShadowMapCheck(pixelColour, vx, vy, vz);
         }
     }
 
@@ -79,7 +79,7 @@ public partial class Rasteriser<TImage>
                 int xLookUp = point.x.RoundToInt();
                 int yLookUp = point.y.RoundToInt();
 
-                if (shadowMap.Data.Values[xLookUp][yLookUp].ApproxLessThan(point.z, 1e-3f))
+                if (shadowMap.Data[xLookUp, yLookUp].ApproxLessThan(point.z, 1e-3f))
                 {
                     // Pixel is not affected by this light
                 }
@@ -97,11 +97,11 @@ public partial class Rasteriser<TImage>
 
     private void OnInterpolation(Edge edge, int x, int y, float z)
     {
-        if (z.ApproxLessThan(zBuffer.Values[x][y], 1E-4f))
+        if (z.ApproxLessThan(zBuffer[x, y], 1E-4f))
         {
-            zBuffer.Values[x][y] = z;
+            zBuffer[x, y] = z;
             Color colour = ((SolidEdgeStyle)(edge.EdgeStyle)).Colour;
-            colourBuffer.Values[x][y] = colour;
+            colourBuffer[x, y] = colour;
         }
     }
 }

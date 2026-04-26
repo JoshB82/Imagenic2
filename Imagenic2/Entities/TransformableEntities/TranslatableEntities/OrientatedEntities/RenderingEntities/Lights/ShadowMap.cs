@@ -54,7 +54,7 @@ public sealed class ShadowMap
                 int tileWidth = (int)(Min(sizeX, width - startX));
                 int tileHeight = (int)(Min(sizeY, height - startY));
 
-                Tiles.Values[x][y] = new Tile(startX, startY, startX + tileWidth, startY + tileHeight);
+                Tiles[x, y] = new Tile(startX, startY, startX + tileWidth, startY + tileHeight);
             }
         }
     }
