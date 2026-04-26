@@ -45,8 +45,8 @@ public sealed class Buffer2D<T>
 
     public T? this[int x, int y]
     {
-        get => Values[x * firstDimensionSize + y];
-        set => Values[x * firstDimensionSize + y] = value;
+        get => Values[x * secondDimensionSize + y];
+        set => Values[x * secondDimensionSize + y] = value;
     }
 
     /*
