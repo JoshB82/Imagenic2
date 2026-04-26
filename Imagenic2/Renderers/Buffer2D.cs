@@ -67,6 +67,7 @@ public sealed class Buffer2D<T>
     {
         this.firstDimensionSize = firstDimensionSize;
         this.secondDimensionSize = secondDimensionSize;
+        Values = new T?[firstDimensionSize * secondDimensionSize];
         //SetSizes(firstDimensionSize, secondDimensionSize);
     }
 
