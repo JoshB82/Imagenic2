@@ -3,7 +3,7 @@ using Imagenic2.Core.Utilities;
 
 namespace Imagenic2.Core.Entities.Animation;
 
-public sealed class AnimationContext<TTransformableEntity> where TTransformableEntity : TransformableEntity
+public sealed class AnimationContext<TTransformableEntity> : IAnimationContext where TTransformableEntity : TransformableEntity
 {
     #region Fields and Properties
 
@@ -62,13 +62,17 @@ public sealed class AnimationContext<TTransformableEntity> where TTransformableE
     #endregion
 }
 
+internal interface IAnimationContext
+{
+}
+
 public sealed class AnimationContextNode
 {
     #region Fields and Properties
 
     public float StartTime { get; set; }
     public Node TransformableEntityNode { get; set; }
-    internal List<AnimationContext<TransformableEntity>> AnimationContexts { get; set; } = new List<AnimationContext<TransformableEntity>>();
+    internal Dictionary<TransformableEntity, IAnimationContext> AnimationContextDictionary { get; set; } = new Dictionary<TransformableEntity, IAnimationContext>();
 
     #endregion
 
@@ -86,12 +90,12 @@ public sealed class AnimationContextNode
 
     public Animation End()
     {
-        foreach (AnimationContext<TransformableEntity> animationContext in AnimationContexts)
+        foreach (KeyValuePair<TransformableEntity, IAnimationContext> animationContextEntry in AnimationContextDictionary)
         {
-            animationContext.AssembleTransformation();
+            ((AnimationContext<TransformableEntity>)(animationContextEntry.Value)).AssembleTransformation();
         }
 
-        return new Animation(AnimationContexts.Select(t => t.Transformation));
+        return new Animation(AnimationContextDictionary.Select(t => ((AnimationContext<TransformableEntity>)(t.Value)).Transformation));
     }
 
     #region Orientate
@@ -105,24 +109,25 @@ public sealed class AnimationContextNode
         {
             OrientatedEntity? orientatedEntity = (OrientatedEntity?)node.Content;
             if (orientatedEntity is null) continue;
-
-            AnimationContext<TransformableEntity>? animationContext = AnimationContexts.FirstOrDefault(c => c.TransformableEntity == orientatedEntity);
-            if (animationContext is null)
+            
+            if (!AnimationContextDictionary.TryGetValue(orientatedEntity, out IAnimationContext animationContext))
             {
-                animationContext = new AnimationContext<TransformableEntity>(orientatedEntity, StartTime);
-                AnimationContexts.Add(animationContext);
+                animationContext = new AnimationContext<OrientatedEntity>(orientatedEntity, StartTime);
+                AnimationContextDictionary.Add(orientatedEntity, animationContext);
             }
 
-            animationContext.OrientationKeyFrameAnimation ??= new KeyFrameAnimation<TransformableEntity, Quaternion>(new List<KeyFrame<Quaternion>>(), v => orientatedEntity.WorldOrientation.Rotate(v), MathsHelper.Lerp);
+            AnimationContext<OrientatedEntity> orientatedEntityAnimationContext = (AnimationContext<OrientatedEntity>)animationContext;
 
-            Instruction<TransformableEntity, Quaternion> instruction = new(
+            orientatedEntityAnimationContext.OrientationKeyFrameAnimation ??= new KeyFrameAnimation<OrientatedEntity, Quaternion>(new List<KeyFrame<Quaternion>>(), v => orientatedEntity.WorldOrientation.Rotate(v), MathsHelper.Lerp);
+
+            Instruction<OrientatedEntity, Quaternion> instruction = new(
                 time: time,
                 func: t => MathsHelper.QuaternionRotateBetweenOrientations(Orientation.ModelOrientation, orientation),
-                predicateFailValue: MathsHelper.QuaternionRotateBetweenOrientations(Orientation.ModelOrientation, ((OrientatedEntity)animationContext.TransformableEntity).WorldOrientation),
+                predicateFailValue: MathsHelper.QuaternionRotateBetweenOrientations(Orientation.ModelOrientation, ((OrientatedEntity)orientatedEntityAnimationContext.TransformableEntity).WorldOrientation),
                 predicate: null
             );
 
-            animationContext.OrientationKeyFrameAnimation.Instructions.Add(instruction);
+            orientatedEntityAnimationContext.OrientationKeyFrameAnimation.Instructions.Add(instruction);
         }
 
         return this;
@@ -142,23 +147,24 @@ public sealed class AnimationContextNode
             OrientatedEntity? orientatedEntity = (OrientatedEntity?)node.Content;
             if (orientatedEntity is null) continue;
 
-            AnimationContext<TransformableEntity>? animationContext = AnimationContexts.FirstOrDefault(c => c.TransformableEntity == orientatedEntity);
-            if (animationContext is null)
+            if (!AnimationContextDictionary.TryGetValue(orientatedEntity, out IAnimationContext animationContext))
             {
-                animationContext = new AnimationContext<TransformableEntity>(orientatedEntity, StartTime);
-                AnimationContexts.Add(animationContext);
+                animationContext = new AnimationContext<OrientatedEntity>(orientatedEntity, StartTime);
+                AnimationContextDictionary.Add(orientatedEntity, animationContext);
             }
 
-            animationContext.OrientationKeyFrameAnimation ??= new KeyFrameAnimation<TransformableEntity, Quaternion>(new List<KeyFrame<Quaternion>>(), v => orientatedEntity.WorldOrientation.Rotate(v), MathsHelper.Lerp);
+            AnimationContext<OrientatedEntity> orientatedEntityAnimationContext = (AnimationContext<OrientatedEntity>)animationContext;
 
-            Instruction<TransformableEntity, Quaternion> instruction = new(
+            orientatedEntityAnimationContext.OrientationKeyFrameAnimation ??= new KeyFrameAnimation<OrientatedEntity, Quaternion>(new List<KeyFrame<Quaternion>>(), v => orientatedEntity.WorldOrientation.Rotate(v), MathsHelper.Lerp);
+
+            Instruction<OrientatedEntity, Quaternion> instruction = new(
                 time: time,
                 func: t => MathsHelper.QuaternionRotateBetweenOrientations(Orientation.ModelOrientation, orientation),
-                predicateFailValue: MathsHelper.QuaternionRotateBetweenOrientations(Orientation.ModelOrientation, ((OrientatedEntity)animationContext.TransformableEntity).WorldOrientation),
+                predicateFailValue: MathsHelper.QuaternionRotateBetweenOrientations(Orientation.ModelOrientation, ((OrientatedEntity)orientatedEntityAnimationContext.TransformableEntity).WorldOrientation),
                 predicate: t => predicate((TOrientatedEntity)t)
             );
 
-            animationContext.OrientationKeyFrameAnimation.Instructions.Add(instruction);
+            orientatedEntityAnimationContext.OrientationKeyFrameAnimation.Instructions.Add(instruction);
         }
 
         return this;
@@ -178,23 +184,24 @@ public sealed class AnimationContextNode
             OrientatedEntity? orientatedEntity = (OrientatedEntity?)node.Content;
             if (orientatedEntity is null) continue;
 
-            AnimationContext<TransformableEntity>? animationContext = AnimationContexts.FirstOrDefault(c => c.TransformableEntity == orientatedEntity);
-            if (animationContext is null)
+            if (!AnimationContextDictionary.TryGetValue(orientatedEntity, out IAnimationContext animationContext))
             {
                 animationContext = new AnimationContext<TransformableEntity>(orientatedEntity, StartTime);
-                AnimationContexts.Add(animationContext);
+                AnimationContextDictionary.Add(orientatedEntity, animationContext);
             }
 
-            animationContext.OrientationKeyFrameAnimation ??= new KeyFrameAnimation<TransformableEntity, Quaternion>(new List<KeyFrame<Quaternion>>(), v => orientatedEntity.WorldOrientation.Rotate(v), MathsHelper.Lerp);
+            AnimationContext<OrientatedEntity> orientatedEntityAnimationContext = (AnimationContext<OrientatedEntity>)animationContext;
 
-            Instruction<TransformableEntity, Quaternion> instruction = new(
+            orientatedEntityAnimationContext.OrientationKeyFrameAnimation ??= new KeyFrameAnimation<OrientatedEntity, Quaternion>(new List<KeyFrame<Quaternion>>(), v => orientatedEntity.WorldOrientation.Rotate(v), MathsHelper.Lerp);
+
+            Instruction<OrientatedEntity, Quaternion> instruction = new(
                 time: time,
                 func: t => q * MathsHelper.QuaternionRotateBetweenOrientations(Orientation.ModelOrientation, ((OrientatedEntity)t).WorldOrientation),
-                predicateFailValue: MathsHelper.QuaternionRotateBetweenOrientations(Orientation.ModelOrientation, ((OrientatedEntity)animationContext.TransformableEntity).WorldOrientation),
+                predicateFailValue: MathsHelper.QuaternionRotateBetweenOrientations(Orientation.ModelOrientation, ((OrientatedEntity)orientatedEntityAnimationContext.TransformableEntity).WorldOrientation),
                 predicate: null
             );
 
-            animationContext.OrientationKeyFrameAnimation.Instructions.Add(instruction);
+            orientatedEntityAnimationContext.OrientationKeyFrameAnimation.Instructions.Add(instruction);
         }
 
         return this;
@@ -219,23 +226,24 @@ public sealed class AnimationContextNode
             OrientatedEntity? orientatedEntity = (OrientatedEntity?)node.Content;
             if (orientatedEntity is null) continue;
 
-            AnimationContext<TransformableEntity>? animationContext = AnimationContexts.FirstOrDefault(c => c.TransformableEntity == orientatedEntity);
-            if (animationContext is null)
+            if (!AnimationContextDictionary.TryGetValue(orientatedEntity, out IAnimationContext animationContext))
             {
                 animationContext = new AnimationContext<TransformableEntity>(orientatedEntity, StartTime);
-                AnimationContexts.Add(animationContext);
+                AnimationContextDictionary.Add(orientatedEntity, animationContext);
             }
 
-            animationContext.OrientationKeyFrameAnimation ??= new KeyFrameAnimation<TransformableEntity, Quaternion>(new List<KeyFrame<Quaternion>>(), v => orientatedEntity.WorldOrientation.Rotate(v), MathsHelper.Lerp);
+            AnimationContext<OrientatedEntity> orientatedEntityAnimationContext = (AnimationContext<OrientatedEntity>)animationContext;
 
-            Instruction<TransformableEntity, Quaternion> instruction = new(
+            orientatedEntityAnimationContext.OrientationKeyFrameAnimation ??= new KeyFrameAnimation<OrientatedEntity, Quaternion>(new List<KeyFrame<Quaternion>>(), v => orientatedEntity.WorldOrientation.Rotate(v), MathsHelper.Lerp);
+
+            Instruction<OrientatedEntity, Quaternion> instruction = new(
                 time: time,
                 func: t => q * MathsHelper.QuaternionRotateBetweenOrientations(Orientation.ModelOrientation, ((OrientatedEntity)t).WorldOrientation),
-                predicateFailValue: MathsHelper.QuaternionRotateBetweenOrientations(Orientation.ModelOrientation, ((OrientatedEntity)animationContext.TransformableEntity).WorldOrientation),
+                predicateFailValue: MathsHelper.QuaternionRotateBetweenOrientations(Orientation.ModelOrientation, ((OrientatedEntity)orientatedEntityAnimationContext.TransformableEntity).WorldOrientation),
                 predicate: t => predicate((TOrientatedEntity)t)
             );
 
-            animationContext.OrientationKeyFrameAnimation.Instructions.Add(instruction);
+            orientatedEntityAnimationContext.OrientationKeyFrameAnimation.Instructions.Add(instruction);
         }
 
         return this;
@@ -284,23 +292,24 @@ public sealed class AnimationContextNode
             PhysicalEntity? physicalEntity = (PhysicalEntity?)node.Content;
             if (physicalEntity is null) continue;
 
-            AnimationContext<TransformableEntity>? animationContext = AnimationContexts.FirstOrDefault(c => c.TransformableEntity == physicalEntity);
-            if (animationContext is null)
+            if (!AnimationContextDictionary.TryGetValue(physicalEntity, out IAnimationContext animationContext))
             {
                 animationContext = new AnimationContext<TransformableEntity>(physicalEntity, StartTime);
-                AnimationContexts.Add(animationContext);
+                AnimationContextDictionary.Add(physicalEntity, animationContext);
             }
 
-            animationContext.ScalingKeyFrameAnimation ??= new KeyFrameAnimation<TransformableEntity, Vector3D>(new List<KeyFrame<Vector3D>>(), v => physicalEntity.Scaling = v, MathsHelper.Lerp);
+            AnimationContext<PhysicalEntity> physicalEntityAnimationContext = (AnimationContext<PhysicalEntity>)animationContext;
 
-            Instruction<TransformableEntity, Vector3D> instruction = new(
+            physicalEntityAnimationContext.ScalingKeyFrameAnimation ??= new KeyFrameAnimation<PhysicalEntity, Vector3D>(new List<KeyFrame<Vector3D>>(), v => physicalEntity.Scaling = v, MathsHelper.Lerp);
+
+            Instruction<PhysicalEntity, Vector3D> instruction = new(
                 time: time,
                 func: t => new Vector3D(((PhysicalEntity)t).Scaling.x * scaleFactor.x, ((PhysicalEntity)t).Scaling.y * scaleFactor.y, ((PhysicalEntity)t).Scaling.z * scaleFactor.z),
-                predicateFailValue: ((PhysicalEntity)animationContext.TransformableEntity).Scaling,
+                predicateFailValue: ((PhysicalEntity)physicalEntityAnimationContext.TransformableEntity).Scaling,
                 predicate: null
             );
 
-            animationContext.ScalingKeyFrameAnimation.Instructions.Add(instruction);
+            physicalEntityAnimationContext.ScalingKeyFrameAnimation.Instructions.Add(instruction);
         }
 
         return this;
@@ -344,23 +353,24 @@ public sealed class AnimationContextNode
             PhysicalEntity? physicalEntity = (PhysicalEntity?)node.Content;
             if (physicalEntity is null) continue;
 
-            AnimationContext<TransformableEntity>? animationContext = AnimationContexts.FirstOrDefault(c => c.TransformableEntity == physicalEntity);
-            if (animationContext is null)
+            if (!AnimationContextDictionary.TryGetValue(physicalEntity, out IAnimationContext animationContext))
             {
                 animationContext = new AnimationContext<TransformableEntity>(physicalEntity, StartTime);
-                AnimationContexts.Add(animationContext);
+                AnimationContextDictionary.Add(physicalEntity, animationContext);
             }
 
-            animationContext.ScalingKeyFrameAnimation ??= new KeyFrameAnimation<TransformableEntity, Vector3D>(new List<KeyFrame<Vector3D>>(), v => physicalEntity.Scaling = v, MathsHelper.Lerp);
+            AnimationContext<PhysicalEntity> physicalEntityAnimationContext = (AnimationContext<PhysicalEntity>)animationContext;
 
-            Instruction<TransformableEntity, Vector3D> instruction = new(
+            physicalEntityAnimationContext.ScalingKeyFrameAnimation ??= new KeyFrameAnimation<PhysicalEntity, Vector3D>(new List<KeyFrame<Vector3D>>(), v => physicalEntity.Scaling = v, MathsHelper.Lerp);
+
+            Instruction<PhysicalEntity, Vector3D> instruction = new(
                 time: time,
                 func: t => new Vector3D(((PhysicalEntity)t).Scaling.x * scaleFactor.x, ((PhysicalEntity)t).Scaling.y * scaleFactor.y, ((PhysicalEntity)t).Scaling.z * scaleFactor.z),
-                predicateFailValue: ((PhysicalEntity)animationContext.TransformableEntity).Scaling,
+                predicateFailValue: ((PhysicalEntity)physicalEntityAnimationContext.TransformableEntity).Scaling,
                 predicate: t => predicate((TPhysicalEntity)t)
             );
 
-            animationContext.ScalingKeyFrameAnimation.Instructions.Add(instruction);
+            physicalEntityAnimationContext.ScalingKeyFrameAnimation.Instructions.Add(instruction);
         }
 
         return this;
@@ -378,18 +388,19 @@ public sealed class AnimationContextNode
             TransformableEntity? transformableEntity = (TransformableEntity?)node.Content;
             if (transformableEntity is null) continue;
 
-            AnimationContext<TransformableEntity>? transformationContext = AnimationContexts.FirstOrDefault(c => c.TransformableEntity == transformableEntity);
-            if (transformationContext is null)
+            if (!AnimationContextDictionary.TryGetValue(transformableEntity, out IAnimationContext animationContext))
             {
-                transformationContext = new AnimationContext<TransformableEntity>(transformableEntity, StartTime);
-                AnimationContexts.Add(transformationContext);
+                animationContext = new AnimationContext<TransformableEntity>(transformableEntity, StartTime);
+                AnimationContextDictionary.Add(transformableEntity, animationContext);
             }
 
-            InstantaneousAnimation<TransformableEntity>? transformationAnimation = transformationContext.TransformationAnimation;
+            AnimationContext<TransformableEntity> transformableEntityAnimationContext = (AnimationContext<TransformableEntity>)animationContext;
+
+            InstantaneousAnimation<TransformableEntity>? transformationAnimation = transformableEntityAnimationContext.TransformationAnimation;
 
             transformationAnimation ??= new InstantaneousAnimation<TransformableEntity>(new List<KeyFrame<Action<TransformableEntity>>>());
 
-            transformationContext.TransformationAnimation = transformationAnimation;
+            transformableEntityAnimationContext.TransformationAnimation = transformationAnimation;
             KeyFrame<Action<TransformableEntity>> newKeyFrame = new KeyFrame<Action<TransformableEntity>>(time, transformation);
             transformationAnimation.KeyFrames.Add(newKeyFrame);
         }
@@ -409,18 +420,19 @@ public sealed class AnimationContextNode
             TransformableEntity? transformableEntity = (TransformableEntity?)node.Content;
             if (transformableEntity is null) continue;
 
-            AnimationContext<TransformableEntity>? transformationContext = AnimationContexts.FirstOrDefault(c => c.TransformableEntity == transformableEntity);
-            if (transformationContext is null)
+            if (!AnimationContextDictionary.TryGetValue(transformableEntity, out IAnimationContext animationContext))
             {
-                transformationContext = new AnimationContext<TransformableEntity>(transformableEntity, StartTime);
-                AnimationContexts.Add(transformationContext);
+                animationContext = new AnimationContext<TransformableEntity>(transformableEntity, StartTime);
+                AnimationContextDictionary.Add(transformableEntity, animationContext);
             }
 
-            InstantaneousAnimation<TransformableEntity>? transformationAnimation = transformationContext.TransformationAnimation;
+            AnimationContext<TransformableEntity> transformableEntityAnimationContext = (AnimationContext<TransformableEntity>)animationContext;
+
+            InstantaneousAnimation<TransformableEntity>? transformationAnimation = transformableEntityAnimationContext.TransformationAnimation;
 
             transformationAnimation ??= new InstantaneousAnimation<TransformableEntity>(new List<KeyFrame<Action<TransformableEntity>>>());
 
-            transformationContext.TransformationAnimation = transformationAnimation;
+            transformableEntityAnimationContext.TransformationAnimation = transformationAnimation;
             KeyFrame<Action<TransformableEntity>> newKeyFrame = new KeyFrame<Action<TransformableEntity>>(time, t => { if (predicate((TTransformableEntity)t)) transformation(t); });
             transformationAnimation.KeyFrames.Add(newKeyFrame);
         }
@@ -466,22 +478,23 @@ public sealed class AnimationContextNode
             TranslatableEntity? translatableEntity = (TranslatableEntity?)node.Content;
             if (translatableEntity is null) continue;
 
-            AnimationContext<TransformableEntity>? animationContext = AnimationContexts.FirstOrDefault(c => c.TransformableEntity == translatableEntity);
-            if (animationContext is null)
+            if (!AnimationContextDictionary.TryGetValue(translatableEntity, out IAnimationContext animationContext))
             {
                 animationContext = new AnimationContext<TransformableEntity>(translatableEntity, StartTime);
-                AnimationContexts.Add(animationContext);
+                AnimationContextDictionary.Add(translatableEntity, animationContext);
             }
 
-            animationContext.TranslationKeyFrameAnimation ??= new KeyFrameAnimation<TransformableEntity, Vector3D>(new List<KeyFrame<Vector3D>>(), v => translatableEntity.WorldOrigin = v, MathsHelper.Lerp);
+            AnimationContext<TranslatableEntity> translatableEntityAnimationContext = (AnimationContext<TranslatableEntity>)animationContext;
 
-            Instruction<TransformableEntity, Vector3D> instruction = new(
+            translatableEntityAnimationContext.TranslationKeyFrameAnimation ??= new KeyFrameAnimation<TranslatableEntity, Vector3D>(new List<KeyFrame<Vector3D>>(), v => translatableEntity.WorldOrigin = v, MathsHelper.Lerp);
+
+            Instruction<TranslatableEntity, Vector3D> instruction = new(
                 time: time,
                 func: t => ((TranslatableEntity)t).WorldOrigin + displacement,
-                predicateFailValue: ((TranslatableEntity)animationContext.TransformableEntity).WorldOrigin,
+                predicateFailValue: ((TranslatableEntity)translatableEntityAnimationContext.TransformableEntity).WorldOrigin,
                 predicate: null);
 
-            animationContext.TranslationKeyFrameAnimation.Instructions.Add(instruction);
+            translatableEntityAnimationContext.TranslationKeyFrameAnimation.Instructions.Add(instruction);
         }
 
         return this;
@@ -525,23 +538,24 @@ public sealed class AnimationContextNode
             TranslatableEntity? translatableEntity = (TranslatableEntity?)node.Content;
             if (translatableEntity is null) continue;
 
-            AnimationContext<TransformableEntity>? animationContext = AnimationContexts.FirstOrDefault(c => c.TransformableEntity == translatableEntity);
-            if (animationContext is null)
+            if (!AnimationContextDictionary.TryGetValue(translatableEntity, out IAnimationContext animationContext))
             {
                 animationContext = new AnimationContext<TransformableEntity>(translatableEntity, StartTime);
-                AnimationContexts.Add(animationContext);
+                AnimationContextDictionary.Add(translatableEntity, animationContext);
             }
 
-            animationContext.TranslationKeyFrameAnimation ??= new KeyFrameAnimation<TransformableEntity, Vector3D>(new List<KeyFrame<Vector3D>>(), v => translatableEntity.WorldOrigin = v, MathsHelper.Lerp);
+            AnimationContext<TranslatableEntity> translatableEntityAnimationContext = (AnimationContext<TranslatableEntity>)animationContext;
 
-            Instruction<TransformableEntity, Vector3D> instruction = new(
+            translatableEntityAnimationContext.TranslationKeyFrameAnimation ??= new KeyFrameAnimation<TranslatableEntity, Vector3D>(new List<KeyFrame<Vector3D>>(), v => translatableEntity.WorldOrigin = v, MathsHelper.Lerp);
+
+            Instruction<TranslatableEntity, Vector3D> instruction = new(
                 time: time,
                 func: t => ((TranslatableEntity)t).WorldOrigin + displacement,
-                predicateFailValue: ((TranslatableEntity)animationContext.TransformableEntity).WorldOrigin,
+                predicateFailValue: ((TranslatableEntity)translatableEntityAnimationContext.TransformableEntity).WorldOrigin,
                 predicate: t => predicate((TTranslatableEntity)t)
             );
 
-            animationContext.TranslationKeyFrameAnimation.Instructions.Add(instruction);
+            translatableEntityAnimationContext.TranslationKeyFrameAnimation.Instructions.Add(instruction);
         }
 
         return this;
