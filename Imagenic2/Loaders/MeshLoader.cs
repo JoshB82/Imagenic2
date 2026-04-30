@@ -21,7 +21,7 @@ public abstract class MeshLoader : Loader
 
     public abstract bool LoadFile(string filePath);
 
-    public abstract MeshStructure ExtractMeshStructure();
+    public abstract MeshStructure ExtractMeshStructure(CancellationToken ct);
 
     #endregion
 }

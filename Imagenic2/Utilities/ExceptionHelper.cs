@@ -100,6 +100,12 @@ internal static class ExceptionHelper
     {
         if (!Quaternion.IsFinite(param)) throw new MustBeFiniteException($"{paramName} must be finite.");
     }
+
+    internal static void ThrowIfNotOfFileType(string filePath, string extension,
+        [CallerArgumentExpression(nameof(filePath))] string? paramName = null)
+    {
+        if (!(Path.GetExtension(filePath) == extension)) throw new IncorrectFileTypeException($"{paramName} must be a file of type {extension}.");
+    }
 }
 
 public class CannotBeZeroException : Exception
@@ -137,6 +143,19 @@ public class MustBeFiniteException : Exception
     public MustBeFiniteException(string message) : base(message) { }
 
     public MustBeFiniteException(string message, Exception innerException) : base(message, innerException) { }
+
+    #endregion
+}
+
+public class IncorrectFileTypeException : Exception
+{
+    #region Constructors
+
+    public IncorrectFileTypeException() { }
+
+    public IncorrectFileTypeException(string message) : base(message) { }
+
+    public IncorrectFileTypeException(string message, Exception innerException) : base(message, innerException) { }
 
     #endregion
 }
