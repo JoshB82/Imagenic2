@@ -4,6 +4,8 @@ public abstract class Loader
 {
     #region Fields and Properties
 
+    public bool IgnoreMalformedData { get; set; } = false;
+
     #endregion
 
     #region Constructors

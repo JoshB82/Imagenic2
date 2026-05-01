@@ -19,7 +19,7 @@ public abstract class MeshLoader : Loader
 
     #region Methods
 
-    public abstract bool LoadFile(string filePath);
+    public abstract bool Load();
 
     public abstract MeshStructure ExtractMeshStructure(CancellationToken ct);
 

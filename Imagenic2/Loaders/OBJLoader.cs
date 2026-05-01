@@ -1,11 +1,16 @@
 ﻿using Imagenic2.Core.Entities;
 using Imagenic2.Core.Enums;
-using System.Drawing.Text;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Imagenic2.Core.Loaders;
 
-public sealed class OBJLoader : MeshLoader
+public interface IOBJBuilder
+{
+    public IOBJBuilder WithMTLFile(string filePath);
+    public IOBJBuilder WithRFLFile(string filePath);
+    public bool Load();
+}
+
+public sealed partial class OBJLoader : MeshLoader, IOBJBuilder
 {
     #region Fields and Properties
 
@@ -13,6 +18,9 @@ public sealed class OBJLoader : MeshLoader
 
     private bool mtlSelected;
     private List<IEnumerable<string>> mtlData;
+
+    private bool rflSelected;
+    private List<IEnumerable<string>> rflData;
 
     #endregion
 
@@ -27,7 +35,7 @@ public sealed class OBJLoader : MeshLoader
 
     #region Methods
 
-    public override OBJLoader LoadFile(string filePath)
+    public IOBJBuilder LoadOBJFile(string filePath)
     {
         ThrowIfNotOfFileType(filePath, ".obj");
 
@@ -35,7 +43,8 @@ public sealed class OBJLoader : MeshLoader
         return this;
     }
 
-    public OBJLoader WithMTLFile(string filePath)
+    
+    public IOBJBuilder WithMTLFile(string filePath)
     {
         ThrowIfNotOfFileType(filePath, ".mtl");
 
@@ -43,24 +52,26 @@ public sealed class OBJLoader : MeshLoader
         return this;
     }
 
-    public OBJLoader WithRFLFile(string filePath)
+    public IOBJBuilder WithRFLFile(string filePath)
     {
         ThrowIfNotOfFileType(filePath, ".rfl");
 
-
+        // ...
 
         return this;
     }
 
-    public bool Load()
+    public override bool Load()
     {
-        mtlSelected = mtlData.Any();
+        mtlSelected = mtlData.Count > 0;
+        rflSelected = rflData.Count > 0;
         return objData.Any();
     }
+    
 
     public async override MeshStructure ExtractMeshStructure(CancellationToken ct = default)
     {
-        var mtlDictionary =  ProcessMaterials();
+        var materialDictionary =  ObtainMaterials();
 
 
         List<Vector3D> positions = new List<Vector3D>();
@@ -74,41 +85,38 @@ public sealed class OBJLoader : MeshLoader
         Dictionary<(Vector3D, Vector3D, Vector3D), Triangle> triangleDictionary = new Dictionary<(Vector3D, Vector3D, Vector3D), Triangle>();
         Dictionary<string, Face> faceDictionary = new Dictionary<string, Face>();
 
-        
-        
-        float x, y, z;
-
         foreach (string line in objData)
         {
-            string[] parts = line.Split(' ');
+            string[] parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+            Material currentMaterial = null;
 
             switch (parts[0])
             {
-                // Position co-ordinates
-                case "v":
-                    x = float.Parse(parts[1]);
-                    y = float.Parse(parts[2]);
-                    z = float.Parse(parts[3]);
+                case "usemtl": // Use material
+                    currentMaterial = materialDictionary[parts[1]];
+                    break;
+                case "v": // Position co-ordinates
+                    float x = float.Parse(parts[1]);
+                    float y = float.Parse(parts[2]);
+                    float z = float.Parse(parts[3]);
 
                     positions.Add(new Vector3D(x, y, z));
                     break;
-                // Texture co-ordinates
-                case "vt":
+                case "vt": // Texture co-ordinates
                     x = float.Parse(parts[1]);
                     y = float.Parse(parts[2]);
 
                     textureCoordinates.Add(new Vector2D(x, y));
                     break;
-                // Normal
-                case "vn":
+                case "vn": // Normal
                     x = float.Parse(parts[1]);
                     y = float.Parse(parts[2]);
                     z = float.Parse(parts[3]);
 
                     vertexNormals.Add(new Vector3D(x, y, z));
                     break;
-                // Line
-                case "l":
+                case "l": // Line
                     addedVertices = new List<(Vertex, int, int, int)>();
                     for (int i = 1; i < parts.Length; i++)
                     {
@@ -126,8 +134,7 @@ public sealed class OBJLoader : MeshLoader
                     }
 
                     break;
-                // Face
-                case "f":
+                case "f": // Face
                     addedVertices = new List<(Vertex, int, int, int)>();
                     for (int i = 1; i < parts.Length; i++)
                     {
@@ -167,7 +174,6 @@ public sealed class OBJLoader : MeshLoader
 
                         AddToTriangleDictionary(key, t);
                     }
-
 
                     triangleFan = triangleFan.Select(t =>
                     {
@@ -272,143 +278,7 @@ public sealed class OBJLoader : MeshLoader
         );
     }
 
-    private Dictionary<string, MTL> ProcessMaterials()
-    {
-        var mtlDictionary = new Dictionary<string, MTL>();
-
-        foreach (IEnumerable<string> fileData in mtlData)
-        {
-            string name = null;
-            MTL mtl = new MTL();
-
-            foreach (string line in fileData)
-            {
-                string[] parts = line.Split(' ');
-
-                switch (parts[0])
-                {
-                    // Comment
-                    case "#":
-                        break;
-                    // New material
-                    case "newmtl":
-                        name = parts[1];
-                        break;
-                    // Ambient colour
-                    case "Ka":
-                        float r = float.Parse(parts[1]);
-                        float g = float.Parse(parts[2]);
-                        float b = float.Parse(parts[3]);
-
-                        ThrowIfNotWithinRange(r, 0, 1);
-                        ThrowIfNotWithinRange(g, 0, 1);
-                        ThrowIfNotWithinRange(b, 0, 1);
-
-                        mtl.AmbientColour = new Vector3D(r, g, b);
-                        break;
-                    // Diffuse colour
-                    case "Kd":
-                        r = float.Parse(parts[1]);
-                        g = float.Parse(parts[2]);
-                        b = float.Parse(parts[3]);
-
-                        ThrowIfNotWithinRange(r, 0, 1);
-                        ThrowIfNotWithinRange(g, 0, 1);
-                        ThrowIfNotWithinRange(b, 0, 1);
-
-                        mtl.DiffuseColour = new Vector3D(r, g, b);
-                        break;
-                    // Specular colour
-                    case "Ks":
-                        r = float.Parse(parts[1]);
-                        g = float.Parse(parts[2]);
-                        b = float.Parse(parts[3]);
-
-                        ThrowIfNotWithinRange(r, 0, 1);
-                        ThrowIfNotWithinRange(g, 0, 1);
-                        ThrowIfNotWithinRange(b, 0, 1);
-
-                        mtl.SpecularColour = new Vector3D(r, g, b);
-                        break;
-                    // Specular exponent
-                    case "Ns":
-                        float specularExponent = float.Parse(parts[1]);
-
-                        ThrowIfNotWithinRange(specularExponent, 0, 1000);
-
-                        mtl.SpecularExponent = specularExponent;
-                        break;
-                    // Dissolve
-                    case "d":
-                        float dissolve = float.Parse(parts[1]);
-
-                        mtl.Dissolve = dissolve;
-                        break;
-                    case "Tr":
-                        dissolve = 1 - float.Parse(parts[1]);
-
-                        mtl.Dissolve = dissolve;
-                        break;
-                    // Transmission filter colour
-                    case "Tf":
-                        switch (parts[1])
-                        {
-                            case "xyz":
-                                float x = float.Parse(parts[1]);
-                                float y = float.Parse(parts[2]);
-                                float z = float.Parse(parts[3]);
-                                // ...
-                                break;
-                            case "spectral":
-                                break;
-                            default:
-                                r = float.Parse(parts[1]);
-                                g = float.Parse(parts[2]);
-                                b = float.Parse(parts[3]);
-
-                                ThrowIfNotWithinRange(r, 0, 1);
-                                ThrowIfNotWithinRange(g, 0, 1);
-                                ThrowIfNotWithinRange(b, 0, 1);
-
-                                mtl.TransmissionFilterColour = new Vector3D(r, g, b);
-                                break;
-                        }
-                        break;
-                    case "Ni":
-                        float iof = float.Parse(parts[1]);
-
-                        ThrowIfNotWithinRange(iof, 0.001f, 10);
-
-                        mtl.IndexOfRefraction = iof;
-                        break;
-                    case "illum":
-                        int illuminationModel = int.Parse(parts[1]);
-
-                        ThrowIfNotWithinRange(illuminationModel, 0, 10);
-
-                        mtl.IlluminationModel = illuminationModel;
-                        break;
-                }
-            }
-
-            name ??= Guid.NewGuid().ToString();
-            mtlDictionary.Add(name, mtl);
-        }
-
-        return mtlDictionary;
-    }
-
-    private class MTL
-    {
-        public Vector3D AmbientColour { get; set; }
-        public Vector3D DiffuseColour { get; set; }
-        public Vector3D SpecularColour { get; set; }
-        public float SpecularExponent { get; set; }
-        public float Dissolve { get; set; }
-        public Vector3D TransmissionFilterColour { get; set; }
-        public float IndexOfRefraction { get; set; }
-        public int IlluminationModel { get; set; }
-    }
+    
 
     private class RFL
     {
