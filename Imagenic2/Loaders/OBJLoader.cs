@@ -1,5 +1,6 @@
 ﻿using Imagenic2.Core.Entities;
 using Imagenic2.Core.Enums;
+using System.Drawing;
 
 namespace Imagenic2.Core.Loaders;
 
@@ -14,13 +15,28 @@ public sealed partial class OBJLoader : MeshLoader, IOBJBuilder
 {
     #region Fields and Properties
 
-    private IEnumerable<string> objData;
+    private LoadedFile<IEnumerable<string>> objData;
 
     private bool mtlSelected;
-    private List<IEnumerable<string>> mtlData;
+    private List<LoadedFile<IEnumerable<string>>> mtlData;
 
     private bool rflSelected;
-    private List<IEnumerable<string>> rflData;
+    private List<LoadedFile<IEnumerable<string>>> rflData;
+
+    private bool bmpSelected;
+    private List<LoadedFile<Bitmap>> bitmaps;
+
+    private class LoadedFile<TData>
+    {
+        public string FilePath { get; set; }
+        public TData Data { get; set; }
+
+        public LoadedFile(string filePath, TData data)
+        {
+            FilePath = filePath;
+            Data = data;
+        }
+    }
 
     #endregion
 
@@ -39,7 +55,7 @@ public sealed partial class OBJLoader : MeshLoader, IOBJBuilder
     {
         ThrowIfNotOfFileType(filePath, ".obj");
 
-        objData = File.ReadLines(filePath);
+        objData = new LoadedFile<IEnumerable<string>>(filePath, File.ReadLines(filePath));
         return this;
     }
 
@@ -48,13 +64,31 @@ public sealed partial class OBJLoader : MeshLoader, IOBJBuilder
     {
         ThrowIfNotOfFileType(filePath, ".mtl");
 
-        mtlData.Add(File.ReadLines(filePath));
+        mtlData.Add(new LoadedFile<IEnumerable<string>>(filePath, File.ReadLines(filePath)));
         return this;
     }
 
     public IOBJBuilder WithRFLFile(string filePath)
     {
         ThrowIfNotOfFileType(filePath, ".rfl");
+
+        // ...
+
+        return this;
+    }
+
+    public IOBJBuilder WithBMPFile(string filePath)
+    {
+        ThrowIfNotOfFileType(filePath, ".bmp");
+
+        // ...
+
+        return this;
+    }
+
+    public IOBJBuilder WithPNGFile(string filePath)
+    {
+        ThrowIfNotOfFileType(filePath, ".png");
 
         // ...
 
@@ -85,7 +119,7 @@ public sealed partial class OBJLoader : MeshLoader, IOBJBuilder
         Dictionary<(Vector3D, Vector3D, Vector3D), Triangle> triangleDictionary = new Dictionary<(Vector3D, Vector3D, Vector3D), Triangle>();
         Dictionary<string, Face> faceDictionary = new Dictionary<string, Face>();
 
-        foreach (string line in objData)
+        foreach (string line in objData.Data)
         {
             string[] parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 

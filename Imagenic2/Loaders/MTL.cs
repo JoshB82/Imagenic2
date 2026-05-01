@@ -1,4 +1,5 @@
 ﻿using Imagenic2.Core.Entities;
+using System.Globalization;
 
 namespace Imagenic2.Core.Loaders;
 
@@ -16,13 +17,25 @@ public partial class OBJLoader
     {
         var mtlDictionary = new Dictionary<string, MTL>();
 
-        foreach (IEnumerable<string> fileData in mtlData)
+        foreach (LoadedFile<IEnumerable<string>> file in mtlData)
         {
             string currentName = null;
             MTL currentMTL = null;
+            int lineNumber = 0;
 
-            foreach (string line in fileData)
+            TParsable ParseStringTo<TParsable>(string input) where TParsable : IParsable<TParsable>
             {
+                if (!TParsable.TryParse(input, CultureInfo.InvariantCulture, out TParsable result))
+                {
+                    ThrowDueToMalformedData(lineNumber, file.FilePath);
+                }
+                return result;
+            }
+
+            foreach (string line in file.Data)
+            {
+                lineNumber++;
+
                 string[] parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
                 if (parts[0] == "newmtl") // New material
@@ -42,9 +55,9 @@ public partial class OBJLoader
                     case "#": // Comment
                         break;
                     case "Ka": // Ambient colour
-                        float r = float.Parse(parts[1]);
-                        float g = float.Parse(parts[2]);
-                        float b = float.Parse(parts[3]);
+                        float r = ParseStringTo<float>(parts[1]);
+                        float g = ParseStringTo<float>(parts[2]);
+                        float b = ParseStringTo<float>(parts[3]);
 
                         ThrowIfNotWithinRange(r, 0, 1);
                         ThrowIfNotWithinRange(g, 0, 1);
@@ -53,9 +66,9 @@ public partial class OBJLoader
                         currentMTL.AmbientColour = new Vector3D(r, g, b);
                         break;
                     case "Kd": // Diffuse colour
-                        r = float.Parse(parts[1]);
-                        g = float.Parse(parts[2]);
-                        b = float.Parse(parts[3]);
+                        r = ParseStringTo<float>(parts[1]);
+                        g = ParseStringTo<float>(parts[2]);
+                        b = ParseStringTo<float>(parts[3]);
 
                         ThrowIfNotWithinRange(r, 0, 1);
                         ThrowIfNotWithinRange(g, 0, 1);
@@ -64,9 +77,9 @@ public partial class OBJLoader
                         currentMTL.DiffuseColour = new Vector3D(r, g, b);
                         break;
                     case "Ks": // Specular colour
-                        r = float.Parse(parts[1]);
-                        g = float.Parse(parts[2]);
-                        b = float.Parse(parts[3]);
+                        r = ParseStringTo<float>(parts[1]);
+                        g = ParseStringTo<float>(parts[2]);
+                        b = ParseStringTo<float>(parts[3]);
 
                         ThrowIfNotWithinRange(r, 0, 1);
                         ThrowIfNotWithinRange(g, 0, 1);
@@ -75,14 +88,14 @@ public partial class OBJLoader
                         currentMTL.SpecularColour = new Vector3D(r, g, b);
                         break;
                     case "Ns": // Specular exponent
-                        float specularExponent = float.Parse(parts[1]);
+                        float specularExponent = ParseStringTo<float>(parts[1]);
 
                         ThrowIfNotWithinRange(specularExponent, 0, 1000);
 
                         currentMTL.SpecularExponent = specularExponent;
                         break;
                     case "d": // Dissolve
-                        float dissolve = float.Parse(parts[1]);
+                        float dissolve = ParseStringTo<float>(parts[1]);
 
                         currentMTL.Dissolve = dissolve;
                         break;
@@ -95,17 +108,17 @@ public partial class OBJLoader
                         switch (parts[1])
                         {
                             case "xyz":
-                                float x = float.Parse(parts[2]);
-                                float y = float.Parse(parts[3]);
-                                float z = float.Parse(parts[4]);
+                                float x = ParseStringTo<float>(parts[2]);
+                                float y = ParseStringTo<float>(parts[3]);
+                                float z = ParseStringTo<float>(parts[4]);
                                 // ...
                                 break;
                             case "spectral":
                                 break;
                             default:
-                                r = float.Parse(parts[1]);
-                                g = float.Parse(parts[2]);
-                                b = float.Parse(parts[3]);
+                                r = ParseStringTo<float>(parts[1]);
+                                g = ParseStringTo<float>(parts[2]);
+                                b = ParseStringTo<float>(parts[3]);
 
                                 ThrowIfNotWithinRange(r, 0, 1);
                                 ThrowIfNotWithinRange(g, 0, 1);
@@ -116,18 +129,21 @@ public partial class OBJLoader
                         }
                         break;
                     case "Ni": // Index of refraction
-                        float iof = float.Parse(parts[1]);
+                        float iof = ParseStringTo<float>(parts[1]);
 
                         ThrowIfNotWithinRange(iof, 0.001f, 10);
 
                         currentMTL.IndexOfRefraction = iof;
                         break;
                     case "illum": // Illumination model
-                        int illuminationModel = int.Parse(parts[1]);
+                        int illuminationModel = ParseStringTo<int>(parts[1]);
 
                         ThrowIfNotWithinRange(illuminationModel, 0, 10);
 
                         currentMTL.IlluminationModel = illuminationModel;
+                        break;
+                    default: // Unknown
+                        ThrowDueToMalformedData(lineNumber, file.FilePath);
                         break;
                 }
             }
@@ -137,6 +153,8 @@ public partial class OBJLoader
 
         return mtlDictionary;
     }
+
+    
 
     private class MTL
     {
