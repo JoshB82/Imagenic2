@@ -2,15 +2,17 @@
 
 namespace Imagenic2.Core.Loaders;
 
-public abstract class MeshLoader : Loader
+public abstract class MeshLoader<TOptions> : Loader<TOptions> where TOptions : MeshLoaderOptions
 {
     #region Fields and Properties
+
+    public override TOptions LoaderOptions { get; set; }
 
     #endregion
 
     #region Constructors
 
-    protected MeshLoader()
+    protected MeshLoader(TOptions options) : base(options)
     {
         
     }

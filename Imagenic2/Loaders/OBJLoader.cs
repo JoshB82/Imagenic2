@@ -11,9 +11,11 @@ public interface IOBJBuilder
     public bool Load();
 }
 
-public sealed partial class OBJLoader : MeshLoader, IOBJBuilder
+public sealed partial class OBJLoader : MeshLoader<OBJLoaderOptions>, IOBJBuilder
 {
     #region Fields and Properties
+
+    public override OBJLoaderOptions LoaderOptions { get; set; }
 
     private LoadedFile<IEnumerable<string>> objData;
 
@@ -42,7 +44,7 @@ public sealed partial class OBJLoader : MeshLoader, IOBJBuilder
 
     #region Constructors
 
-    public OBJLoader()
+    public OBJLoader(OBJLoaderOptions options) : base(options)
     {
         
     }
@@ -103,7 +105,7 @@ public sealed partial class OBJLoader : MeshLoader, IOBJBuilder
         return objData is not null;
     }
 
-    public async override MeshStructure ExtractMeshStructure(CancellationToken ct = default)
+    public /*async */override MeshStructure ExtractMeshStructure(CancellationToken ct = default)
     {
         var materialDictionary =  ObtainMaterials();
 
@@ -132,11 +134,13 @@ public sealed partial class OBJLoader : MeshLoader, IOBJBuilder
         List<Triangle> triangles = new();
         List<Face> faces = new();
 
+        Material? currentMaterial = null;
+
         foreach (string line in objData.Data)
         {
-            string[] parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            if (line == "") continue;
 
-            Material currentMaterial = null;
+            string[] parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
             switch (parts[0])
             {
@@ -163,7 +167,8 @@ public sealed partial class OBJLoader : MeshLoader, IOBJBuilder
                     y = float.Parse(parts[2]);
                     z = float.Parse(parts[3]);
 
-                    vertexNormals.Add(new Vector3D(x, y, z));
+                    Vector3D vertexNormal = new Vector3D(x, y, z);
+                    vertexNormals.Add(LoaderOptions.NormaliseVertexNormals ? vertexNormal.Normalise() : vertexNormal);
 
                     break;
                 case "l": // Line
@@ -172,6 +177,7 @@ public sealed partial class OBJLoader : MeshLoader, IOBJBuilder
                     {
                         Vertex referencedVertex = new Vertex(positions[ParsePositionsIndex(parts[i])]);
                         referencedVertices.Add(referencedVertex);
+                        vertices.Add(referencedVertex);
                     }
 
                     for (int j = 0; j < referencedVertices.Count - 1; j++)
@@ -197,10 +203,11 @@ public sealed partial class OBJLoader : MeshLoader, IOBJBuilder
 
                         Vertex referencedVertex = new Vertex(position, normal, texture);
                         referencedVertices.Add(referencedVertex);
+                        vertices.Add(referencedVertex);
                     }
 
                     List<Triangle> referencedTriangles = new();
-                    for (int j = 0; j < referencedVertices.Count - 1; j++)
+                    for (int j = 1; j < referencedVertices.Count - 1; j++)
                     {
                         Triangle triangle = new Triangle(referencedVertices[0], referencedVertices[j], referencedVertices[j + 1]);
                         triangle.FrontStyle = currentMaterial;
@@ -229,12 +236,55 @@ public sealed partial class OBJLoader : MeshLoader, IOBJBuilder
             dimension = MeshDimension._1D;
         }
 
+        DeduplicateVertices(vertices);
+        DeduplicateEdges(edges);
+        DeduplicateTriangles(triangles);
+        DeduplicateFaces(faces);
+
         return new MeshStructure(dimension,
                                  vertices.ToArray(),
                                  edges.ToArray(),
                                  triangles.ToArray(),
                                  faces.ToArray()
         );
+    }
+
+    private struct VertexEqualityComparer : IEqualityComparer<Vertex>
+    {
+        public readonly bool Equals(Vertex v1, Vertex v2) => (v1.WorldOrigin, v1.TextureCoordinates, v1.Normal) == (v2.WorldOrigin, v2.TextureCoordinates, v2.Normal);
+        public readonly int GetHashCode(Vertex v) => (v.WorldOrigin, v.TextureCoordinates, v.Normal).GetHashCode();
+    }
+
+    private void DeduplicateVertices(List<Vertex> vertices)
+    {
+        if (LoaderOptions.DeduplicateVertices)
+        {
+            vertices = vertices.Distinct(new VertexEqualityComparer()).ToList();
+        }
+    }
+
+    private void DeduplicateEdges(List<Edge> edges)
+    {
+        if (LoaderOptions.DeduplicateEdges)
+        {
+
+        }
+    }
+
+    private void DeduplicateTriangles(List<Triangle> triangles)
+    {
+        if (LoaderOptions.DeduplicateTriangles)
+        {
+
+        }
+    }
+
+    private void DeduplicateFaces(List<Face> faces)
+    {
+        if (LoaderOptions.DeduplicateFaces)
+        {
+
+        }
     }
 
     private class RFL

@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Imagenic2.Core.Loaders;
 
-public abstract class Loader
+public abstract class Loader<TOptions> where TOptions : LoaderOptions
 {
     #region Fields and Properties
 
@@ -13,14 +13,16 @@ public abstract class Loader
 
     #endif
 
-    public bool IgnoreMalformedData { get; set; } = false;
+    public virtual TOptions LoaderOptions { get; set; }
 
     #endregion
 
     #region Constructors
 
-    protected Loader()
+    protected Loader(TOptions options)
     {
+        LoaderOptions = options;
+
         #if DEBUG
         
         var loggerFactory = LoggerFactory.Create(builder =>
@@ -28,7 +30,7 @@ public abstract class Loader
             builder.AddConsole();
         });
 
-        Logger = loggerFactory.CreateLogger<Loader>();
+        Logger = loggerFactory.CreateLogger<Loader<TOptions>>();
 
         #endif
     }
@@ -39,7 +41,7 @@ public abstract class Loader
 
     protected void ThrowDueToMalformedData(int lineNumber, string filePath)
     {
-        if (IgnoreMalformedData)
+        if (LoaderOptions.IgnoreMalformedData)
         {
             #if DEBUG
 
