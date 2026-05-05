@@ -8,9 +8,73 @@ public class Bitmap : Image, IFactory<Bitmap>
 {
     #region Fields and Properties
 
+    public int FileSize { get; private set; }
+
     #endregion
 
     #region Constructors
+
+    public static Bitmap FromFile(string filePath)
+    {
+        ThrowIfNotOfFileType(filePath, ".bmp");
+
+        int width = 0, height = 0;
+        Buffer2D<Color>? buffer = null;
+        short bitsPerPixel = 0;
+        int fileSize = 0;
+
+        using (FileStream fs = new FileStream(filePath, FileMode.Open))
+        {
+            using (BinaryReader br = new BinaryReader(fs))
+            {
+                br.ReadBytes(2);
+
+                fileSize = br.ReadInt32();
+
+                br.ReadInt32();
+
+                int pixelDataOffset = br.ReadInt32();
+                int headerSize = br.ReadInt32();
+                width = br.ReadInt32();
+                height = br.ReadInt32();
+                buffer = new Buffer2D<Color>(width, height);
+
+                br.ReadInt16();
+
+                bitsPerPixel = br.ReadInt16();
+
+                fs.Position = pixelDataOffset;
+                
+                int rowSize = (bitsPerPixel * width + 31) / 32 * 4;
+
+                for (int y = 0; y < height; y++)
+                {
+                    int rowStart = y * width * 3;
+                    byte[] row = br.ReadBytes(rowSize);
+
+                    for (int x = 0; x < width; x++)
+                    {
+                        int i = x * 3;
+                        
+                        byte r = row[i + 2]; // R
+                        byte g = row[i + 1]; // G
+                        byte b = row[i + 0]; // B
+
+                        buffer[x, y] = Color.FromArgb(r,g,b);
+                    }
+                }
+            }
+        }
+
+        return new Bitmap(buffer)
+        {
+            FileSize = fileSize,
+            PixelFormat = bitsPerPixel switch
+            {
+                24 => PixelFormat.Format24bppRgb
+            }
+        };
+    }
 
     public Bitmap(int width, int height) : base(width, height, new Buffer2D<Color>(width, height))
     {

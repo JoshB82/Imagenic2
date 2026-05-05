@@ -1,6 +1,5 @@
 ﻿using Imagenic2.Core.Entities;
 using Imagenic2.Core.Enums;
-using System.Drawing;
 
 namespace Imagenic2.Core.Loaders;
 
@@ -26,7 +25,7 @@ public sealed partial class OBJLoader : MeshLoader<OBJLoaderOptions>, IOBJBuilde
     private List<LoadedFile<IEnumerable<string>>> rflData;
 
     private bool bmpSelected;
-    private List<LoadedFile<Bitmap>> bitmaps;
+    private List<LoadedFile<Imagenic2.Core.Images.Bitmap>> bitmaps;
 
     private class LoadedFile<TData>
     {
@@ -81,9 +80,8 @@ public sealed partial class OBJLoader : MeshLoader<OBJLoaderOptions>, IOBJBuilde
 
     public IOBJBuilder WithBMPFile(string filePath)
     {
-        ThrowIfNotOfFileType(filePath, ".bmp");
-
-        // ...
+        Imagenic2.Core.Images.Bitmap bmp = Imagenic2.Core.Images.Bitmap.FromFile(filePath);
+        bitmaps.Add(new LoadedFile<Imagenic2.Core.Images.Bitmap>(filePath, bmp));
 
         return this;
     }

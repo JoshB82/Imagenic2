@@ -19,8 +19,8 @@ public partial class OBJLoader
 
         foreach (LoadedFile<IEnumerable<string>> file in mtlData)
         {
-            string currentName = null;
-            MTL currentMTL = null;
+            string? currentName = null;
+            MTL? currentMTL = null;
             int lineNumber = 0;
 
             TParsable ParseStringTo<TParsable>(string input) where TParsable : IParsable<TParsable>
