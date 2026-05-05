@@ -209,5 +209,14 @@ public struct Vector3D : IApproximatelyEquatable<Vector3D>,
         return Color.FromArgb(r, g, b);
     }
 
+    public readonly Colour ToColour()
+    {
+        byte r = (byte)(Math.Clamp(x, 0, 1) * 255);
+        byte g = (byte)(Math.Clamp(y, 0, 1) * 255);
+        byte b = (byte)(Math.Clamp(z, 0, 1) * 255);
+
+        return new Colour(r, g, b);
+    }
+
     #endregion
 }

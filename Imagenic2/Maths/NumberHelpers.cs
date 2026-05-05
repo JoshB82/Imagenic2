@@ -4,8 +4,6 @@ namespace Imagenic2.Core.Maths;
 
 internal static class NumberHelpers
 {
-    
-
     internal static void Swap<T>(ref T x1, ref T x2)
     {
         T temp = x1;

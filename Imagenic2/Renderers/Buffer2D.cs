@@ -8,24 +8,24 @@ public sealed class Buffer2D<T>
 {
     #region Fields and Properties
 
-    private int firstDimensionSize, secondDimensionSize;
+    private int width, height;
 
-    public int FirstDimensionSize
+    public int Width
     {
-        get => firstDimensionSize;
+        get => width;
         set
         {
-            firstDimensionSize = value;
+            width = value;
             //SetSizes(firstDimensionSize, secondDimensionSize);
         }
     }
 
-    public int SecondDimensionSize
+    public int Height
     {
-        get => secondDimensionSize;
+        get => height;
         set
         {
-            secondDimensionSize = value;
+            height = value;
             //SetSizes(firstDimensionSize, secondDimensionSize);
         }
     }
@@ -45,8 +45,8 @@ public sealed class Buffer2D<T>
 
     public T? this[int x, int y]
     {
-        get => Values[x * secondDimensionSize + y];
-        set => Values[x * secondDimensionSize + y] = value;
+        get => Values[x * height + y];
+        set => Values[x * height + y] = value;
     }
 
     /*
@@ -63,11 +63,11 @@ public sealed class Buffer2D<T>
 
     #region Constructors
 
-    public Buffer2D(int firstDimensionSize, int secondDimensionSize)
+    public Buffer2D(int width, int height)
     {
-        this.firstDimensionSize = firstDimensionSize;
-        this.secondDimensionSize = secondDimensionSize;
-        Values = new T?[firstDimensionSize * secondDimensionSize];
+        this.width = width;
+        this.height = height;
+        Values = new T?[width * height];
         //SetSizes(firstDimensionSize, secondDimensionSize);
     }
 
@@ -77,7 +77,7 @@ public sealed class Buffer2D<T>
 
     public Buffer2D<T> DeepCopy()
     {
-        Buffer2D<T> newBuffer2D = new Buffer2D<T>(firstDimensionSize, secondDimensionSize);
+        Buffer2D<T> newBuffer2D = new Buffer2D<T>(width, height);
         newBuffer2D.ForEach((t, i, j) => t = this[i, j]);
         return newBuffer2D;
     }
@@ -99,9 +99,9 @@ public sealed class Buffer2D<T>
 
     public void ForEach(Action<T?> action)
     {
-        for (int i = 0; i < firstDimensionSize; i++)
+        for (int i = 0; i < width; i++)
         {
-            for (int j = 0; j < secondDimensionSize; j++)
+            for (int j = 0; j < height; j++)
             {
                 action(this[i, j]);
             }
@@ -110,9 +110,9 @@ public sealed class Buffer2D<T>
 
     public void ForEach(Action<T?, int, int> action)
     {
-        for (int i = 0; i < firstDimensionSize; i++)
+        for (int i = 0; i < width; i++)
         {
-            for (int j = 0; j < secondDimensionSize; j++)
+            for (int j = 0; j < height; j++)
             {
                 action(this[i, j], i, j);
             }
@@ -121,9 +121,9 @@ public sealed class Buffer2D<T>
 
     public void ParallelForEach(Action<T?> action)
     {
-        Parallel.For(0, firstDimensionSize * secondDimensionSize, i =>
+        Parallel.For(0, width * height, i =>
         {
-            T? value = this[i % firstDimensionSize, i / firstDimensionSize];
+            T? value = this[i % width, i / width];
             action(value);
         });
     }
@@ -137,14 +137,14 @@ public sealed class Buffer2D<T>
     
     public TImage ToImage<TImage>() where TImage : Imagenic2.Core.Images.Image, IFactory<TImage>
     {
-        Buffer2D<Color> imageValues = null;
-        if (typeof(T) == typeof(Color))
+        Buffer2D<Colour> imageValues = null;
+        if (typeof(T) == typeof(Colour))
         {
-            imageValues = this as Buffer2D<Color>;
+            imageValues = this as Buffer2D<Colour>;
         }
         else if (typeof(T) == typeof(float))
         {
-            imageValues = new Buffer2D<Color>(firstDimensionSize, secondDimensionSize);
+            imageValues = new Buffer2D<Colour>(width, height);
             imageValues.ForEach((colour, x, y) =>
             {
                 float value = (float)((object)(this[x, y]));

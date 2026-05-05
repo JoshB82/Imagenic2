@@ -13,7 +13,7 @@ public abstract class Renderer<TImage> where TImage : Images.Image, IFactory<TIm
 {
     #region Fields and Properties
 
-    protected Buffer2D<Color> colourBuffer;
+    protected Buffer2D<Colour> colourBuffer;
 
     internal static readonly ClippingPlane[] ScreenClippingPlanes = new ClippingPlane[]
     {
@@ -116,7 +116,7 @@ public abstract class Renderer<TImage> where TImage : Images.Image, IFactory<TIm
     private protected Renderer(RenderingOptions renderingOptions)
     {
         RenderingOptions = renderingOptions;
-        colourBuffer = new Buffer2D<Color>(RenderingOptions.RenderWidth, RenderingOptions.RenderHeight);
+        colourBuffer = new Buffer2D<Colour>(RenderingOptions.RenderWidth, RenderingOptions.RenderHeight);
 
         #if DEBUG
 

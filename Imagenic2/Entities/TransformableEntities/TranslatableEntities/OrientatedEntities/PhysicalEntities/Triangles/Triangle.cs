@@ -6,8 +6,8 @@ public struct Triangle
 {
     #region Fields and Properties
 
-    private FaceStyle frontStyle = new SolidStyle() { Colour = Color.Black };
-    private FaceStyle backStyle = new SolidStyle() { Colour = Color.Black };
+    private FaceStyle frontStyle = new SolidStyle() { Colour = Colour.Black };
+    private FaceStyle backStyle = new SolidStyle() { Colour = Colour.Black };
 
     public FaceStyle FrontStyle
     {

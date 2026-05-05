@@ -6,7 +6,7 @@ public class EmissiveMaterial : Material
 {
     #region Fields and Properties
 
-    public Color EmissionColour { get; set; }
+    public Colour EmissionColour { get; set; }
     public float EmissionIntensity { get; set; }
 
     #endregion

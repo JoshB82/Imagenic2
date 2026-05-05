@@ -5,4 +5,3 @@ public enum PlaybackDirection
     Forwards,
     Backwards
 }
-

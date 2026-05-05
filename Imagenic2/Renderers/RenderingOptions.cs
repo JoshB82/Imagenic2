@@ -2,7 +2,6 @@
 using Imagenic2.Core.Enums;
 using Imagenic2.Core.Maths.Transformations;
 using Microsoft.Extensions.Logging;
-using System.Drawing;
 
 namespace Imagenic2.Core.Renderers;
 
@@ -55,8 +54,8 @@ public sealed class RenderingOptions
     }
 
     // Background colour
-    private Color backgroundColour = Color.White;
-    public Color BackgroundColour
+    private Colour backgroundColour = Colour.White;
+    public Colour BackgroundColour
     {
         get => backgroundColour;
         set

@@ -12,7 +12,7 @@ public struct Edge
     internal Vector4D TransformedP1 { get; set; }
     internal Vector4D TransformedP2 { get; set; }
 
-    public EdgeStyle EdgeStyle { get; set; } = new SolidEdgeStyle(Color.Red);
+    public EdgeStyle EdgeStyle { get; set; } = new SolidEdgeStyle(Colour.Red);
 
     #endregion
 

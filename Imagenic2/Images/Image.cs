@@ -1,6 +1,6 @@
-﻿using Imagenic2.Core.Renderers;
-using System.Drawing;
-using System.Drawing.Imaging;
+﻿using Imagenic2.Core.Enums;
+using Imagenic2.Core.Renderers;
+//using System.Drawing.Imaging;
 
 namespace Imagenic2.Core.Images;
 
@@ -8,20 +8,24 @@ public abstract class Image : IDisposable
 {
     #region Fields and Properties
 
+    public int FileSize { get; protected set; }
+
     public int Width { get; set; }
     public int Height { get; set; }
 
-    public Buffer2D<Color> ColourBuffer { get; set; }
-    public PixelFormat PixelFormat { get; set; } = PixelFormat.Format24bppRgb;
+    public Buffer2D<Colour> ColourBuffer { get; set; }
+    public PixelFormat PixelFormat { get; set; } = PixelFormat._24bpp;
 
     #endregion
 
     #region Constructors
 
-    public Image(int width, int height, Buffer2D<Color> colourBuffer)
+    public Image(/*int width, int height, */Buffer2D<Colour> colourBuffer)
     {
-        Width = width;
-        Height = height;
+        //Width = width;
+        //Height = height;
+        Width = colourBuffer.Width;
+        Height = colourBuffer.Height;
         ColourBuffer = colourBuffer;
     }
 

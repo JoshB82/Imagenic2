@@ -6,7 +6,7 @@ public class SolidStyle : FaceStyle
 {
     #region Fields and Parameters
 
-    public Color Colour { get; set; }
+    public Colour Colour { get; set; }
 
     #endregion
 

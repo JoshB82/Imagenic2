@@ -1,4 +1,5 @@
 ﻿using Imagenic2.Core.Renderers;
+using Imagenic2.Core.Enums;
 using System.Drawing;
 using System.Drawing.Imaging;
 
@@ -8,7 +9,7 @@ public class Bitmap : Image, IFactory<Bitmap>
 {
     #region Fields and Properties
 
-    public int FileSize { get; private set; }
+    
 
     #endregion
 
@@ -19,7 +20,7 @@ public class Bitmap : Image, IFactory<Bitmap>
         ThrowIfNotOfFileType(filePath, ".bmp");
 
         int width = 0, height = 0;
-        Buffer2D<Color>? buffer = null;
+        Buffer2D<Colour>? buffer = null;
         short bitsPerPixel = 0;
         int fileSize = 0;
 
@@ -37,7 +38,7 @@ public class Bitmap : Image, IFactory<Bitmap>
                 int headerSize = br.ReadInt32();
                 width = br.ReadInt32();
                 height = br.ReadInt32();
-                buffer = new Buffer2D<Color>(width, height);
+                buffer = new Buffer2D<Colour>(width, height);
 
                 br.ReadInt16();
 
@@ -60,7 +61,8 @@ public class Bitmap : Image, IFactory<Bitmap>
                         byte g = row[i + 1]; // G
                         byte b = row[i + 0]; // B
 
-                        buffer[x, y] = Color.FromArgb(r,g,b);
+                        //buffer[x, y] = Color.FromArgb(r, g, b);
+                        buffer[x, y] = new Colour(r, g, b);
                     }
                 }
             }
@@ -71,23 +73,25 @@ public class Bitmap : Image, IFactory<Bitmap>
             FileSize = fileSize,
             PixelFormat = bitsPerPixel switch
             {
-                24 => PixelFormat.Format24bppRgb
+                24 => Enums.PixelFormat._24bpp,
+                32 => Enums.PixelFormat._32bpp
             }
         };
     }
 
-    public Bitmap(int width, int height) : base(width, height, new Buffer2D<Color>(width, height))
+    public Bitmap(int width, int height) : base(new Buffer2D<Colour>(width, height))
     {
 
     }
 
-    public Bitmap(Buffer2D<Color> buffer) : base(buffer.FirstDimensionSize, buffer.SecondDimensionSize, buffer)
+    public Bitmap(Buffer2D<Colour> buffer) : base(buffer)
     {
 
     }
 
-    public unsafe Bitmap(System.Drawing.Bitmap bitmap) : base(bitmap.Width, bitmap.Height, new Buffer2D<Color>(bitmap.Width, bitmap.Height))
+    public unsafe Bitmap(System.Drawing.Bitmap bitmap) : base(new Buffer2D<Colour>(bitmap.Width, bitmap.Height))
     {
+        /*
         PixelFormat = bitmap.PixelFormat;
         BitmapData data = bitmap.LockBits(new Rectangle(0, 0, Width, Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
 
@@ -103,13 +107,14 @@ public class Bitmap : Image, IFactory<Bitmap>
         });
 
         bitmap.UnlockBits(data);
+        */
     }
 
     #endregion
 
     #region Methods
 
-    public static Bitmap CreateFromBuffer(Buffer2D<Color> colourBuffer) => new Bitmap(colourBuffer);
+    public static Bitmap CreateFromBuffer(Buffer2D<Colour> colourBuffer) => new Bitmap(colourBuffer);
 
     public override Bitmap DeepCopy()
     {
@@ -118,6 +123,7 @@ public class Bitmap : Image, IFactory<Bitmap>
 
     public System.Drawing.Bitmap ToSystemDrawingBitmap(System.Drawing.Bitmap? systemDrawingBitmap = null)
     {
+        /*
         systemDrawingBitmap ??= new System.Drawing.Bitmap(Width, Height);
         BitmapData data = systemDrawingBitmap.LockBits(new Rectangle(0, 0, Width, Height), ImageLockMode.WriteOnly, PixelFormat);
 
@@ -130,13 +136,14 @@ public class Bitmap : Image, IFactory<Bitmap>
 
         systemDrawingBitmap.UnlockBits(data);
         return systemDrawingBitmap;
+        */
     }
 
     private static unsafe void Format24bppRgb(
         int width,
         int height,
         BitmapData data,
-        Buffer2D<Color> colourBuffer)
+        Buffer2D<Colour> colourBuffer)
     {
         //Parallel.For(0, height, y =>
         //{

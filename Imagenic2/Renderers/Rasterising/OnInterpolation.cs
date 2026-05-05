@@ -1,6 +1,5 @@
 ﻿using Imagenic2.Core.Entities;
 using Imagenic2.Core.Entities.Lights;
-using System.Drawing;
 
 namespace Imagenic2.Core.Renderers.Rasterising;
 
@@ -20,7 +19,7 @@ public partial class Rasteriser<TImage>
         if (z.ApproxLessThan(zBuffer[x, y], 1E-4f))
         {
             zBuffer[x, y] = z;
-            Color pixelColour = ((SolidStyle)(triangle.FrontStyle)).Colour;
+            Colour pixelColour = ((SolidStyle)(triangle.FrontStyle)).Colour;
             colourBuffer[x, y] = ShadowMapCheck(pixelColour, vx, vy, vz);
         }
     }
@@ -33,7 +32,7 @@ public partial class Rasteriser<TImage>
         if (z.ApproxLessThan(zBuffer[x, y], 1E-4f))
         {
             zBuffer[x, y] = z;
-            Color pixelColour;
+            Colour pixelColour;
             TextureStyle ts = (TextureStyle)(triangle.FrontStyle);
             Imagenic2.Core.Images.Image textureImage = ts.Image;
             if (tu.ApproxLessThan(0) || tu.ApproxMoreThan(1) ||
@@ -50,7 +49,7 @@ public partial class Rasteriser<TImage>
         }
     }
 
-    private Color ShadowMapCheck(Color pixelColour, float vx, float vy, float vz)
+    private Colour ShadowMapCheck(Colour pixelColour, float vx, float vy, float vz)
     {
         bool anyLights = false;
 
@@ -92,7 +91,7 @@ public partial class Rasteriser<TImage>
             }
         }
 
-        return anyLights ? pixelColour : Color.Black;
+        return anyLights ? pixelColour : Colour.Black;
     }
 
     private void OnInterpolation(Edge edge, int x, int y, float z)
@@ -100,7 +99,7 @@ public partial class Rasteriser<TImage>
         if (z.ApproxLessThan(zBuffer[x, y], 1E-4f))
         {
             zBuffer[x, y] = z;
-            Color colour = ((SolidEdgeStyle)(edge.EdgeStyle)).Colour;
+            Colour colour = ((SolidEdgeStyle)(edge.EdgeStyle)).Colour;
             colourBuffer[x, y] = colour;
         }
     }
