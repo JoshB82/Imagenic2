@@ -25,6 +25,15 @@ public readonly struct Colour
 
     public Vector3D ToVector3D() => new Vector3D(R, G, B);
 
+    public Colour MixWith(Colour colour)
+    {
+        byte newR = (0.5f * (R + colour.R)).RoundToByte();
+        byte newG = (0.5f * (G + colour.G)).RoundToByte();
+        byte newB = (0.5f * (B + colour.B)).RoundToByte();
+
+        return new Colour(newR, newG, newB);
+    }
+
     #endregion
 
     #region Set Colours

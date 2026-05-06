@@ -85,7 +85,7 @@ public partial class Rasteriser<TImage>
                 else
                 {
                     // Pixel is affected by this light
-                    pixelColour = pixelColour.Mix(light.Colour);
+                    pixelColour = pixelColour.MixWith(light.Colour);
                     anyLights = true;
                 }
             }

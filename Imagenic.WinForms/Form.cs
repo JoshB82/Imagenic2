@@ -36,6 +36,6 @@ public partial class Form : System.Windows.Forms.Form
 
         Imagenic2.Core.Images.Bitmap renderedImage = renderer.RenderAsync().Result;
 
-        pictureBox.Image = renderedImage.ToSystemDrawingBitmap();
+        //pictureBox.Image = renderedImage.ToSystemDrawingBitmap();
     }
 }

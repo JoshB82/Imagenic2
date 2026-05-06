@@ -1,6 +1,5 @@
 ﻿using Imagenic2.Core.Enums;
 using Imagenic2.Core.Renderers;
-//using System.Drawing.Imaging;
 
 namespace Imagenic2.Core.Images;
 
@@ -37,8 +36,8 @@ public abstract class Image : IDisposable
 
     public bool Export(string filePath)
     {
-        System.Drawing.Bitmap bitmap = ((Bitmap)(this)).ToSystemDrawingBitmap();
-        bitmap.Save(filePath);
+        //System.Drawing.Bitmap bitmap = ((Bitmap)(this)).ToSystemDrawingBitmap();
+        //bitmap.Save(filePath);
         return true; // Temporary
     }
 

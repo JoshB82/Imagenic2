@@ -2,6 +2,7 @@ using Imagenic2.Core.Entities;
 using Imagenic2.Core.Maths.Vectors;
 using Imagenic2.Core.Renderers;
 using Imagenic2.Core.Renderers.RayTracing;
+using Imagenic2.Core.Utilities.Colour;
 using System.Diagnostics;
 
 namespace Imagenic2.RayTracingDemo;
@@ -49,7 +50,7 @@ public partial class Form : System.Windows.Forms.Form
             worldOrientation: Imagenic2.Core.Maths.Orientation.OrientationZNegativeY,
             sideLength: 20
         );
-        emissiveSquare.Structure.Faces[0].FrontStyle = new EmissiveMaterial() { EmissionColour = Color.Green, EmissionIntensity = 0.5f };
+        emissiveSquare.Structure.Faces[0].FrontStyle = new EmissiveMaterial() { EmissionColour = Colour.Green, EmissionIntensity = 0.5f };
 
         // Lights
         Spotlight blueSpotlight = new Spotlight(
@@ -60,7 +61,7 @@ public partial class Form : System.Windows.Forms.Form
             zNear: 10,
             zFar: 100
         );
-        blueSpotlight.Colour = Color.Blue;
+        blueSpotlight.Colour = Colour.Blue;
 
         Spotlight redSpotlight = new Spotlight(
             worldOrigin: new Vector3D(50, 0, 0),
@@ -70,7 +71,7 @@ public partial class Form : System.Windows.Forms.Form
             zNear: 10,
             zFar: 100
         );
-        redSpotlight.Colour = Color.Red;
+        redSpotlight.Colour = Colour.Red;
 
         // Cameras
         float aspectRatio = pictureBox.Width / (float)(pictureBox.Height);
@@ -131,8 +132,8 @@ public partial class Form : System.Windows.Forms.Form
                 Imagenic2.Core.Images.Bitmap? renderedImage = await renderer.RenderAsync();
                 this.Invoke((MethodInvoker)(() =>
                 {
-                    System.Drawing.Bitmap? image = renderedImage?.ToSystemDrawingBitmap(renderBuffer);
-                    pictureBox.Image = image;
+                    //System.Drawing.Bitmap? image = renderedImage?.ToSystemDrawingBitmap(renderBuffer);
+                    //pictureBox.Image = image;
                 }));
 
                 noFrames++;

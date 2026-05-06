@@ -20,7 +20,7 @@ public abstract class Light : RenderingEntity
         }
     }
 
-    public Color Colour { get; set; } = Color.Blue;
+    public Colour Colour { get; set; } = Colour.Blue;
 
     private float intensity = 1;
     public float Intensity

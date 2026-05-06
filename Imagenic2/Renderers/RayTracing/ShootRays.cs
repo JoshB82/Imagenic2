@@ -38,7 +38,7 @@ public partial class RayTracer<TImage>
             }
 
             Vector3D finalColour = accumulatedColour / numberOfRaysPerPixel;
-            colourBuffer[x, y] = finalColour.ToSystemDrawingColor();
+            colourBuffer[x, y] = finalColour.ToColour();
         });
 
         // Draw edges

@@ -3,9 +3,9 @@ using Imagenic2.Core.Enums;
 using Imagenic2.Core.Maths.Vectors;
 using Imagenic2.Core.Renderers;
 using Imagenic2.Core.Renderers.Rasterising;
+using Imagenic2.Core.Utilities.Colour;
 using Imagenic2.WinForms;
 using System.Diagnostics;
-using System.Drawing.Imaging;
 
 namespace Imagenic2.InteractiveDemo;
 
@@ -104,7 +104,7 @@ public partial class Form : System.Windows.Forms.Form
             zFar: 300
         );
         redRightLight.VolumeStyle = VolumeOutline.Far;
-        redRightLight.Colour = Color.Red;
+        redRightLight.Colour = Colour.Red;
 
         // Renderer
         RenderingOptions renderingOptions = new RenderingOptions(renderCamera)
@@ -116,7 +116,7 @@ public partial class Form : System.Windows.Forms.Form
         .AddToRender(blueTopLight, redRightLight);
 
         renderer = new Rasteriser<Imagenic2.Core.Images.Bitmap>(renderingOptions);
-        renderBuffer = new Bitmap(renderControl.Width, renderControl.Height, PixelFormat.Format24bppRgb);
+        //renderBuffer = new Bitmap(renderControl.Width, renderControl.Height, PixelFormat._24bpp);
         renderControl.renderBuffer = renderBuffer;
 
         Task.Run(Loop);
@@ -153,7 +153,7 @@ public partial class Form : System.Windows.Forms.Form
                 {
                     //System.Drawing.Bitmap? image = renderedImage?.ToSystemDrawingBitmap(renderBuffer);
                     //pictureBox.Image = image;
-                    renderControl.renderBuffer = renderedImage?.ToSystemDrawingBitmap(renderBuffer);
+                    //renderControl.renderBuffer = renderedImage?.ToSystemDrawingBitmap(renderBuffer);
                     renderControl.Invalidate();
                 }));
 

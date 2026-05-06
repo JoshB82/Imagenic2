@@ -25,7 +25,7 @@ public static class Extensions
 
     
 
-    internal static int RoundToInt(this float num) => (int)(num >= 0 ? num + 0.5f : num - 0.5f);
+    
 
     internal static void SortByY(
             ref int x1, ref int y1, ref float z1,

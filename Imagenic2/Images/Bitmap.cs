@@ -1,7 +1,6 @@
 ﻿using Imagenic2.Core.Renderers;
 using Imagenic2.Core.Enums;
-using System.Drawing;
-using System.Drawing.Imaging;
+using Imagenic2.Core.Utilities;
 
 namespace Imagenic2.Core.Images;
 
@@ -9,13 +8,13 @@ public class Bitmap : Image, IFactory<Bitmap>
 {
     #region Fields and Properties
 
-    
-
     #endregion
 
     #region Constructors
 
-    public static Bitmap FromFile(string filePath)
+    public static Bitmap CreateFromBuffer(Buffer2D<Colour> colourBuffer) => new Bitmap(colourBuffer);
+
+    public static Bitmap CreateFromFile(string filePath)
     {
         ThrowIfNotOfFileType(filePath, ".bmp");
 
@@ -28,7 +27,11 @@ public class Bitmap : Image, IFactory<Bitmap>
         {
             using (BinaryReader br = new BinaryReader(fs))
             {
-                br.ReadBytes(2);
+                byte[] top = br.ReadBytes(2);
+                if (top[0] != 'B' || top[1] != 'M')
+                {
+                    throw new MalformedDataException("Not a valid .BMP file.");
+                }
 
                 fileSize = br.ReadInt32();
 
@@ -38,7 +41,8 @@ public class Bitmap : Image, IFactory<Bitmap>
                 int headerSize = br.ReadInt32();
                 width = br.ReadInt32();
                 height = br.ReadInt32();
-                buffer = new Buffer2D<Colour>(width, height);
+
+                buffer = new Buffer2D<Colour>(width, height < 0 ? height * -1 : height);
 
                 br.ReadInt16();
 
@@ -48,9 +52,9 @@ public class Bitmap : Image, IFactory<Bitmap>
                 
                 int rowSize = (bitsPerPixel * width + 31) / 32 * 4;
 
-                for (int y = 0; y < height; y++)
+                (int start, int finish, int step) = height < 0 ? (0, height, 1) : ((height - 1) * -1, -1, -1);
+                for (int y = start; y != finish; y += step)
                 {
-                    int rowStart = y * width * 3;
                     byte[] row = br.ReadBytes(rowSize);
 
                     for (int x = 0; x < width; x++)
@@ -61,7 +65,6 @@ public class Bitmap : Image, IFactory<Bitmap>
                         byte g = row[i + 1]; // G
                         byte b = row[i + 0]; // B
 
-                        //buffer[x, y] = Color.FromArgb(r, g, b);
                         buffer[x, y] = new Colour(r, g, b);
                     }
                 }
@@ -73,21 +76,16 @@ public class Bitmap : Image, IFactory<Bitmap>
             FileSize = fileSize,
             PixelFormat = bitsPerPixel switch
             {
-                24 => Enums.PixelFormat._24bpp,
-                32 => Enums.PixelFormat._32bpp
+                24 => PixelFormat._24bpp,
+                32 => PixelFormat._32bpp,
+                _ => throw new InvalidOperationException()
             }
         };
     }
 
-    public Bitmap(int width, int height) : base(new Buffer2D<Colour>(width, height))
-    {
+    public Bitmap(int width, int height) : base(new Buffer2D<Colour>(width, height)) { }
 
-    }
-
-    public Bitmap(Buffer2D<Colour> buffer) : base(buffer)
-    {
-
-    }
+    public Bitmap(Buffer2D<Colour> buffer) : base(buffer) { }
 
     public unsafe Bitmap(System.Drawing.Bitmap bitmap) : base(new Buffer2D<Colour>(bitmap.Width, bitmap.Height))
     {
@@ -114,15 +112,13 @@ public class Bitmap : Image, IFactory<Bitmap>
 
     #region Methods
 
-    public static Bitmap CreateFromBuffer(Buffer2D<Colour> colourBuffer) => new Bitmap(colourBuffer);
-
     public override Bitmap DeepCopy()
     {
         return new Bitmap(ColourBuffer.DeepCopy());
     }
 
-    public System.Drawing.Bitmap ToSystemDrawingBitmap(System.Drawing.Bitmap? systemDrawingBitmap = null)
-    {
+    //public System.Drawing.Bitmap ToSystemDrawingBitmap(System.Drawing.Bitmap? systemDrawingBitmap = null)
+    //{
         /*
         systemDrawingBitmap ??= new System.Drawing.Bitmap(Width, Height);
         BitmapData data = systemDrawingBitmap.LockBits(new Rectangle(0, 0, Width, Height), ImageLockMode.WriteOnly, PixelFormat);
@@ -137,8 +133,9 @@ public class Bitmap : Image, IFactory<Bitmap>
         systemDrawingBitmap.UnlockBits(data);
         return systemDrawingBitmap;
         */
-    }
+    //}
 
+    /*
     private static unsafe void Format24bppRgb(
         int width,
         int height,
@@ -157,7 +154,7 @@ public class Bitmap : Image, IFactory<Bitmap>
                 rowStart[x * 3 + 1] = colourBuffer[x, yIndex].G; // Green
                 rowStart[x * 3 + 2] = colourBuffer[x, yIndex].R; // Red
             }
-        }
+        }*/
         //});
 
         /*
@@ -221,7 +218,7 @@ public class Bitmap : Image, IFactory<Bitmap>
         Task.WaitAll(renderTasks);
 
         */
-    }
+    //}
 
     #endregion
 }

@@ -80,7 +80,7 @@ public sealed partial class OBJLoader : MeshLoader<OBJLoaderOptions>, IOBJBuilde
 
     public IOBJBuilder WithBMPFile(string filePath)
     {
-        Imagenic2.Core.Images.Bitmap bmp = Imagenic2.Core.Images.Bitmap.FromFile(filePath);
+        Imagenic2.Core.Images.Bitmap bmp = Imagenic2.Core.Images.Bitmap.CreateFromFile(filePath);
         bitmaps.Add(new LoadedFile<Imagenic2.Core.Images.Bitmap>(filePath, bmp));
 
         return this;

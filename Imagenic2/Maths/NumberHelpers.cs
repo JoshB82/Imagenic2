@@ -13,4 +13,14 @@ internal static class NumberHelpers
 
     public static float DegToRad(float deg) => deg * MathF.PI / 180;
     public static float RadToDeg(float rad) => rad * 180 / MathF.PI;
+
+    #region Rounding
+
+    extension(float num)
+    {
+        internal int RoundToInt() => (int)(num >= 0 ? num + 0.5f : num - 0.5f);
+        internal byte RoundToByte() => (byte)RoundToInt(num);
+    }
+
+    #endregion
 }
