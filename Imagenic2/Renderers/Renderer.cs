@@ -4,7 +4,6 @@ using Imagenic2.Core.Enums;
 using Imagenic2.Core.Images;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
-using System.Drawing;
 using System.Runtime.CompilerServices;
 
 namespace Imagenic2.Core.Renderers;

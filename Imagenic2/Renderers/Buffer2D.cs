@@ -1,6 +1,5 @@
 ﻿using Imagenic2.Core.Images;
 using Imagenic2.Core.Renderers.Rasterising;
-using System.Drawing;
 
 namespace Imagenic2.Core.Renderers;
 
